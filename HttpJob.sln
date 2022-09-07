@@ -1,0 +1,54 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.1.32319.34
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MineServer", "MineServer\MineServer.csproj", "{4AF9D621-E2F1-4B77-B298-3B092C6D72F5}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SpiderTool", "SpiderTool\SpiderTool.csproj", "{820D7E40-7C83-472D-8229-898C98F598BC}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SpiderWin", "SpiderWin\SpiderWin.csproj", "{304B01E8-DF83-4250-962E-CD3A30D921E0}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SpiderTool.EntityFrameworkCore", "SpiderTool.EntityFrameworkCore\SpiderTool.EntityFrameworkCore.csproj", "{27B192BD-2E0A-42F8-A803-642FB96102B0}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SpiderTool.Dapper", "SpiderTool.Dapper\SpiderTool.Dapper.csproj", "{3712DDB6-13DE-4916-B447-EC74333BB209}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution", "Solution", "{570530B1-8C31-4BAA-8A1E-434052A7403A}"
+	ProjectSection(SolutionItems) = preProject
+		NuGet.Config = NuGet.Config
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{4AF9D621-E2F1-4B77-B298-3B092C6D72F5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4AF9D621-E2F1-4B77-B298-3B092C6D72F5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4AF9D621-E2F1-4B77-B298-3B092C6D72F5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4AF9D621-E2F1-4B77-B298-3B092C6D72F5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{820D7E40-7C83-472D-8229-898C98F598BC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{820D7E40-7C83-472D-8229-898C98F598BC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{820D7E40-7C83-472D-8229-898C98F598BC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{820D7E40-7C83-472D-8229-898C98F598BC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{304B01E8-DF83-4250-962E-CD3A30D921E0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{304B01E8-DF83-4250-962E-CD3A30D921E0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{304B01E8-DF83-4250-962E-CD3A30D921E0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{304B01E8-DF83-4250-962E-CD3A30D921E0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{27B192BD-2E0A-42F8-A803-642FB96102B0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{27B192BD-2E0A-42F8-A803-642FB96102B0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{27B192BD-2E0A-42F8-A803-642FB96102B0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{27B192BD-2E0A-42F8-A803-642FB96102B0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3712DDB6-13DE-4916-B447-EC74333BB209}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3712DDB6-13DE-4916-B447-EC74333BB209}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3712DDB6-13DE-4916-B447-EC74333BB209}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3712DDB6-13DE-4916-B447-EC74333BB209}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {0F8B381A-A723-4F3E-9B5B-2865B1799CDE}
+	EndGlobalSection
+EndGlobal
