@@ -352,9 +352,3 @@ ASALocalRun/
 
 # BeatPulse healthcheck temp database
 healthchecksdb
-/CloudPayroll.Web/wwwroot/dist
-/CloudPayroll.Web/wwwroot/Scripts/pdfjs-1.9.426
-/CloudPayroll.WebApi/logs
-/CloudPayroll.WebApi/.config/dotnet-tools.json
-/CloudPayroll.Setup/logs
-/CloudPayroll.Setup/wwwroot/dist
