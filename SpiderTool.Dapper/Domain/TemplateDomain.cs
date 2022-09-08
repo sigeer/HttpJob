@@ -38,12 +38,21 @@ namespace SpiderTool.Dapper.Domain
                 $"join {replacementRule} b on a.RuleId = b.Id" +
                 $"join {templateTable} c on c.id = a.templateId";
 
-            return _dbConn.Query<TemplateDto, ReplacementRuleDto, TemplateDto>(sql, (a, b) =>
+            var ids = new Dictionary<int, TemplateDto>();
+            _dbConn.Query<TemplateDto, ReplacementRuleDto, TemplateDto>(sql, (a, b) =>
             {
-                a.ReplacementRules ??= new List<ReplacementRuleDto>();
-                a.ReplacementRules.Add(b);
-                return a;
-            }).ToList();
+                TemplateDto? tmp;
+                if (!ids.TryGetValue(a.Id, out tmp))
+                {
+                    tmp = a;
+                    ids.Add(a.Id, tmp);
+                }
+                if (tmp.ReplacementRules == null)
+                    tmp.ReplacementRules = new List<ReplacementRuleDto>();
+                tmp.ReplacementRules.Add(b);
+                return tmp;
+            });
+            return ids.Values.ToList();
         }
 
         public async Task<List<TemplateDto>> GetTemplateDtoListAsync()
@@ -53,12 +62,21 @@ namespace SpiderTool.Dapper.Domain
                 $"join {replacementRule} b on a.RuleId = b.Id" +
                 $"join {templateTable} c on c.id = a.templateId";
 
-            return (await _dbConn.QueryAsync<TemplateDto, ReplacementRuleDto, TemplateDto>(sql, (a, b) =>
+            var ids = new Dictionary<int, TemplateDto>();
+            await _dbConn.QueryAsync<TemplateDto, ReplacementRuleDto, TemplateDto>(sql, (a, b) =>
             {
-                a.ReplacementRules ??= new List<ReplacementRuleDto>();
-                a.ReplacementRules.Add(b);
-                return a;
-            }, splitOn: "ReplacmentRuleId")).ToList();
+                TemplateDto? tmp;
+                if (!ids.TryGetValue(a.Id, out tmp))
+                {
+                    tmp = a;
+                    ids.Add(a.Id, tmp);
+                }
+                if (tmp.ReplacementRules == null)
+                    tmp.ReplacementRules = new List<ReplacementRuleDto>();
+                tmp.ReplacementRules.Add(b);
+                return tmp;
+            });
+            return ids.Values.ToList();
         }
 
         public string Submit(TemplateDto model)
@@ -68,14 +86,11 @@ namespace SpiderTool.Dapper.Domain
 
             using var dbTrans = _dbConn.BeginTransaction();
 
-            var dbModel = _dbConn.QueryFirst<DB_Template>($"select * from {templateTable}");
+            var dbModel = _dbConn.QueryFirst<DB_Template>($"select id, createtime, lastUpdatedTime from {templateTable}", transaction: dbTrans);
             if (dbModel == null)
             {
-                dbModel = new DB_Template
-                {
-                    CreateTime = DateTime.Now
-                };
-                _dbConn.Insert(dbModel, dbTrans);
+                dbModel = new DB_Template();
+                dbModel.Id = _dbConn.QueryFirstOrDefault<int>($"insert into {templateTable} (`createtime`, `lastUpdatedTime`) values(now(6), now(6)); select last_insert_id()");
             }
 
             dbModel.Name = model.Name;

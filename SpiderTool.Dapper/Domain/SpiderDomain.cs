@@ -62,7 +62,7 @@ namespace SpiderTool.Dapper.Domain
                 }
 
                 return a;
-            }).FirstOrDefault();
+            }, param: new { id }).FirstOrDefault();
         }
 
         public List<SpiderDtoSetter> GetSpiderDtoList()
@@ -99,14 +99,11 @@ namespace SpiderTool.Dapper.Domain
                 return StatusMessage.FormInvalid;
 
             using var dbTrans = _dbConn.BeginTransaction();
-            var dbModel = _dbConn.QueryFirstOrDefault<DB_Spider>($"select * from {spiderTable} where id = @id", model);
+            var dbModel = _dbConn.QueryFirstOrDefault<DB_Spider>($"select id, createtime, lastUpdatedTime from {spiderTable} where id = @id", model);
             if (dbModel == null)
             {
-                dbModel = new DB_Spider
-                {
-                    CreateTime = DateTime.Now
-                };
-                _dbConn.Insert(dbModel);
+                dbModel = new DB_Spider();
+                dbModel.Id = _dbConn.QueryFirstOrDefault<int>($"insert into {spiderTable} (`createtime`, `lastUpdatedTime`) values(now(6), now(6)); select last_insert_id()");
             }
 
             dbModel.Name = model.Name;
