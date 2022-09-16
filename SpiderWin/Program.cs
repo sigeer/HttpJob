@@ -1,8 +1,7 @@
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using MySqlConnector;
-using SpiderTool.Dapper;
+using SpiderTool.SqlSugar;
+using SqlSugar;
 
 namespace SpiderWin
 {
@@ -29,7 +28,11 @@ namespace SpiderWin
             services.AddSingleton<IConfiguration>(configuration);
 
             services.AddScoped<Form1>();
-            services.AddSpiderService(new MySqlConnection(configuration.GetConnectionString("MySql")), ServiceLifetime.Transient);
+            services.AddSpiderService(new SqlSugarScope(new ConnectionConfig
+            {
+                ConnectionString = configuration.GetConnectionString("MySql"),
+                DbType = DbType.MySql
+            }), ServiceLifetime.Singleton);
 
             var serviceProvider = services.BuildServiceProvider();
             System.Text.Encoding.RegisterProvider(System.Text.CodePagesEncodingProvider.Instance);

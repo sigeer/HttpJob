@@ -87,8 +87,10 @@ namespace SpiderTool.SqlSugar.Domain
             //    NextPageTemplateId = x.NextPageTemplateId,
             //    PostObjStr = x.PostObjStr,
             //});
-            var data = (from x in _dbContext.Queryable<DB_Spider>()
-                        let b = _dbContext.Queryable<DB_SpiderTemplate>().Where(a => a.SpiderId == x.Id).ToList()
+            var spiderList = _dbContext.Queryable<DB_Spider>().ToList();
+            var spiderTemplate = _dbContext.Queryable<DB_SpiderTemplate>().ToList();
+            var data = (from x in spiderList
+                        let b = spiderTemplate
                         select new SpiderDtoSetter
                         {
                             Description = x.Description,
@@ -100,7 +102,6 @@ namespace SpiderTool.SqlSugar.Domain
                             PostObjStr = x.PostObjStr,
                             Templates = b.Select(y => y.TemplateId).ToList()
                         });
-            var sql = data.ToSql();
             return data.ToList();
         }
 
