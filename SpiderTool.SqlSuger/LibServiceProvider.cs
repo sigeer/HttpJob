@@ -10,7 +10,7 @@ namespace SpiderTool.SqlSugar
 {
     public static class LibServiceProvider
     {
-        public static IServiceCollection AddSpiderService(this IServiceCollection services, SqlSugarClient sugarClient, ServiceLifetime serviceLifetime = ServiceLifetime.Scoped)
+        public static IServiceCollection AddSpiderService(this IServiceCollection services, ISqlSugarClient sugarClient, ServiceLifetime serviceLifetime = ServiceLifetime.Scoped)
         {
             ArgumentNullException.ThrowIfNull(services);
 
