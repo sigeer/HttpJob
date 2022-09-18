@@ -235,7 +235,7 @@ namespace SpiderTool.Dto.Spider
                  var fileName = uri.Segments.Last();
                  if (!TryGetExtension(fileName, out var extension))
                  {
-                     var contentType = result.Headers.FirstOrDefault(x => x.Key.ToLower() == "content-type").Value.FirstOrDefault()?.ToLower();
+                     var contentType = result.Content.Headers.FirstOrDefault(x => x.Key.ToLower() == "content-type").Value.FirstOrDefault()?.ToLower();
                      extension = GetExtensionFromContentType(contentType);
                      if (extension == null)
                          return;
