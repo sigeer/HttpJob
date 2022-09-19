@@ -38,6 +38,7 @@ namespace SpiderTool
                     if (docTitle != null)
                         sub = HttpUtility.HtmlDecode(docTitle.InnerText);
                     _currentDir = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "wwwroot", "download", sub ?? DateTime.Now.Ticks.ToString());
+                    _currentDir.GetDirectory();
                 }
                 return _currentDir;
             }
@@ -48,7 +49,7 @@ namespace SpiderTool
         /// </summary>
         private string _rootUrl = string.Empty;
         private string HostUrl => _rootUrl.GetHostUrl();
-        
+
         readonly ISpiderService _service;
 
         public SpiderWorker(ISpiderService service)
@@ -59,21 +60,22 @@ namespace SpiderTool
         public async Task Start(string url, int spiderId)
         {
             _spider = _service.GetSpider(spiderId);
-            if (_spider == null)
+            if (Spider == null)
                 return;
 
             _currentUrl = url;
             _rootUrl = url;
 
             await Process();
-            _service.SubmitResouce(new ResourceHistorySetter()
+            _service.SubmitResouceHistory(new ResourceHistorySetter()
             {
                 Url = _rootUrl,
                 Name = DocumentTitle,
+                SpiderId = spiderId
             });
         }
 
-        public async Task Process()
+        public async Task<string> LoadDocumentContent()
         {
             string documentContent;
             var url = _currentUrl!.GetTotalUrl(HostUrl);
@@ -81,7 +83,12 @@ namespace SpiderTool
                 documentContent = await HttpRequest.PostAsync(url, Spider.PostObj, Spider.GetHeaders());
             else
                 documentContent = await HttpRequest.GetAsync(url, Spider.GetHeaders());
+            return documentContent;
+        }
 
+        public async Task Process()
+        {
+            var documentContent = await LoadDocumentContent();
             _currentDoc.LoadHtml(documentContent);
             ExtractContent();
             await MoveToNextPage();
@@ -96,8 +103,8 @@ namespace SpiderTool
         {
             foreach (var rule in Spider.TemplateList)
             {
-                var nodes = string.IsNullOrEmpty(rule.TemplateStr) 
-                    ? new HtmlNodeCollection(_currentDoc.DocumentNode) 
+                var nodes = string.IsNullOrEmpty(rule.TemplateStr)
+                    ? new HtmlNodeCollection(_currentDoc.DocumentNode)
                     : _currentDoc.DocumentNode.SelectNodes(rule.TemplateStr ?? "");
                 if (nodes == null)
                     return;
@@ -163,13 +170,14 @@ namespace SpiderTool
 
         private async Task MoveToNextPage()
         {
-            if (Spider.NextPageTemplate == null)
+            if (Spider.NextPageTemplate == null || string.IsNullOrEmpty(Spider.NextPageTemplate.TemplateStr))
                 return;
             var nextPageNode = _currentDoc.DocumentNode.SelectSingleNode(Spider.NextPageTemplate.TemplateStr);
             if (nextPageNode != null)
             {
-                _currentUrl = nextPageNode.Attributes["href"].Value;
-                await Process();
+                _currentUrl = (nextPageNode.Attributes["href"] ?? nextPageNode.Attributes["data-href"])?.Value;
+                if (_currentUrl != null)
+                    await Start(_currentUrl, Spider.NextPageTemplate.LinkedSpiderId!.Value);
             }
         }
 

@@ -39,7 +39,11 @@
             this.工作设置ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.本地ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.服务器ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.listBoxUrl = new System.Windows.Forms.ListBox();
+            this.statusStrip1 = new System.Windows.Forms.StatusStrip();
+            this.mainModalStatusLabel = new System.Windows.Forms.ToolStripStatusLabel();
             this.menuStrip1.SuspendLayout();
+            this.statusStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
             // btnShowConfig
@@ -63,10 +67,12 @@
             // 
             // txtUrl
             // 
+            this.txtUrl.AutoCompleteSource = System.Windows.Forms.AutoCompleteSource.CustomSource;
             this.txtUrl.Location = new System.Drawing.Point(81, 41);
             this.txtUrl.Name = "txtUrl";
             this.txtUrl.Size = new System.Drawing.Size(546, 23);
             this.txtUrl.TabIndex = 2;
+            this.txtUrl.KeyUp += new System.Windows.Forms.KeyEventHandler(this.txtUrl_KeyUp);
             // 
             // label2
             // 
@@ -119,26 +125,55 @@
             this.本地ToolStripMenuItem,
             this.服务器ToolStripMenuItem});
             this.工作设置ToolStripMenuItem.Name = "工作设置ToolStripMenuItem";
-            this.工作设置ToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.工作设置ToolStripMenuItem.Size = new System.Drawing.Size(124, 22);
             this.工作设置ToolStripMenuItem.Text = "工作设置";
             // 
             // 本地ToolStripMenuItem
             // 
             this.本地ToolStripMenuItem.Name = "本地ToolStripMenuItem";
-            this.本地ToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.本地ToolStripMenuItem.Size = new System.Drawing.Size(112, 22);
             this.本地ToolStripMenuItem.Text = "本地";
             // 
             // 服务器ToolStripMenuItem
             // 
             this.服务器ToolStripMenuItem.Name = "服务器ToolStripMenuItem";
-            this.服务器ToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.服务器ToolStripMenuItem.Size = new System.Drawing.Size(112, 22);
             this.服务器ToolStripMenuItem.Text = "服务器";
+            // 
+            // listBoxUrl
+            // 
+            this.listBoxUrl.FormattingEnabled = true;
+            this.listBoxUrl.ItemHeight = 17;
+            this.listBoxUrl.Location = new System.Drawing.Point(80, 64);
+            this.listBoxUrl.Name = "listBoxUrl";
+            this.listBoxUrl.Size = new System.Drawing.Size(546, 89);
+            this.listBoxUrl.TabIndex = 9;
+            this.listBoxUrl.Visible = false;
+            this.listBoxUrl.Click += new System.EventHandler(this.listBoxUrl_Click);
+            // 
+            // statusStrip1
+            // 
+            this.statusStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.mainModalStatusLabel});
+            this.statusStrip1.Location = new System.Drawing.Point(0, 258);
+            this.statusStrip1.Name = "statusStrip1";
+            this.statusStrip1.Size = new System.Drawing.Size(674, 22);
+            this.statusStrip1.TabIndex = 10;
+            this.statusStrip1.Text = "statusStrip1";
+            // 
+            // mainModalStatusLabel
+            // 
+            this.mainModalStatusLabel.Name = "mainModalStatusLabel";
+            this.mainModalStatusLabel.Size = new System.Drawing.Size(131, 17);
+            this.mainModalStatusLabel.Text = "toolStripStatusLabel1";
             // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 17F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(674, 452);
+            this.ClientSize = new System.Drawing.Size(674, 280);
+            this.Controls.Add(this.statusStrip1);
+            this.Controls.Add(this.listBoxUrl);
             this.Controls.Add(this.menuStrip1);
             this.Controls.Add(this.btnRun);
             this.Controls.Add(this.dropConfig);
@@ -150,8 +185,11 @@
             this.Name = "Form1";
             this.Text = "爬虫";
             this.Load += new System.EventHandler(this.Form1_Load);
+            this.Click += new System.EventHandler(this.Form1_Click);
             this.menuStrip1.ResumeLayout(false);
             this.menuStrip1.PerformLayout();
+            this.statusStrip1.ResumeLayout(false);
+            this.statusStrip1.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -170,5 +208,8 @@
         private ToolStripMenuItem 工作设置ToolStripMenuItem;
         private ToolStripMenuItem 本地ToolStripMenuItem;
         private ToolStripMenuItem 服务器ToolStripMenuItem;
+        private ListBox listBoxUrl;
+        private StatusStrip statusStrip1;
+        private ToolStripStatusLabel mainModalStatusLabel;
     }
 }

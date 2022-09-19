@@ -19,13 +19,13 @@ namespace MineServer.Controllers
         [HttpGet]
         public ResponseModel<List<ResourceHistoryDto>> GetResourceList()
         {
-            return new ResponseModel<List<ResourceHistoryDto>>(_spiderService.GetResourceDtoList());
+            return new ResponseModel<List<ResourceHistoryDto>>(_spiderService.GetResourceHistoryDtoList());
         }
 
         [HttpPost]
         public ResponseModel<string> SubmitResource([FromBody] ResourceHistorySetter model)
         {
-            return new ResponseModel<string>(_spiderService.SubmitResouce(model));
+            return new ResponseModel<string>(_spiderService.SubmitResouceHistory(model));
         }
 
         [HttpPost]

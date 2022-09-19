@@ -23,7 +23,17 @@ namespace SpiderTool.EntityFrameworkCore.Domain
                 Id = x.Id,
                 Name = x.Name,
                 Url = x.Url
-            }).ToList();
+            }).OrderByDescending(x => x.LastUpdatedTime).ToList();
+        }
+
+        public async Task<List<ResourceHistoryDto>> GetResourceDtoListAsync()
+        {
+            return await _dbContext.Resources.AsNoTracking().Select(x => new ResourceHistoryDto()
+            {
+                Id = x.Id,
+                Name = x.Name,
+                Url = x.Url
+            }).OrderByDescending(x => x.LastUpdatedTime).ToListAsync();
         }
 
         public string Submit(ResourceHistorySetter model)

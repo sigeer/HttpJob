@@ -35,44 +35,42 @@ namespace SpiderTool.SqlSugar.Domain
 
         public SpiderDto? GetSpiderDto(int id)
         {
-            var data = _dbContext.Queryable<DB_Spider>()
-               .LeftJoin<DB_Template>((a, b) => a.NextPageTemplateId == b.Id)
-               .Select((a, b) => new SpiderDto()
-               {
-                   Id = a.Id,
-                   Description = a.Description,
-                   Name = a.Name,
-                   Method = a.Method,
-                   PostObjStr = a.PostObjStr,
-                   Headers = a.Headers,
-                   NextPageTemplateId = a.NextPageTemplateId,
-                   NextPageTemplate = b == null ? new TemplateDto() : new TemplateDto
-                   {
-                       Id = b.Id,
-                       LinkedSpiderId = b.LinkedSpiderId,
-                       Name = b.Name,
-                       TemplateStr = b.TemplateStr,
-                       Type = b.Type
-                   }
-               }).InSingle(id);
+            var dbModel = _dbContext.Queryable<DB_Spider>().First(x => x.Id == id);
+            if (dbModel == null)
+                return null;
+            var nextPage = _dbContext.Queryable<DB_Template>().First(x => x.Id == dbModel.NextPageTemplateId);
 
-            if (data != null)
+            var data = new SpiderDto()
             {
-                var templateIdList = _dbContext.Queryable<DB_SpiderTemplate>().Where(x => x.SpiderId == id).Select(x => x.Id).ToList();
-                var templateList = _dbContext.Queryable<DB_Template>().Where(x => templateIdList.Contains(x.Id)).Select(b => new TemplateDto()
+                Id = dbModel.Id,
+                Description = dbModel.Description,
+                Name = dbModel.Name,
+                Method = dbModel.Method,
+                PostObjStr = dbModel.PostObjStr,
+                Headers = dbModel.Headers,
+                NextPageTemplateId = dbModel.NextPageTemplateId,
+                NextPageTemplate = nextPage == null ? new TemplateDto() : new TemplateDto
                 {
-                    Id = b.Id,
-                    LinkedSpiderId = b.LinkedSpiderId,
-                    Name = b.Name,
-                    TemplateStr = b.TemplateStr,
-                    Type = b.Type
-                }).ToList();
+                    Id = nextPage.Id,
+                    LinkedSpiderId = nextPage.LinkedSpiderId,
+                    Name = nextPage.Name,
+                    TemplateStr = nextPage.TemplateStr,
+                    Type = nextPage.Type
+                }
+            };
 
-                data.TemplateList = templateList;
-                return data;
-            }
+            var templateIdList = _dbContext.Queryable<DB_SpiderTemplate>().Where(x => x.SpiderId == id).Select(x => x.TemplateId).ToList();
+            var templateList = _dbContext.Queryable<DB_Template>().Where(x => templateIdList.Contains(x.Id)).Select(b => new TemplateDto()
+            {
+                Id = b.Id,
+                LinkedSpiderId = b.LinkedSpiderId,
+                Name = b.Name,
+                TemplateStr = b.TemplateStr,
+                Type = b.Type
+            }).ToList();
 
-            return null;
+            data.TemplateList = templateList;
+            return data;
         }
 
         public List<SpiderDtoSetter> GetSpiderDtoList()
