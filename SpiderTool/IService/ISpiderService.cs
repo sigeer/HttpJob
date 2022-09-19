@@ -10,10 +10,10 @@ namespace SpiderTool.IService
 {
     public interface ISpiderService
     {
-        List<ResourceDto> GetResourceDtoList();
+        List<ResourceHistoryDto> GetResourceDtoList();
 
-        string SubmitResouce(ResourceSetter model);
-        string DeleteResource(ResourceSetter model);
+        string SubmitResouce(ResourceHistorySetter model);
+        string DeleteResource(ResourceHistorySetter model);
 
         List<SpiderDtoSetter> GetSpiderDtoList();
         string SubmitSpider(SpiderDtoSetter model);
@@ -26,7 +26,5 @@ namespace SpiderTool.IService
 
 
         SpiderDto? GetSpider(int id);
-        Task<string> Crawling(string url, int spiderId);
-        Task<string> Crawling(int resourceId, int spiderId);
     }
 }

@@ -1,0 +1,23 @@
+syntax = "proto3";
+
+option csharp_namespace = "SpiderService";
+
+package spider;
+
+// The greeting service definition.
+service SpiderWorkerProtoService {
+  // Sends a greeting
+  rpc Crawl (RequestModel) returns (ResultModel);
+}
+
+// The request message containing the user's name.
+message RequestModel {
+  string url = 1;
+  int32 spiderId = 2;
+}
+
+message ResultModel {
+	string data = 1;
+	int32 type = 2;
+	string status = 3;
+}

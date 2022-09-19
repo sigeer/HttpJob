@@ -4,9 +4,9 @@ namespace SpiderTool.IDomain
 {
     public interface IResourceDomain
     {
-        List<ResourceDto> GetResourceDtoList();
+        List<ResourceHistoryDto> GetResourceDtoList();
 
-        string Submit(ResourceSetter model);
-        string Delete(ResourceSetter model);
+        string Submit(ResourceHistorySetter model);
+        string Delete(ResourceHistorySetter model);
     }
 }

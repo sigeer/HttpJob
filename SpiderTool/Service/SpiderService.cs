@@ -50,7 +50,7 @@ namespace SpiderTool.Service
             return StatusMessage.Success;
         }
 
-        public string DeleteResource(ResourceSetter model)
+        public string DeleteResource(ResourceHistorySetter model)
         {
             return _resourceDomain.Delete(model);
         }
@@ -65,7 +65,7 @@ namespace SpiderTool.Service
             return _templateDomain.Delete(model);
         }
 
-        public List<ResourceDto> GetResourceDtoList()
+        public List<ResourceHistoryDto> GetResourceDtoList()
         {
             return _resourceDomain.GetResourceDtoList();
         }
@@ -90,7 +90,7 @@ namespace SpiderTool.Service
             return await _templateDomain.GetTemplateDtoListAsync();
         }
 
-        public string SubmitResouce(ResourceSetter model)
+        public string SubmitResouce(ResourceHistorySetter model)
         {
             return _resourceDomain.Submit(model);
         }

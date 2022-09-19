@@ -1,12 +1,13 @@
-﻿using CommonUtility.Constants;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
+using SpiderTool;
 using SpiderTool.Dto.Resource;
 using SpiderTool.Dto.Spider;
 using SpiderTool.IService;
+using Utility.Constants;
 
 namespace MineServer.Controllers
 {
-    public class SpiderController: BaseApiController
+    public class SpiderController : BaseApiController
     {
         readonly ISpiderService _spiderService;
 
@@ -16,19 +17,19 @@ namespace MineServer.Controllers
         }
         #region
         [HttpGet]
-        public ResponseModel<List<ResourceDto>> GetResourceList()
+        public ResponseModel<List<ResourceHistoryDto>> GetResourceList()
         {
-            return new ResponseModel<List<ResourceDto>>(_spiderService.GetResourceDtoList());
+            return new ResponseModel<List<ResourceHistoryDto>>(_spiderService.GetResourceDtoList());
         }
 
         [HttpPost]
-        public ResponseModel<string> SubmitResource([FromBody] ResourceSetter model)
+        public ResponseModel<string> SubmitResource([FromBody] ResourceHistorySetter model)
         {
             return new ResponseModel<string>(_spiderService.SubmitResouce(model));
         }
 
         [HttpPost]
-        public ResponseModel<string> DeleteResource([FromBody] ResourceSetter model)
+        public ResponseModel<string> DeleteResource([FromBody] ResourceHistorySetter model)
         {
             return new ResponseModel<string>(_spiderService.DeleteResource(model));
         }
@@ -75,9 +76,9 @@ namespace MineServer.Controllers
         #endregion
 
         [HttpGet]
-        public async Task<ResponseModel<string>> Run(int resourceId, int spiderId)
+        public async Task<ResponseModel<string>> Run(string url, int spiderId)
         {
-            return new ResponseModel<string>(await _spiderService.Crawling(resourceId, spiderId));
+            return new ResponseModel<string>(await new SpiderWorker(_spiderService).Start(url, spiderId));
         }
     }
 }

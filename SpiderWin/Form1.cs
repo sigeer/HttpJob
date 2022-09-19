@@ -1,3 +1,4 @@
+using SpiderTool;
 using SpiderTool.Dto.Spider;
 using SpiderTool.IService;
 using SpiderWin.Modals;
@@ -50,7 +51,8 @@ namespace SpiderWin
                 MessageBox.Show("«Î ‰»ÎURL");
                 return;
             }
-            _coreService.Crawling(txtUrl.Text, (dropConfig.SelectedItem as SpiderDtoSetter).Id);
+            var worker = new SpiderWorker(_coreService);
+            _ = worker.Start(txtUrl.Text, (dropConfig.SelectedItem as SpiderDtoSetter)!.Id);
         }
     }
 }
