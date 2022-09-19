@@ -15,9 +15,9 @@ namespace SpiderTool.SqlSugar.Domain
             _dbContext = dbContext;
         }
 
-        public List<ResourceDto> GetResourceDtoList()
+        public List<ResourceHistoryDto> GetResourceDtoList()
         {
-            return _dbContext.Queryable<DB_Resource>().Select(x => new ResourceDto()
+            return _dbContext.Queryable<DB_ResourceHistory>().Select(x => new ResourceHistoryDto()
             {
                 Id = x.Id,
                 Name = x.Name,
@@ -25,7 +25,7 @@ namespace SpiderTool.SqlSugar.Domain
             }).ToList();
         }
 
-        public string Submit(ResourceSetter model)
+        public string Submit(ResourceHistorySetter model)
         {
             if (!model.FormValid())
                 return StatusMessage.FormInvalid;
@@ -34,23 +34,24 @@ namespace SpiderTool.SqlSugar.Domain
             {
                 _dbContext.Ado.BeginTran();
 
-                var dbModel = _dbContext.Queryable<DB_Resource>().InSingle(model.Id);
+                var dbModel = _dbContext.Queryable<DB_ResourceHistory>().First(x => x.Url == model.Url && x.SpiderId == model.SpiderId);
                 if (dbModel == null)
                 {
-                    dbModel = new DB_Resource
+                    dbModel = new DB_ResourceHistory
                     {
                         CreateTime = DateTime.Now,
                         LastUpdatedTime = DateTime.Now
                     };
-                    dbModel.Id = _dbContext.Insertable<DB_Resource>(dbModel).ExecuteReturnIdentity();
+                    dbModel.Id = _dbContext.Insertable<DB_ResourceHistory>(dbModel).ExecuteReturnIdentity();
                 }
 
                 dbModel.Description = model.Description;
                 dbModel.Name = model.Name;
                 dbModel.Url = model.Url;
+                dbModel.SpiderId = model.SpiderId;
                 dbModel.LastUpdatedTime = DateTime.Now;
 
-                _dbContext.Updateable<DB_Resource>(dbModel).ExecuteCommand();
+                _dbContext.Updateable<DB_ResourceHistory>(dbModel).ExecuteCommand();
                 _dbContext.Ado.CommitTran();
 
                 return StatusMessage.Success;
@@ -61,9 +62,9 @@ namespace SpiderTool.SqlSugar.Domain
                 return ex.Message;
             }
         }
-        public string Delete(ResourceSetter model)
+        public string Delete(ResourceHistorySetter model)
         {
-            _dbContext.Deleteable<DB_Resource>(x => x.Id == model.Id).ExecuteCommand();
+            _dbContext.Deleteable<DB_ResourceHistory>(x => x.Id == model.Id).ExecuteCommand();
             return StatusMessage.Success;
         }
 

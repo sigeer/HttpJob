@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace SpiderTool.Dto.Resource
 {
-    public class ResourceDto : ResourceSetter
+    public class ResourceHistoryDto : ResourceHistorySetter
     {
 
         public DateTime CreateTime { get; set; }
@@ -15,11 +15,12 @@ namespace SpiderTool.Dto.Resource
 
     }
 
-    public class ResourceSetter
+    public class ResourceHistorySetter
     {
         public int Id { get; set; }
         public string? Name { get; set; }
         public string? Url { get; set; }
+        public int? SpiderId { get; set; }
         public string? Description { get; set; }
         public bool FormValid()
         {

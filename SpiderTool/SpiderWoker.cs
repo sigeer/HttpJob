@@ -1,11 +1,14 @@
 ﻿using HtmlAgilityPack;
 using SpiderTool.Constants;
+using SpiderTool.Dto.Resource;
+using SpiderTool.Dto.Spider;
 using SpiderTool.IDomain;
+using SpiderTool.IService;
 using System.Web;
 using Utility.Extensions;
 using Utility.Http;
 
-namespace SpiderTool.Dto.Spider
+namespace SpiderTool
 {
     public class SpiderWorker
     {
@@ -18,6 +21,10 @@ namespace SpiderTool.Dto.Spider
                 return _spider;
             }
         }
+        private string DocumentTitle => HttpUtility.HtmlDecode(_currentDoc?.DocumentNode?.SelectSingleNode("//title")?.InnerText) ?? _rootUrl;
+        /// <summary>
+        /// 经过下一页设置进行变换
+        /// </summary>
         private string? _currentUrl;
         private string? _currentDir;
         public string CurrentDir
@@ -36,18 +43,22 @@ namespace SpiderTool.Dto.Spider
             }
         }
         private HtmlDocument _currentDoc = new HtmlDocument();
+        /// <summary>
+        /// 在同一个爬虫任务内始终一致
+        /// </summary>
         private string _rootUrl = string.Empty;
         private string HostUrl => _rootUrl.GetHostUrl();
-        readonly ISpiderDomain _spiderDomain;
+        
+        readonly ISpiderService _service;
 
-        public SpiderWorker(ISpiderDomain spiderDomain)
+        public SpiderWorker(ISpiderService service)
         {
-            _spiderDomain = spiderDomain;
+            _service = service;
         }
 
         public async Task Start(string url, int spiderId)
         {
-            _spider = _spiderDomain.GetSpiderDto(spiderId);
+            _spider = _service.GetSpider(spiderId);
             if (_spider == null)
                 return;
 
@@ -55,6 +66,11 @@ namespace SpiderTool.Dto.Spider
             _rootUrl = url;
 
             await Process();
+            _service.SubmitResouce(new ResourceHistorySetter()
+            {
+                Url = _rootUrl,
+                Name = DocumentTitle,
+            });
         }
 
         public async Task Process()
@@ -80,20 +96,19 @@ namespace SpiderTool.Dto.Spider
         {
             foreach (var rule in Spider.TemplateList)
             {
+                var nodes = string.IsNullOrEmpty(rule.TemplateStr) 
+                    ? new HtmlNodeCollection(_currentDoc.DocumentNode) 
+                    : _currentDoc.DocumentNode.SelectNodes(rule.TemplateStr ?? "");
+                if (nodes == null)
+                    return;
+
                 if (rule.Type == (int)ContentType.DownloadLink)
                 {
-                    var nodes = _currentDoc.DocumentNode.SelectNodes(rule.TemplateStr);
-                    if (nodes == null)
-                        continue;
-
                     var urlList = nodes.Select(item => (item.Attributes["src"] ?? item.Attributes["data-src"]).Value.GetTotalUrl(HostUrl)).ToList();
                     SpiderUtility.BulkDownload(CurrentDir, urlList);
                 }
                 if (rule.Type == (int)ContentType.Text)
                 {
-                    var nodes = _currentDoc.DocumentNode.SelectNodes(rule.TemplateStr);
-                    if (nodes == null)
-                        continue;
                     foreach (var item in nodes)
                     {
                         var finalText = HttpUtility.HtmlDecode(item.InnerText);
@@ -102,36 +117,24 @@ namespace SpiderTool.Dto.Spider
                 }
                 if (rule.Type == (int)ContentType.Html)
                 {
-                    if (string.IsNullOrEmpty(rule.TemplateStr))
-                        SpiderUtility.SaveText(CurrentDir, ReadHtmlNodeInnerHtml(_currentDoc.DocumentNode, rule));
-                    else
+                    foreach (var item in nodes)
                     {
-                        var nodes = _currentDoc.DocumentNode.SelectNodes(rule.TemplateStr ?? "");
-                        if (nodes == null)
-                            continue;
-                        foreach (var item in nodes)
-                        {
-                            SpiderUtility.SaveText(CurrentDir, ReadHtmlNodeInnerHtml(item, rule));
-                        }
+                        SpiderUtility.SaveText(CurrentDir, ReadHtmlNodeInnerHtml(item, rule));
                     }
                 }
                 if (rule.Type == (int)ContentType.JumpLink)
                 {
-                    HtmlNodeCollection? nodes = null;
-                    if (string.IsNullOrEmpty(rule.TemplateStr))
-                        nodes = new HtmlNodeCollection(_currentDoc.DocumentNode);
-                    else
-                        nodes = _currentDoc.DocumentNode.SelectNodes(rule.TemplateStr ?? "");
-                    if (nodes == null)
-                        continue;
                     //新增
                     var index = 1;
                     foreach (var item in nodes)
                     {
-                        var resource = (item.Attributes["href"] ?? item.Attributes["data-href"]).Value;
+                        var resource = (item.Attributes["href"] ?? item.Attributes["data-href"])?.Value;
+                        if (resource == null)
+                            continue;
+
                         var url = resource.GetTotalUrl(HostUrl);
 
-                        var newSpider = new SpiderWorker(_spiderDomain);
+                        var newSpider = new SpiderWorker(_service);
                         ThreadStart childref = new ThreadStart(async () =>
                         {
                             Console.WriteLine($"{Spider.Name}_{index}号爬虫开始 Url:{url} -- thread: {Thread.CurrentThread.ManagedThreadId}");
