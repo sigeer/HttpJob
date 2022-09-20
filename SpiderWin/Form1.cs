@@ -4,7 +4,6 @@ using SpiderTool.Dto.Spider;
 using SpiderTool.IService;
 using SpiderWin.Modals;
 using System.Diagnostics;
-using System.Web;
 using Utility.Extensions;
 
 namespace SpiderWin
@@ -67,10 +66,10 @@ namespace SpiderWin
         {
             if (string.IsNullOrEmpty(ComboxUrl.Text) || dropConfig.SelectedValue == null || (int)dropConfig.SelectedValue == 0)
             {
-                MessageBox.Show("ÇëÊäÈëURL");
+                MessageBox.Show("è¯·è¾“å…¥URL");
                 return;
             }
-            mainModalStatusLabel.Text = "ÔËĞĞÖĞ...";
+            mainModalStatusLabel.Text = "è¿è¡Œä¸­...";
             _sw.Restart();
             btnRun.Enabled = false;
             var spiderId = (int)dropConfig.SelectedValue;
@@ -81,7 +80,7 @@ namespace SpiderWin
                {
                    btnRun.Enabled = true;
                    _sw.Stop();
-                   mainModalStatusLabel.Text = $"¹²ºÄÊ±£º{_sw.Elapsed.TotalSeconds.ToFixed(2)}Ãë";
+                   mainModalStatusLabel.Text = $"å…±è€—æ—¶ï¼š{_sw.Elapsed.TotalSeconds.ToFixed(2)}ç§’";
                    ResultTxtBox.Text += $"[{DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")}] file:///{evt} \r\n";
 
                    await Task.Run(() =>
@@ -105,12 +104,12 @@ namespace SpiderWin
 
         private void UseLocalMenu_Click(object sender, EventArgs e)
         {
-            //Ê¹ÓÃ±¾µØ·şÎñ
+            //ä½¿ç”¨æœ¬åœ°æœåŠ¡
         }
 
         private void UseServiceMenu_Click(object sender, EventArgs e)
         {
-            //Ê¹ÓÃ·şÎñÆ÷·şÎñ
+            //ä½¿ç”¨æœåŠ¡å™¨æœåŠ¡
         }
     }
 }
