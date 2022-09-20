@@ -31,6 +31,7 @@
             this.dataGridView1 = new System.Windows.Forms.DataGridView();
             this.BtnOK = new System.Windows.Forms.Button();
             this.BtnCancel = new System.Windows.Forms.Button();
+            this.BtnAdd = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
             this.SuspendLayout();
             // 
@@ -64,11 +65,22 @@
             this.BtnCancel.UseVisualStyleBackColor = true;
             this.BtnCancel.Click += new System.EventHandler(this.BtnCancel_Click);
             // 
+            // BtnAdd
+            // 
+            this.BtnAdd.Location = new System.Drawing.Point(547, 33);
+            this.BtnAdd.Name = "BtnAdd";
+            this.BtnAdd.Size = new System.Drawing.Size(75, 23);
+            this.BtnAdd.TabIndex = 3;
+            this.BtnAdd.Text = "新增";
+            this.BtnAdd.UseVisualStyleBackColor = true;
+            this.BtnAdd.Click += new System.EventHandler(this.BtnAdd_Click);
+            // 
             // TemplateManageForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 17F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(634, 450);
+            this.Controls.Add(this.BtnAdd);
             this.Controls.Add(this.BtnCancel);
             this.Controls.Add(this.BtnOK);
             this.Controls.Add(this.dataGridView1);
@@ -85,5 +97,6 @@
         private DataGridView dataGridView1;
         private Button BtnOK;
         private Button BtnCancel;
+        private Button BtnAdd;
     }
 }

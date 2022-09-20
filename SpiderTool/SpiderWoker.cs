@@ -66,38 +66,45 @@ namespace SpiderTool
             if (Spider == null)
                 return;
 
-            _currentUrl = url;
             _rootUrl = url;
+            await Process(url);
+            FinishSpider();
 
-            await Process();
+        }
+
+        public void FinishSpider()
+        {
             _service.SubmitResouceHistory(new ResourceHistorySetter()
             {
                 Url = _rootUrl,
                 Name = DocumentTitle,
-                SpiderId = spiderId
+                SpiderId = Spider.Id
             });
             TaskComplete?.Invoke(this, CurrentDir);
+            MergeTextFile(CurrentDir);
         }
 
         public async Task<string> LoadDocumentContent()
         {
-            string documentContent;
+            HttpResponseMessage res;
             var url = _currentUrl!.GetTotalUrl(HostUrl);
             if (Spider.Method == RequestMethod.POST)
-                documentContent = await HttpRequest.PostAsync(url, Spider.PostObj, Spider.GetHeaders());
+                res = await HttpRequest.PostRawAsync(url, Spider.PostObj, Spider.GetHeaders());
             else
-                documentContent = await HttpRequest.GetAsync(url, Spider.GetHeaders());
-            return documentContent;
+                res = await HttpRequest.GetRawAsync(url, Spider.GetHeaders());
+            return (await res.Content.ReadAsStreamAsync()).DecodeData(res.Content.Headers.ContentType?.ToString() ?? "");
         }
 
-        public async Task Process()
+        public async Task Process(string currentUrl)
         {
+            _currentUrl = currentUrl;
+
             var documentContent = await LoadDocumentContent();
             _currentDoc.LoadHtml(documentContent);
             ExtractContent();
             await MoveToNextPage();
             OnLog?.Invoke(this, "====开始合并====");
-            MergeTextFile(CurrentDir);
+
             //Console.WriteLine("====开始打包");
             //var filePath = CurrentDir.PackZip();
             //Console.WriteLine("打包完成：" + filePath);
@@ -189,7 +196,7 @@ namespace SpiderTool
             {
                 _currentUrl = (nextPageNode.Attributes["href"] ?? nextPageNode.Attributes["data-href"])?.Value;
                 if (_currentUrl != null)
-                    await Start(_currentUrl, Spider.NextPageTemplate.LinkedSpiderId!.Value);
+                    await Process(_currentUrl);
             }
         }
 

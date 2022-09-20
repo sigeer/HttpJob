@@ -60,13 +60,20 @@ namespace SpiderTool.SqlSugar.Domain
             };
 
             var templateIdList = _dbContext.Queryable<DB_SpiderTemplate>().Where(x => x.SpiderId == id).Select(x => x.TemplateId).ToList();
+            var templateReplaceList = _dbContext.Queryable<DB_ReplacementRule>().Where(x => templateIdList.Contains(x.TemplateId)).ToList();
             var templateList = _dbContext.Queryable<DB_Template>().Where(x => templateIdList.Contains(x.Id)).Select(b => new TemplateDto()
             {
                 Id = b.Id,
                 LinkedSpiderId = b.LinkedSpiderId,
                 Name = b.Name,
                 TemplateStr = b.TemplateStr,
-                Type = b.Type
+                Type = b.Type,
+                ReplacementRules = templateReplaceList.Select(x => new ReplacementRuleDto()
+                {
+                    Id = x.Id,
+                    ReplacementNewlyStr = x.ReplacementNewlyStr,
+                    ReplacementOldStr = x.ReplacementOldStr,
+                }).ToList()
             }).ToList();
 
             data.TemplateList = templateList;
@@ -132,7 +139,7 @@ namespace SpiderTool.SqlSugar.Domain
             dbModel.PostObjStr = model.PostObjStr;
             dbModel.NextPageTemplateId = model.NextPageTemplateId;
             dbModel.LastUpdatedTime = DateTime.Now;
-            _dbContext.Updateable<DB_Spider>(dbModel).Where(x => x.Id == model.Id).ExecuteCommand();
+            _dbContext.Updateable<DB_Spider>(dbModel).Where(x => x.Id == dbModel.Id).ExecuteCommand();
 
             _dbContext.Deleteable<DB_SpiderTemplate>(x => x.SpiderId == dbModel.Id).ExecuteCommand();
             var data = model.Templates.Select(x => new DB_SpiderTemplate { SpiderId = dbModel.Id, TemplateId = x }).ToList();
