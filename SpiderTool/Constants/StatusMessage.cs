@@ -18,12 +18,4 @@ namespace SpiderTool.Constants
         public const string POST = "POST";
         public const string GET = "GET";
     }
-
-    public enum ContentType
-    {
-        Html = 1,
-        Text = 2,
-        DownloadLink = 3,
-        JumpLink = 4
-    }
 }

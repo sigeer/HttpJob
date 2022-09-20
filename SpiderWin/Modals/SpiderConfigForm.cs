@@ -43,7 +43,7 @@ namespace SpiderWin.Modals
                 TxtName.Text = _currentSpider.Name;
                 TxtDescription.Text = _currentSpider.Description;
                 TxtPostObj.Text = _currentSpider.PostObjStr;
-                ComboMethod.SelectedText = _currentSpider.Method;
+                ComboMethod.SelectedItem = _currentSpider.Method;
 
                 if (_currentSpider.NextPageTemplateId != null)
                     ComboBoxNextPage.SelectedValue = _currentSpider.NextPageTemplateId;

@@ -50,7 +50,7 @@ namespace SpiderWin.Modals
             txtXPath.Text = edittingModel.TemplateStr;
             comboType.SelectedValue = edittingModel.Type;
 
-            if ((int)comboType.SelectedValue == 4)
+            if (comboType.SelectedValue != null && (int)comboType.SelectedValue == 4)
                 ShowSelectSpider();
             else
                 HideSelectSpider();

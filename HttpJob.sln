@@ -15,14 +15,15 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SpiderTool.Dapper", "Spider
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution", "Solution", "{570530B1-8C31-4BAA-8A1E-434052A7403A}"
 	ProjectSection(SolutionItems) = preProject
-		NuGet.Config = NuGet.Config
+		Solution\db.sql = Solution\db.sql
+		Solution\NuGet.Config = Solution\NuGet.Config
 	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SpiderTool.SqlSugar", "SpiderTool.SqlSuger\SpiderTool.SqlSugar.csproj", "{D5DB4A5F-26BB-4437-803D-190AD824779F}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Services", "Services", "{2226B7E3-B2D1-4FC5-8554-35A396574902}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SpiderService", "SpiderService\SpiderService.csproj", "{E7888030-414F-4E72-9A28-A01B7467F3D2}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SpiderService", "SpiderService\SpiderService.csproj", "{E7888030-414F-4E72-9A28-A01B7467F3D2}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Protos", "Protos", "{4D9AEC46-0ECF-4995-9DD7-AC568260561C}"
 	ProjectSection(SolutionItems) = preProject
