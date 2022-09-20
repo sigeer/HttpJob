@@ -52,6 +52,9 @@ namespace SpiderTool
 
         readonly ISpiderService _service;
 
+        public event EventHandler<string>? TaskComplete;
+        public event EventHandler<string>? OnLog;
+
         public SpiderWorker(ISpiderService service)
         {
             _service = service;
@@ -92,8 +95,9 @@ namespace SpiderTool
             _currentDoc.LoadHtml(documentContent);
             ExtractContent();
             await MoveToNextPage();
-            Console.WriteLine("====开始合并====");
+            OnLog?.Invoke(this, "====开始合并====");
             MergeTextFile(CurrentDir);
+            TaskComplete?.Invoke(this, CurrentDir);
             //Console.WriteLine("====开始打包");
             //var filePath = CurrentDir.PackZip();
             //Console.WriteLine("打包完成：" + filePath);
@@ -142,11 +146,19 @@ namespace SpiderTool
                         var url = resource.GetTotalUrl(HostUrl);
 
                         var newSpider = new SpiderWorker(_service);
+                        newSpider.TaskComplete += (obj, evt) =>
+                        {
+                            TaskComplete?.Invoke(obj, evt);
+                        };
+                        newSpider.OnLog += (obj, log) =>
+                        {
+                            OnLog?.Invoke(obj, log);
+                        };
                         ThreadStart childref = new ThreadStart(async () =>
                         {
-                            Console.WriteLine($"{Spider.Name}_{index}号爬虫开始 Url:{url} -- thread: {Thread.CurrentThread.ManagedThreadId}");
+                            OnLog?.Invoke(this, $"{Spider.Name}_{index}号爬虫开始 Url:{url} -- thread: {Thread.CurrentThread.ManagedThreadId}");
                             await newSpider.Start(url, rule.LinkedSpiderId ?? 0);
-                            Console.WriteLine($"{Spider.Name}_{index}号爬虫结束 -- thread: {Thread.CurrentThread.ManagedThreadId}");
+                            OnLog?.Invoke(this, $"{Spider.Name}_{index}号爬虫结束 Url:{url} -- thread: {Thread.CurrentThread.ManagedThreadId}");
                         });
                         var th = new Thread(childref);
                         th.Start();

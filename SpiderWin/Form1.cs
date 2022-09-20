@@ -4,6 +4,8 @@ using SpiderTool.Dto.Spider;
 using SpiderTool.IService;
 using SpiderWin.Modals;
 using System.Diagnostics;
+using System.Web;
+using Utility.Extensions;
 
 namespace SpiderWin
 {
@@ -28,25 +30,31 @@ namespace SpiderWin
             form.ShowDialog();
         }
 
-        private void BindDropdown()
+        private void PreLoadForm()
         {
             dropConfig.DisplayMember = nameof(SpiderDtoSetter.Name);
             dropConfig.ValueMember = nameof(SpiderDtoSetter.Id);
-            dropConfig.DataSource = _spiderList;
+
+            listBoxUrl.DisplayMember = nameof(ResourceHistoryDto.Url);
+            listBoxUrl.ValueMember = nameof(ResourceHistoryDto.Url);
+        }
+
+        private void LoadForm()
+        {
+            dropConfig.DataSource = (new List<SpiderDtoSetter>() { new SpiderDtoSetter() { Id = 0, Name = "" } }.Concat(_spiderList)).ToList();
 
             listBoxUrl.DataSource = _historyList;
-            listBoxUrl.DisplayMember = nameof(ResourceHistoryDto.Url) + " " + nameof(ResourceHistoryDto.Name);
-            listBoxUrl.ValueMember = nameof(ResourceHistoryDto.Url);
         }
 
         private async void LoadData()
         {
+            PreLoadForm();
             await Task.Run(() =>
             {
                 _spiderList = _coreService.GetSpiderDtoList();
                 _historyList = _coreService.GetResourceHistoryDtoList();
             });
-            BindDropdown();
+            LoadForm();
 
         }
 
@@ -55,9 +63,9 @@ namespace SpiderWin
             LoadData();
         }
 
-        private async void btnRun_Click(object sender, EventArgs e)
+        private void btnRun_Click(object sender, EventArgs e)
         {
-            if (string.IsNullOrEmpty(txtUrl.Text))
+            if (string.IsNullOrEmpty(txtUrl.Text) || dropConfig.SelectedValue == null || (int)dropConfig.SelectedValue == 0)
             {
                 MessageBox.Show("请输入URL");
                 return;
@@ -65,15 +73,23 @@ namespace SpiderWin
             mainModalStatusLabel.Text = "运行中...";
             _sw.Restart();
             btnRun.Enabled = false;
-            var spiderId = (dropConfig.SelectedItem as SpiderDtoSetter)!.Id;
-            await Task.Run(async () =>
-            {
-                var worker = new SpiderWorker(_coreService);
-                await worker.Start(txtUrl.Text, spiderId);
-            });
-            btnRun.Enabled = true;
-            _sw.Stop();
-            mainModalStatusLabel.Text = $"共耗时：{_sw.Elapsed.TotalSeconds}秒 {AppDomain.CurrentDomain.BaseDirectory}";
+            var spiderId = (int)dropConfig.SelectedValue;
+            new Task(() =>
+           {
+               var worker = new SpiderWorker(_coreService);
+               worker.TaskComplete += (obj, evt) =>
+               {
+                   btnRun.Enabled = true;
+                   _sw.Stop();
+                   mainModalStatusLabel.Text = $"共耗时：{_sw.Elapsed.TotalSeconds.ToFixed(2)}秒";
+                   ResultTxtBox.Text += $"[{DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")}] file:///{evt} \r\n";
+               };
+
+               BeginInvoke(new MethodInvoker(async () =>
+               {
+                   await worker.Start(txtUrl.Text, spiderId);
+               }));
+           }).Start();
         }
 
         private void txtUrl_KeyUp(object sender, KeyEventArgs e)
@@ -113,6 +129,21 @@ namespace SpiderWin
             {
                 listBoxUrl.Visible = false;
             }
+        }
+
+        private void MenuNewSpider_Click(object sender, EventArgs e)
+        {
+            new SpiderConfigForm(_coreService).ShowDialog();
+        }
+
+        private void UseLocalMenu_Click(object sender, EventArgs e)
+        {
+            //使用本地服务
+        }
+
+        private void UseServiceMenu_Click(object sender, EventArgs e)
+        {
+            //使用服务器服务
         }
     }
 }

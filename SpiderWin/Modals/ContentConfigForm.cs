@@ -10,7 +10,7 @@ namespace SpiderWin.Modals
 
         TemplateDto backup;
         TemplateDto edittingModel;
-        List<ReplacementRuleDto> replacements = new List<ReplacementRuleDto>();
+
         List<TemplateType> types = TemplateType.GetAll();
         List<SpiderDtoSetter> spiderList = new List<SpiderDtoSetter>();
         public ContentConfigForm(ISpiderService service, TemplateDto? model = null)
@@ -46,7 +46,18 @@ namespace SpiderWin.Modals
             comboSpider.DisplayMember = nameof(SpiderDtoSetter.Name);
             comboSpider.ValueMember = nameof(SpiderDtoSetter.Id);
 
-            HideSelectSpider();
+            txtName.Text = edittingModel.Name;
+            txtXPath.Text = edittingModel.TemplateStr;
+            comboType.SelectedValue = edittingModel.Type;
+
+            if ((int)comboType.SelectedValue == 4)
+                ShowSelectSpider();
+            else
+                HideSelectSpider();
+
+            if (edittingModel.LinkedSpiderId > 0)
+                comboSpider.SelectedValue = edittingModel.LinkedSpiderId;
+
         }
 
         private void LoadForm()
@@ -60,19 +71,12 @@ namespace SpiderWin.Modals
 
         private void btnReplaceRule_Click(object sender, EventArgs e)
         {
-            var txtReplaceRuleForm = new TxtReplaceRuleForm(_service);
-            var dialogResult = txtReplaceRuleForm.ShowDialog();
-            if (dialogResult == DialogResult.OK)
+            var txtReplaceRuleForm = new TxtReplaceRuleForm(_service, edittingModel.ReplacementRules);
+            txtReplaceRuleForm.OnOk += (sender, evt) =>
             {
-                for (int i = 0; i < txtReplaceRuleForm.extraControlList.Count; i += 3)
-                {
-                    replacements.Add(new ReplacementRuleDto
-                    {
-                        ReplacementOldStr = txtReplaceRuleForm.extraControlList[i].Text,
-                        ReplacementNewlyStr = txtReplaceRuleForm.extraControlList[i + 1].Text
-                    });
-                }
-            }
+                edittingModel.ReplacementRules = evt;
+            };
+            txtReplaceRuleForm.ShowDialog();
         }
 
         private bool Valid()
@@ -96,7 +100,7 @@ namespace SpiderWin.Modals
                 TemplateStr = txtXPath.Text,
                 Type = (int)(comboType.SelectedItem),
                 LinkedSpiderId = (int)(comboType.SelectedItem),
-                ReplacementRules = replacements
+                ReplacementRules = edittingModel.ReplacementRules
             });
             DialogResult = DialogResult.OK;
             Close();
@@ -108,14 +112,20 @@ namespace SpiderWin.Modals
             label3.Visible = false;
         }
 
+        private void ShowSelectSpider()
+        {
+            comboSpider.Visible = true;
+            label3.Visible = true;
+        }
+
         private void comboType_SelectedValueChanged(object sender, EventArgs e)
         {
             if (comboType.SelectedValue != null)
             {
                 if ((int)comboType.SelectedValue == 4)
-                {
+                    ShowSelectSpider();
+                else
                     HideSelectSpider();
-                }
             }
 
         }

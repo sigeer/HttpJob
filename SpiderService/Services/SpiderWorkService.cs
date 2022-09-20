@@ -1,4 +1,5 @@
-﻿using Grpc.Core;
+﻿using Google.Protobuf.WellKnownTypes;
+using Grpc.Core;
 using SpiderTool;
 using SpiderTool.IService;
 
@@ -18,6 +19,14 @@ namespace SpiderService.Services
             var worker = new SpiderWorker(_service);
             await worker.Start(request.Url, request.SpiderId);
             return new ResultModel { Status = "" };
+        }
+
+        public override Task<ResultModel> Ping(Empty request, ServerCallContext context)
+        {
+            return Task.FromResult(new ResultModel
+            {
+                Status = "ok"
+            });
         }
     }
 }

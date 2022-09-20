@@ -1,5 +1,5 @@
 syntax = "proto3";
-
+import "google/protobuf/empty.proto";
 option csharp_namespace = "SpiderService";
 
 package spider;
@@ -8,6 +8,7 @@ package spider;
 service SpiderWorkerProtoService {
   // Sends a greeting
   rpc Crawl (RequestModel) returns (ResultModel);
+  rpc Ping (google.protobuf.Empty) returns (ResultModel);
 }
 
 // The request message containing the user's name.
