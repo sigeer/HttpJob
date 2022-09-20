@@ -6,6 +6,7 @@ namespace SpiderWin.Modals
     {
         int _flag = 0;
         public List<Control> extraControlList = new List<Control>();
+
         readonly ISpiderService _service;
         public TxtReplaceRuleForm(ISpiderService service)
         {

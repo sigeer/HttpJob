@@ -56,6 +56,7 @@
             this.comboType.Name = "comboType";
             this.comboType.Size = new System.Drawing.Size(180, 25);
             this.comboType.TabIndex = 1;
+            this.comboType.SelectedValueChanged += new System.EventHandler(this.comboType_SelectedValueChanged);
             // 
             // label2
             // 
@@ -143,6 +144,7 @@
             this.Controls.Add(this.label1);
             this.Name = "ContentConfigForm";
             this.Text = "模板设置";
+            this.Load += new System.EventHandler(this.ContentConfigForm_Load);
             this.ResumeLayout(false);
             this.PerformLayout();
 

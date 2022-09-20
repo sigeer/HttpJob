@@ -125,19 +125,19 @@
             this.本地ToolStripMenuItem,
             this.服务器ToolStripMenuItem});
             this.工作设置ToolStripMenuItem.Name = "工作设置ToolStripMenuItem";
-            this.工作设置ToolStripMenuItem.Size = new System.Drawing.Size(124, 22);
+            this.工作设置ToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.工作设置ToolStripMenuItem.Text = "工作设置";
             // 
             // 本地ToolStripMenuItem
             // 
             this.本地ToolStripMenuItem.Name = "本地ToolStripMenuItem";
-            this.本地ToolStripMenuItem.Size = new System.Drawing.Size(112, 22);
+            this.本地ToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.本地ToolStripMenuItem.Text = "本地";
             // 
             // 服务器ToolStripMenuItem
             // 
             this.服务器ToolStripMenuItem.Name = "服务器ToolStripMenuItem";
-            this.服务器ToolStripMenuItem.Size = new System.Drawing.Size(112, 22);
+            this.服务器ToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.服务器ToolStripMenuItem.Text = "服务器";
             // 
             // listBoxUrl
@@ -155,7 +155,7 @@
             // 
             this.statusStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.mainModalStatusLabel});
-            this.statusStrip1.Location = new System.Drawing.Point(0, 258);
+            this.statusStrip1.Location = new System.Drawing.Point(0, 226);
             this.statusStrip1.Name = "statusStrip1";
             this.statusStrip1.Size = new System.Drawing.Size(674, 22);
             this.statusStrip1.TabIndex = 10;
@@ -171,7 +171,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 17F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(674, 280);
+            this.ClientSize = new System.Drawing.Size(674, 248);
             this.Controls.Add(this.statusStrip1);
             this.Controls.Add(this.listBoxUrl);
             this.Controls.Add(this.menuStrip1);

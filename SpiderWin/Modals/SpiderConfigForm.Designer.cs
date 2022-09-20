@@ -42,8 +42,9 @@
             this.ComboBoxNextPage = new System.Windows.Forms.ComboBox();
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.设置ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.TemplateConfig = new System.Windows.Forms.ToolStripMenuItem();
             this.TemplateListMenu = new System.Windows.Forms.ToolStripMenuItem();
+            this.BtnSubmit = new System.Windows.Forms.Button();
+            this.BtnCancel = new System.Windows.Forms.Button();
             this.menuStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -166,18 +167,10 @@
             // 设置ToolStripMenuItem
             // 
             this.设置ToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.TemplateConfig,
             this.TemplateListMenu});
             this.设置ToolStripMenuItem.Name = "设置ToolStripMenuItem";
             this.设置ToolStripMenuItem.Size = new System.Drawing.Size(44, 21);
             this.设置ToolStripMenuItem.Text = "设置";
-            // 
-            // TemplateConfig
-            // 
-            this.TemplateConfig.Name = "TemplateConfig";
-            this.TemplateConfig.Size = new System.Drawing.Size(180, 22);
-            this.TemplateConfig.Text = "模板设置";
-            this.TemplateConfig.Click += new System.EventHandler(this.TemplateConfig_Click);
             // 
             // TemplateListMenu
             // 
@@ -186,12 +179,34 @@
             this.TemplateListMenu.Text = "模板列表";
             this.TemplateListMenu.Click += new System.EventHandler(this.TemplateListMenu_Click);
             // 
+            // BtnSubmit
+            // 
+            this.BtnSubmit.Location = new System.Drawing.Point(561, 320);
+            this.BtnSubmit.Name = "BtnSubmit";
+            this.BtnSubmit.Size = new System.Drawing.Size(75, 23);
+            this.BtnSubmit.TabIndex = 14;
+            this.BtnSubmit.Text = "保存";
+            this.BtnSubmit.UseVisualStyleBackColor = true;
+            this.BtnSubmit.Click += new System.EventHandler(this.BtnSubmit_Click);
+            // 
+            // BtnCancel
+            // 
+            this.BtnCancel.Location = new System.Drawing.Point(467, 320);
+            this.BtnCancel.Name = "BtnCancel";
+            this.BtnCancel.Size = new System.Drawing.Size(75, 23);
+            this.BtnCancel.TabIndex = 15;
+            this.BtnCancel.Text = "取消";
+            this.BtnCancel.UseVisualStyleBackColor = true;
+            this.BtnCancel.Click += new System.EventHandler(this.BtnCancel_Click);
+            // 
             // SpiderConfigForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 17F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.AutoScroll = true;
-            this.ClientSize = new System.Drawing.Size(648, 554);
+            this.ClientSize = new System.Drawing.Size(648, 355);
+            this.Controls.Add(this.BtnCancel);
+            this.Controls.Add(this.BtnSubmit);
             this.Controls.Add(this.ComboBoxNextPage);
             this.Controls.Add(this.label3);
             this.Controls.Add(this.btnAddContentReader);
@@ -233,7 +248,8 @@
         private ComboBox ComboBoxNextPage;
         private MenuStrip menuStrip1;
         private ToolStripMenuItem 设置ToolStripMenuItem;
-        private ToolStripMenuItem TemplateConfig;
         private ToolStripMenuItem TemplateListMenu;
+        private Button BtnSubmit;
+        private Button BtnCancel;
     }
 }

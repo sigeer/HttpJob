@@ -114,7 +114,7 @@ namespace SpiderTool.SqlSugar.Domain
                 return StatusMessage.FormInvalid;
 
             _dbContext.Ado.BeginTran();
-            var dbModel = _dbContext.Queryable<DB_Spider>().InSingle(model.Id);
+            var dbModel = _dbContext.Queryable<DB_Spider>().First(x => x.Id == model.Id);
             if (dbModel == null)
             {
                 dbModel = new DB_Spider
@@ -132,7 +132,7 @@ namespace SpiderTool.SqlSugar.Domain
             dbModel.PostObjStr = model.PostObjStr;
             dbModel.NextPageTemplateId = model.NextPageTemplateId;
             dbModel.LastUpdatedTime = DateTime.Now;
-            _dbContext.Updateable<DB_Spider>(dbModel).ExecuteCommand();
+            _dbContext.Updateable<DB_Spider>(dbModel).Where(x => x.Id == model.Id).ExecuteCommand();
 
             _dbContext.Deleteable<DB_SpiderTemplate>(x => x.SpiderId == dbModel.Id).ExecuteCommand();
             _dbContext.Insertable<DB_SpiderTemplate>(model.Templates.Select(x => new DB_SpiderTemplate { SpiderId = dbModel.Id, TemplateId = x })).ExecuteCommand();

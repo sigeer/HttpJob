@@ -24,8 +24,7 @@ namespace SpiderWin
 
         private void btnShowConfig_Click(object sender, EventArgs e)
         {
-            var selectedConfigId = (int?)(dropConfig.SelectedValue);
-            var form = new SpiderConfigForm(selectedConfigId ?? 0, _coreService);
+            var form = new SpiderConfigForm(_coreService, dropConfig.SelectedItem as SpiderDtoSetter);
             form.ShowDialog();
         }
 

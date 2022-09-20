@@ -1,22 +1,60 @@
 ﻿using SpiderTool.Dto.Spider;
 using SpiderTool.IService;
+using Utility.Extensions;
 
 namespace SpiderWin.Modals
 {
     public partial class ContentConfigForm : Form
     {
         readonly ISpiderService _service;
+
+        TemplateDto backup;
+        TemplateDto edittingModel;
         List<ReplacementRuleDto> replacements = new List<ReplacementRuleDto>();
-        public ContentConfigForm(ISpiderService service)
+        List<TemplateType> types = TemplateType.GetAll();
+        List<SpiderDtoSetter> spiderList = new List<SpiderDtoSetter>();
+        public ContentConfigForm(ISpiderService service, TemplateDto? model = null)
         {
             _service = service;
+            backup = model ?? new TemplateDto();
+            edittingModel = backup.Clone();
 
             InitializeComponent();
-            LoadData();
+
+        }
+
+        private async void ContentConfigForm_Load(object sender, EventArgs e)
+        {
+            PreLoadForm();
+            await Task.Run(() =>
+            {
+                LoadData();
+            });
+            LoadForm();
         }
 
         private void LoadData()
         {
+            spiderList = _service.GetSpiderDtoList();
+        }
+
+        private void PreLoadForm()
+        {
+            comboType.ValueMember = nameof(TemplateType.Id);
+            comboType.DisplayMember = nameof(TemplateType.Name);
+
+            comboSpider.DisplayMember = nameof(SpiderDtoSetter.Name);
+            comboSpider.ValueMember = nameof(SpiderDtoSetter.Id);
+
+            HideSelectSpider();
+        }
+
+        private void LoadForm()
+        {
+            comboType.DataSource = types;
+
+            var ds = (new List<SpiderDtoSetter>() { new SpiderDtoSetter { Id = 0, Name = "" } }.Concat(spiderList)).ToList();
+            comboSpider.DataSource = ds;
 
         }
 
@@ -53,6 +91,7 @@ namespace SpiderWin.Modals
             }
             _service.SubmitTemplate(new TemplateDto
             {
+                Id = edittingModel.Id,
                 Name = txtName.Text,
                 TemplateStr = txtXPath.Text,
                 Type = (int)(comboType.SelectedItem),
@@ -61,6 +100,24 @@ namespace SpiderWin.Modals
             });
             DialogResult = DialogResult.OK;
             Close();
+        }
+
+        private void HideSelectSpider()
+        {
+            comboSpider.Visible = false;
+            label3.Visible = false;
+        }
+
+        private void comboType_SelectedValueChanged(object sender, EventArgs e)
+        {
+            if (comboType.SelectedValue != null)
+            {
+                if ((int)comboType.SelectedValue == 4)
+                {
+                    HideSelectSpider();
+                }
+            }
+
         }
     }
 }
