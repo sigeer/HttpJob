@@ -18,7 +18,7 @@ namespace SpiderTool.Dto.Spider
         public string? TemplateStr { get; set; }
 
         /// <summary>
-        /// type == 跳转链接时 为必填
+        /// type == 跳转链接时 为必填，仅在作为子爬虫时使用
         /// </summary>
         public int? LinkedSpiderId { get; set; }
         public List<ReplacementRuleDto> ReplacementRules { get; set; } = new List<ReplacementRuleDto>();
