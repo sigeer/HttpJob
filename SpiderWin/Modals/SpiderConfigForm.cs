@@ -1,5 +1,4 @@
-﻿using Newtonsoft.Json;
-using SpiderTool.Constants;
+﻿using SpiderTool.Constants;
 using SpiderTool.Dto.Spider;
 using SpiderTool.IService;
 using Utility.Extensions;
@@ -47,7 +46,7 @@ namespace SpiderWin.Modals
 
                 if (_currentSpider.NextPageTemplateId != null)
                     ComboBoxNextPage.SelectedValue = _currentSpider.NextPageTemplateId;
-            } 
+            }
         }
 
         private async void SpiderConfigForm_Load(object sender, EventArgs e)
@@ -69,7 +68,7 @@ namespace SpiderWin.Modals
 
         private void SpiderConfigForm_KeyDown(object sender, KeyEventArgs e)
         {
-            if(e.KeyCode == Keys.S && e.Modifiers == Keys.Control)
+            if (e.KeyCode == Keys.S && e.Modifiers == Keys.Control)
             {
                 MessageBox.Show("ctrl + s");
             }

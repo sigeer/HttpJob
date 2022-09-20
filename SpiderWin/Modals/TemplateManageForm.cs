@@ -1,14 +1,5 @@
 ﻿using SpiderTool.Dto.Spider;
 using SpiderTool.IService;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Forms;
 
 namespace SpiderWin.Modals
 {
@@ -87,7 +78,7 @@ namespace SpiderWin.Modals
             {
                 var row = dataGridView1.Rows[e.RowIndex];
                 var btn = row.Cells[e.ColumnIndex];
-                var form =  new ContentConfigForm(_service, btn.Tag as TemplateDto);
+                var form = new ContentConfigForm(_service, btn.Tag as TemplateDto);
                 form.ShowDialog();
             }
         }

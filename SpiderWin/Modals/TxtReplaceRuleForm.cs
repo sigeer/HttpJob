@@ -79,7 +79,7 @@ namespace SpiderWin.Modals
                 this.Controls.Remove(txtOld);
                 this.Controls.Remove(txtNew);
                 this.Controls.Remove(btnDel);
-                
+
                 SortExtraControls();
             };
             extraControlList.Add(txtOld);
