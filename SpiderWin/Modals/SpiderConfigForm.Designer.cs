@@ -83,6 +83,7 @@
             // 
             // ComboMethod
             // 
+            this.ComboMethod.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.ComboMethod.FormattingEnabled = true;
             this.ComboMethod.Items.AddRange(new object[] {
             "GET",
@@ -148,6 +149,7 @@
             // 
             // ComboBoxNextPage
             // 
+            this.ComboBoxNextPage.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.ComboBoxNextPage.FormattingEnabled = true;
             this.ComboBoxNextPage.Location = new System.Drawing.Point(89, 243);
             this.ComboBoxNextPage.Name = "ComboBoxNextPage";
@@ -175,7 +177,7 @@
             // TemplateListMenu
             // 
             this.TemplateListMenu.Name = "TemplateListMenu";
-            this.TemplateListMenu.Size = new System.Drawing.Size(180, 22);
+            this.TemplateListMenu.Size = new System.Drawing.Size(124, 22);
             this.TemplateListMenu.Text = "模板列表";
             this.TemplateListMenu.Click += new System.EventHandler(this.TemplateListMenu_Click);
             // 

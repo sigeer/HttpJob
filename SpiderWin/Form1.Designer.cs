@@ -30,7 +30,6 @@
         {
             this.btnShowConfig = new System.Windows.Forms.Button();
             this.label1 = new System.Windows.Forms.Label();
-            this.txtUrl = new System.Windows.Forms.TextBox();
             this.label2 = new System.Windows.Forms.Label();
             this.dropConfig = new System.Windows.Forms.ComboBox();
             this.btnRun = new System.Windows.Forms.Button();
@@ -40,10 +39,10 @@
             this.UseLocalMenu = new System.Windows.Forms.ToolStripMenuItem();
             this.UseServiceMenu = new System.Windows.Forms.ToolStripMenuItem();
             this.MenuNewSpider = new System.Windows.Forms.ToolStripMenuItem();
-            this.listBoxUrl = new System.Windows.Forms.ListBox();
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
             this.mainModalStatusLabel = new System.Windows.Forms.ToolStripStatusLabel();
             this.ResultTxtBox = new System.Windows.Forms.RichTextBox();
+            this.ComboxUrl = new System.Windows.Forms.ComboBox();
             this.menuStrip1.SuspendLayout();
             this.statusStrip1.SuspendLayout();
             this.SuspendLayout();
@@ -67,15 +66,6 @@
             this.label1.TabIndex = 1;
             this.label1.Text = "URL";
             // 
-            // txtUrl
-            // 
-            this.txtUrl.AutoCompleteSource = System.Windows.Forms.AutoCompleteSource.CustomSource;
-            this.txtUrl.Location = new System.Drawing.Point(81, 41);
-            this.txtUrl.Name = "txtUrl";
-            this.txtUrl.Size = new System.Drawing.Size(546, 23);
-            this.txtUrl.TabIndex = 2;
-            this.txtUrl.KeyUp += new System.Windows.Forms.KeyEventHandler(this.txtUrl_KeyUp);
-            // 
             // label2
             // 
             this.label2.AutoSize = true;
@@ -87,6 +77,7 @@
             // 
             // dropConfig
             // 
+            this.dropConfig.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.dropConfig.FormattingEnabled = true;
             this.dropConfig.Location = new System.Drawing.Point(80, 84);
             this.dropConfig.Name = "dropConfig";
@@ -154,17 +145,6 @@
             this.MenuNewSpider.Text = "新增爬虫";
             this.MenuNewSpider.Click += new System.EventHandler(this.MenuNewSpider_Click);
             // 
-            // listBoxUrl
-            // 
-            this.listBoxUrl.FormattingEnabled = true;
-            this.listBoxUrl.ItemHeight = 17;
-            this.listBoxUrl.Location = new System.Drawing.Point(80, 64);
-            this.listBoxUrl.Name = "listBoxUrl";
-            this.listBoxUrl.Size = new System.Drawing.Size(546, 89);
-            this.listBoxUrl.TabIndex = 9;
-            this.listBoxUrl.Visible = false;
-            this.listBoxUrl.Click += new System.EventHandler(this.listBoxUrl_Click);
-            // 
             // statusStrip1
             // 
             this.statusStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
@@ -189,26 +169,32 @@
             this.ResultTxtBox.TabIndex = 11;
             this.ResultTxtBox.Text = "";
             // 
+            // ComboxUrl
+            // 
+            this.ComboxUrl.FormattingEnabled = true;
+            this.ComboxUrl.Location = new System.Drawing.Point(79, 41);
+            this.ComboxUrl.Name = "ComboxUrl";
+            this.ComboxUrl.Size = new System.Drawing.Size(547, 25);
+            this.ComboxUrl.TabIndex = 12;
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 17F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(674, 346);
+            this.Controls.Add(this.ComboxUrl);
             this.Controls.Add(this.ResultTxtBox);
             this.Controls.Add(this.statusStrip1);
-            this.Controls.Add(this.listBoxUrl);
             this.Controls.Add(this.menuStrip1);
             this.Controls.Add(this.btnRun);
             this.Controls.Add(this.dropConfig);
             this.Controls.Add(this.label2);
-            this.Controls.Add(this.txtUrl);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.btnShowConfig);
             this.MainMenuStrip = this.menuStrip1;
             this.Name = "Form1";
             this.Text = "爬虫";
             this.Load += new System.EventHandler(this.Form1_Load);
-            this.Click += new System.EventHandler(this.Form1_Click);
             this.menuStrip1.ResumeLayout(false);
             this.menuStrip1.PerformLayout();
             this.statusStrip1.ResumeLayout(false);
@@ -222,7 +208,6 @@
 
         private Button btnShowConfig;
         private Label label1;
-        private TextBox txtUrl;
         private Label label2;
         private ComboBox dropConfig;
         private Button btnRun;
@@ -231,10 +216,10 @@
         private ToolStripMenuItem 工作设置ToolStripMenuItem;
         private ToolStripMenuItem UseLocalMenu;
         private ToolStripMenuItem UseServiceMenu;
-        private ListBox listBoxUrl;
         private StatusStrip statusStrip1;
         private ToolStripStatusLabel mainModalStatusLabel;
         private ToolStripMenuItem MenuNewSpider;
         private RichTextBox ResultTxtBox;
+        private ComboBox ComboxUrl;
     }
 }

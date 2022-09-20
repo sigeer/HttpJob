@@ -51,6 +51,7 @@
             // 
             // comboType
             // 
+            this.comboType.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.comboType.FormattingEnabled = true;
             this.comboType.Location = new System.Drawing.Point(90, 70);
             this.comboType.Name = "comboType";
@@ -95,6 +96,7 @@
             // 
             // comboSpider
             // 
+            this.comboSpider.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.comboSpider.FormattingEnabled = true;
             this.comboSpider.Location = new System.Drawing.Point(89, 165);
             this.comboSpider.Name = "comboSpider";

@@ -76,6 +76,7 @@ namespace SpiderTool
                 Name = DocumentTitle,
                 SpiderId = spiderId
             });
+            TaskComplete?.Invoke(this, CurrentDir);
         }
 
         public async Task<string> LoadDocumentContent()
@@ -97,7 +98,6 @@ namespace SpiderTool
             await MoveToNextPage();
             OnLog?.Invoke(this, "====开始合并====");
             MergeTextFile(CurrentDir);
-            TaskComplete?.Invoke(this, CurrentDir);
             //Console.WriteLine("====开始打包");
             //var filePath = CurrentDir.PackZip();
             //Console.WriteLine("打包完成：" + filePath);
@@ -113,12 +113,12 @@ namespace SpiderTool
                 if (nodes == null)
                     return;
 
-                if (rule.Type == (int)ContentType.DownloadLink)
+                if (rule.Type == (int)TemplateTypeEnum.Object)
                 {
                     var urlList = nodes.Select(item => (item.Attributes["src"] ?? item.Attributes["data-src"]).Value.GetTotalUrl(HostUrl)).ToList();
                     SpiderUtility.BulkDownload(CurrentDir, urlList);
                 }
-                if (rule.Type == (int)ContentType.Text)
+                if (rule.Type == (int)TemplateTypeEnum.Text)
                 {
                     foreach (var item in nodes)
                     {
@@ -126,14 +126,14 @@ namespace SpiderTool
                         SpiderUtility.SaveText(CurrentDir, finalText);
                     }
                 }
-                if (rule.Type == (int)ContentType.Html)
+                if (rule.Type == (int)TemplateTypeEnum.Html)
                 {
                     foreach (var item in nodes)
                     {
                         SpiderUtility.SaveText(CurrentDir, ReadHtmlNodeInnerHtml(item, rule));
                     }
                 }
-                if (rule.Type == (int)ContentType.JumpLink)
+                if (rule.Type == (int)TemplateTypeEnum.JumpLink)
                 {
                     //新增
                     var index = 1;

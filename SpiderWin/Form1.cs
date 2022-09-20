@@ -21,7 +21,7 @@ namespace SpiderWin
             _coreService = coreService;
 
             InitializeComponent();
-            mainModalStatusLabel.Text = $"{AppDomain.CurrentDomain.BaseDirectory}";
+            mainModalStatusLabel.Text = $"file:\\\\{AppDomain.CurrentDomain.BaseDirectory}";
         }
 
         private void btnShowConfig_Click(object sender, EventArgs e)
@@ -35,15 +35,16 @@ namespace SpiderWin
             dropConfig.DisplayMember = nameof(SpiderDtoSetter.Name);
             dropConfig.ValueMember = nameof(SpiderDtoSetter.Id);
 
-            listBoxUrl.DisplayMember = nameof(ResourceHistoryDto.Url);
-            listBoxUrl.ValueMember = nameof(ResourceHistoryDto.Url);
+
+            ComboxUrl.DisplayMember = nameof(ResourceHistoryDto.Url);
+            ComboxUrl.ValueMember = nameof(ResourceHistoryDto.Url);
         }
 
         private void LoadForm()
         {
             dropConfig.DataSource = (new List<SpiderDtoSetter>() { new SpiderDtoSetter() { Id = 0, Name = "" } }.Concat(_spiderList)).ToList();
 
-            listBoxUrl.DataSource = _historyList;
+            ComboxUrl.DataSource = _historyList;
         }
 
         private async void LoadData()
@@ -55,7 +56,6 @@ namespace SpiderWin
                 _historyList = _coreService.GetResourceHistoryDtoList();
             });
             LoadForm();
-
         }
 
         private void Form1_Load(object sender, EventArgs e)
@@ -65,7 +65,7 @@ namespace SpiderWin
 
         private void btnRun_Click(object sender, EventArgs e)
         {
-            if (string.IsNullOrEmpty(txtUrl.Text) || dropConfig.SelectedValue == null || (int)dropConfig.SelectedValue == 0)
+            if (string.IsNullOrEmpty(ComboxUrl.Text) || dropConfig.SelectedValue == null || (int)dropConfig.SelectedValue == 0)
             {
                 MessageBox.Show("请输入URL");
                 return;
@@ -77,58 +77,25 @@ namespace SpiderWin
             new Task(() =>
            {
                var worker = new SpiderWorker(_coreService);
-               worker.TaskComplete += (obj, evt) =>
+               worker.TaskComplete += async (obj, evt) =>
                {
                    btnRun.Enabled = true;
                    _sw.Stop();
                    mainModalStatusLabel.Text = $"共耗时：{_sw.Elapsed.TotalSeconds.ToFixed(2)}秒";
                    ResultTxtBox.Text += $"[{DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")}] file:///{evt} \r\n";
+
+                   await Task.Run(() =>
+                   {
+                       _historyList = _coreService.GetResourceHistoryDtoList();
+                   });
+                   ComboxUrl.DataSource = _historyList;
                };
 
                BeginInvoke(new MethodInvoker(async () =>
                {
-                   await worker.Start(txtUrl.Text, spiderId);
+                   await worker.Start(ComboxUrl.Text, spiderId);
                }));
            }).Start();
-        }
-
-        private void txtUrl_KeyUp(object sender, KeyEventArgs e)
-        {
-            var eObj = (sender as TextBox)!;
-            if (eObj.Name == nameof(txtUrl))
-            {
-                if (txtUrl.Text.Length > 0)
-                    listBoxUrl.Visible = true;
-                else
-                    listBoxUrl.Visible = false;
-            }
-        }
-
-        private void listBoxUrl_Click(object sender, EventArgs e)
-        {
-            ListBox eObj = (sender as ListBox)!;
-            var info = eObj.SelectedItem as ResourceHistoryDto;
-            if (info != null)
-            {
-                if (info.SpiderId != null)
-                    dropConfig.SelectedValue = info.SpiderId;
-                if (info.Url != null)
-                {
-                    txtUrl.Text = info.Url;
-                    eObj.Visible = false;
-                    txtUrl.Select(txtUrl.Text.Length, 1); //光标定位到最后
-                }
-
-            }
-        }
-
-        private void Form1_Click(object sender, EventArgs e)
-        {
-            var eObj = (sender as Control)!;
-            if (eObj.Name != nameof(txtUrl))
-            {
-                listBoxUrl.Visible = false;
-            }
         }
 
         private void MenuNewSpider_Click(object sender, EventArgs e)

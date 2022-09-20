@@ -61,7 +61,7 @@ namespace SpiderTool.SqlSugar.Domain
                 dbModel.SpiderId = model.SpiderId;
                 dbModel.LastUpdatedTime = DateTime.Now;
 
-                _dbContext.Updateable<DB_ResourceHistory>(dbModel).ExecuteCommand();
+                _dbContext.Updateable<DB_ResourceHistory>(dbModel).Where(x => x.Id == dbModel.Id).ExecuteCommand();
                 _dbContext.Ado.CommitTran();
 
                 return StatusMessage.Success;
