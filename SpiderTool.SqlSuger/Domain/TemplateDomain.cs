@@ -18,7 +18,7 @@ namespace SpiderTool.SqlSugar.Domain
         public string Delete(TemplateDto model)
         {
             _dbContext.Ado.BeginTran();
-            _dbContext.Deleteable<DB_TemplateReplacementRule>(x => x.TemplateId == model.Id).ExecuteCommand();
+            _dbContext.Deleteable<DB_ReplacementRule>(x => x.TemplateId == model.Id).ExecuteCommand();
             _dbContext.Deleteable<DB_Template>(x => x.Id == model.Id).ExecuteCommand();
             _dbContext.Ado.CommitTran();
             return StatusMessage.Success;
@@ -28,8 +28,7 @@ namespace SpiderTool.SqlSugar.Domain
         {
             var allTemplates = _dbContext.Queryable<DB_Template>().ToList();
 
-            var templateRules = _dbContext.Queryable<DB_TemplateReplacementRule>()
-                .InnerJoin<DB_ReplacementRule>((a, b) => a.RuleId == b.Id).Select((a, b) => new { TemplateId = a.TemplateId, b }).ToList();
+            var templateRules = _dbContext.Queryable<DB_ReplacementRule>().ToList();
 
 
             return (from a in allTemplates
@@ -43,9 +42,9 @@ namespace SpiderTool.SqlSugar.Domain
                         Type = a.Type,
                         ReplacementRules = b.Select(x => new ReplacementRuleDto
                         {
-                            Id = x.b.Id,
-                            ReplacementOldStr = x.b.ReplacementOldStr,
-                            ReplacementNewlyStr = x.b.ReplacementNewlyStr
+                            Id = x.Id,
+                            ReplacementOldStr = x.ReplacementOldStr,
+                            ReplacementNewlyStr = x.ReplacementNewlyStr
                         }).ToList()
                     }).ToList();
         }
@@ -54,8 +53,7 @@ namespace SpiderTool.SqlSugar.Domain
         {
             var allTemplates = await _dbContext.Queryable<DB_Template>().ToListAsync();
 
-            var templateRules = await _dbContext.Queryable<DB_TemplateReplacementRule>()
-                .InnerJoin<DB_ReplacementRule>((a, b) => a.RuleId == b.Id).Select((a, b) => new { TemplateId = a.TemplateId, b }).ToListAsync();
+            var templateRules = await _dbContext.Queryable<DB_ReplacementRule>().ToListAsync();
 
             return (from a in allTemplates
                     let b = templateRules.Where(x => x.TemplateId == a.Id).ToList()
@@ -68,9 +66,9 @@ namespace SpiderTool.SqlSugar.Domain
                         Type = a.Type,
                         ReplacementRules = b.Select(x => new ReplacementRuleDto
                         {
-                            Id = x.b.Id,
-                            ReplacementOldStr = x.b.ReplacementOldStr,
-                            ReplacementNewlyStr = x.b.ReplacementNewlyStr
+                            Id = x.Id,
+                            ReplacementOldStr = x.ReplacementOldStr,
+                            ReplacementNewlyStr = x.ReplacementNewlyStr
                         }).ToList()
                     }).ToList();
         }
@@ -102,11 +100,12 @@ namespace SpiderTool.SqlSugar.Domain
                 dbModel.LinkedSpiderId = model.LinkedSpiderId;
                 _dbContext.Updateable<DB_Template>(dbModel).ExecuteCommand();
 
-                _dbContext.Deleteable<DB_TemplateReplacementRule>(x => x.TemplateId == dbModel.Id).ExecuteCommand();
-                _dbContext.Insertable<DB_TemplateReplacementRule>(model.ReplacementRules.Select(x => new DB_TemplateReplacementRule
+                _dbContext.Deleteable<DB_ReplacementRule>(x => x.TemplateId == dbModel.Id).ExecuteCommand();
+                _dbContext.Insertable<DB_ReplacementRule>(model.ReplacementRules.Select(x => new DB_ReplacementRule
                 {
-                    RuleId = x.Id,
-                    TemplateId = dbModel.Id
+                    TemplateId = dbModel.Id,
+                    ReplacementNewlyStr = x.ReplacementNewlyStr,
+                    ReplacementOldStr = x.ReplacementOldStr
                 })).ExecuteCommand();
 
                 _dbContext.Ado.CommitTran();

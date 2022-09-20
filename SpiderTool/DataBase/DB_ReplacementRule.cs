@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Text;
@@ -11,15 +12,11 @@ namespace SpiderTool.DataBase
     public class DB_ReplacementRule
     {
         public int Id { get; set; }
+        public int TemplateId { get; set; }
+        [MaxLength(100)]
         public string? ReplacementOldStr { get; set; }
+        [MaxLength(100)]
         public string? ReplacementNewlyStr { get; set; }
 
-    }
-    [Table("db_templatereplacementrule")]
-    public class DB_TemplateReplacementRule
-    {
-        public int Id { get; set; }
-        public int RuleId { get; set; }
-        public int TemplateId { get; set; }
     }
 }

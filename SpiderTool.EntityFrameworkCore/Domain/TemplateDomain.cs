@@ -21,23 +21,13 @@ namespace SpiderTool.EntityFrameworkCore.Domain
             var dbModel = new DB_Template() { Id = model.Id };
             _dbContext.Templates.Attach(dbModel).State = EntityState.Deleted;
             _dbContext.SaveChanges();
-            _dbContext.TemplateReplacementRules.RemoveRange(_dbContext.TemplateReplacementRules.Where(x => x.TemplateId == model.Id));
-            _dbContext.SaveChanges();
             return StatusMessage.Success;
         }
 
         public List<TemplateDto> GetTemplateDtoList()
         {
-            var templateRules = from a in _dbContext.TemplateReplacementRules
-                                join b in _dbContext.ReplacementRules on a.RuleId equals b.Id
-                                select new
-                                {
-                                    a.TemplateId,
-                                    b
-                                };
-
             return (from a in _dbContext.Templates
-                    let b = templateRules.Where(x => x.TemplateId == a.Id).ToList()
+                    let b = _dbContext.ReplacementRules.Where(x => x.TemplateId == a.Id).ToList()
                     select new TemplateDto
                     {
                         Id = a.Id,
@@ -47,25 +37,17 @@ namespace SpiderTool.EntityFrameworkCore.Domain
                         Type = a.Type,
                         ReplacementRules = b.Select(x => new ReplacementRuleDto
                         {
-                            Id = x.b.Id,
-                            ReplacementOldStr = x.b.ReplacementOldStr,
-                            ReplacementNewlyStr = x.b.ReplacementNewlyStr
+                            Id = x.Id,
+                            ReplacementOldStr = x.ReplacementOldStr,
+                            ReplacementNewlyStr = x.ReplacementNewlyStr
                         }).ToList()
                     }).AsSplitQuery().ToList();
         }
 
         public async Task<List<TemplateDto>> GetTemplateDtoListAsync()
         {
-            var templateRules = from a in _dbContext.TemplateReplacementRules
-                                join b in _dbContext.ReplacementRules on a.RuleId equals b.Id
-                                select new
-                                {
-                                    a.TemplateId,
-                                    b
-                                };
-
             return await (from a in _dbContext.Templates
-                          let b = templateRules.Where(x => x.TemplateId == a.Id).ToList()
+                          let b = _dbContext.ReplacementRules.Where(x => x.TemplateId == a.Id).ToList()
                           select new TemplateDto
                           {
                               Id = a.Id,
@@ -75,9 +57,9 @@ namespace SpiderTool.EntityFrameworkCore.Domain
                               Type = a.Type,
                               ReplacementRules = b.Select(x => new ReplacementRuleDto
                               {
-                                  Id = x.b.Id,
-                                  ReplacementOldStr = x.b.ReplacementOldStr,
-                                  ReplacementNewlyStr = x.b.ReplacementNewlyStr
+                                  Id = x.Id,
+                                  ReplacementOldStr = x.ReplacementOldStr,
+                                  ReplacementNewlyStr = x.ReplacementNewlyStr
                               }).ToList()
                           }).AsSplitQuery().ToListAsync();
         }
@@ -106,11 +88,12 @@ namespace SpiderTool.EntityFrameworkCore.Domain
             dbModel.LinkedSpiderId = model.LinkedSpiderId;
             _dbContext.SaveChanges();
 
-            _dbContext.TemplateReplacementRules.RemoveRange(_dbContext.TemplateReplacementRules.Where(x => x.TemplateId == dbModel.Id));
-            _dbContext.TemplateReplacementRules.AddRange(model.ReplacementRules.Select(x => new DB_TemplateReplacementRule
+            _dbContext.ReplacementRules.RemoveRange(_dbContext.ReplacementRules.Where(x => x.TemplateId == dbModel.Id));
+            _dbContext.ReplacementRules.AddRange(model.ReplacementRules.Select(x => new DB_ReplacementRule
             {
-                RuleId = x.Id,
-                TemplateId = dbModel.Id
+                TemplateId = dbModel.Id,
+                ReplacementNewlyStr = x.ReplacementNewlyStr,
+                ReplacementOldStr = x.ReplacementOldStr
             }));
             _dbContext.SaveChanges();
             dbTrans.Commit();

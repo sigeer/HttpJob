@@ -20,22 +20,20 @@ namespace SpiderTool.Dapper.Domain
         }
 
         private string templateTable = typeof(DB_Template).GetTableName();
-        private string templateReplacementRule = typeof(DB_TemplateReplacementRule).GetTableName();
-        private string replacementRule = typeof(DB_TemplateReplacementRule).GetTableName();
+        private string replacementRule = typeof(DB_ReplacementRule).GetTableName();
 
         public string Delete(TemplateDto model)
         {
             var dbModel = new DB_Template() { Id = model.Id };
             _dbConn.ExecuteScalar($"delete from {templateTable} where id = @id;" +
-                $" delete from {templateReplacementRule} where templateId = @id", dbModel);
+                $" delete from {replacementRule} where templateId = @id", dbModel);
             return StatusMessage.Success;
         }
 
         public List<TemplateDto> GetTemplateDtoList()
         {
-            var sql = $"select a.TemplateId as Id, c.Name, c.TemplateStr, c.LinkedSpiderId, c.Type, b.Id as ReplacmentRuleId, b.ReplacementOldStr, b.ReplacementNewlyStr " +
-                $"from {templateReplacementRule} a" +
-                $"join {replacementRule} b on a.RuleId = b.Id" +
+            var sql = $"select a.TemplateId as Id, c.Name, c.TemplateStr, c.LinkedSpiderId, c.Type, a.ReplacementOldStr, a.ReplacementNewlyStr " +
+                $"from {replacementRule} a" +
                 $"join {templateTable} c on c.id = a.templateId";
 
             var ids = new Dictionary<int, TemplateDto>();
@@ -57,9 +55,8 @@ namespace SpiderTool.Dapper.Domain
 
         public async Task<List<TemplateDto>> GetTemplateDtoListAsync()
         {
-            var sql = $"select a.TemplateId as Id, c.Name, c.TemplateStr, c.LinkedSpiderId, c.Type, b.Id as ReplacmentRuleId, b.ReplacementOldStr, b.ReplacementNewlyStr " +
-                $"from {templateReplacementRule} a" +
-                $"join {replacementRule} b on a.RuleId = b.Id" +
+            var sql = $"select a.TemplateId as Id, c.Name, c.TemplateStr, c.LinkedSpiderId, c.Type, a.ReplacementOldStr, a.ReplacementNewlyStr " +
+                $"from {replacementRule} a" +
                 $"join {templateTable} c on c.id = a.templateId";
 
             var ids = new Dictionary<int, TemplateDto>();
@@ -100,11 +97,12 @@ namespace SpiderTool.Dapper.Domain
             dbModel.LinkedSpiderId = model.LinkedSpiderId;
             _dbConn.Update(dbModel, dbTrans);
 
-            _dbConn.ExecuteScalar($"delete from {templateReplacementRule} where templateId = @id", dbModel, dbTrans);
-            _dbConn.Insert(model.ReplacementRules.Select(x => new DB_TemplateReplacementRule
+            _dbConn.ExecuteScalar($"delete from {replacementRule} where templateId = @id", dbModel, dbTrans);
+            _dbConn.Insert(model.ReplacementRules.Select(x => new DB_ReplacementRule
             {
-                RuleId = x.Id,
-                TemplateId = dbModel.Id
+                TemplateId = dbModel.Id,
+                ReplacementOldStr = x.ReplacementOldStr,
+                ReplacementNewlyStr = x.ReplacementNewlyStr
             }), dbTrans);
             dbTrans.Commit();
 
