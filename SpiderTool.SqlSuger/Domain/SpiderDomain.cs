@@ -132,7 +132,7 @@ namespace SpiderTool.SqlSugar.Domain
             dbModel.PostObjStr = model.PostObjStr;
             dbModel.NextPageTemplateId = model.NextPageTemplateId;
             dbModel.LastUpdatedTime = DateTime.Now;
-            _dbContext.Updateable<DB_Spider>(dbModel).Where(x => x.Id == model.Id).ExecuteCommand();
+            _dbContext.Updateable<DB_Spider>(dbModel).Where(x => x.Id == dbModel.Id).ExecuteCommand();
 
             _dbContext.Deleteable<DB_SpiderTemplate>(x => x.SpiderId == dbModel.Id).ExecuteCommand();
             var data = model.Templates.Select(x => new DB_SpiderTemplate { SpiderId = dbModel.Id, TemplateId = x }).ToList();

@@ -2,8 +2,8 @@ DROP TABLE IF EXISTS `db_replacementrule`;
 
 CREATE TABLE `db_replacementrule` (
   `Id` int NOT NULL AUTO_INCREMENT,
-  `ReplacementOldStr` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
-  `ReplacementNewlyStr` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
+  `ReplacementOldStr` varchar(100) DEFAULT NULL,
+  `ReplacementNewlyStr` varchar(100) DEFAULT NULL,
   `TemplateId` int DEFAULT NULL,
   PRIMARY KEY (`Id`)
 );
@@ -14,9 +14,9 @@ DROP TABLE IF EXISTS `db_resourcehistory`;
 
 CREATE TABLE `db_resourcehistory` (
   `Id` int NOT NULL AUTO_INCREMENT,
-  `Name` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
-  `Url` varchar(500) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
-  `Description` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
+  `Name` varchar(100) DEFAULT NULL,
+  `Url` varchar(500) DEFAULT NULL,
+  `Description` varchar(200) DEFAULT NULL,
   `CreateTime` datetime(6) NOT NULL,
   `LastUpdatedTime` datetime(6) NOT NULL,
   `SpiderId` int DEFAULT NULL,
@@ -29,11 +29,11 @@ DROP TABLE IF EXISTS `db_spider`;
 
 CREATE TABLE `db_spider` (
   `Id` int NOT NULL AUTO_INCREMENT,
-  `Name` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
-  `Description` varchar(500) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
-  `Method` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
-  `PostObjStr` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci,
-  `Headers` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci,
+  `Name` varchar(100) DEFAULT NULL,
+  `Description` varchar(500) DEFAULT NULL,
+  `Method` varchar(10) DEFAULT NULL,
+  `PostObjStr` longtext ,
+  `Headers` longtext ,
   `NextPageTemplateId` int DEFAULT NULL,
   `CreateTime` datetime(6) NOT NULL DEFAULT '0001-01-01 00:00:00.000000',
   `LastUpdatedTime` datetime(6) NOT NULL DEFAULT '0001-01-01 00:00:00.000000',
@@ -57,9 +57,9 @@ DROP TABLE IF EXISTS `db_template`;
 
 CREATE TABLE `db_template` (
   `Id` int NOT NULL AUTO_INCREMENT,
-  `Name` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
+  `Name` varchar(100) DEFAULT NULL,
   `Type` int NOT NULL,
-  `TemplateStr` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
+  `TemplateStr` varchar(100) DEFAULT NULL,
   `CreateTime` datetime(6) NOT NULL DEFAULT '0001-01-01 00:00:00.000000',
   `LastUpdatedTime` datetime(6) NOT NULL DEFAULT '0001-01-01 00:00:00.000000',
   `LinkedSpiderId` int DEFAULT NULL,

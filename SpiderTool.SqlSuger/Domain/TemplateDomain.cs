@@ -98,15 +98,16 @@ namespace SpiderTool.SqlSugar.Domain
                 dbModel.Type = model.Type;
                 dbModel.LastUpdatedTime = DateTime.Now;
                 dbModel.LinkedSpiderId = model.LinkedSpiderId;
-                _dbContext.Updateable<DB_Template>(dbModel).ExecuteCommand();
+                _dbContext.Updateable<DB_Template>(dbModel).Where(x => x.Id == dbModel.Id).ExecuteCommand();
 
                 _dbContext.Deleteable<DB_ReplacementRule>(x => x.TemplateId == dbModel.Id).ExecuteCommand();
-                _dbContext.Insertable<DB_ReplacementRule>(model.ReplacementRules.Select(x => new DB_ReplacementRule
+                var data = model.ReplacementRules.Select(x => new DB_ReplacementRule
                 {
                     TemplateId = dbModel.Id,
                     ReplacementNewlyStr = x.ReplacementNewlyStr,
                     ReplacementOldStr = x.ReplacementOldStr
-                })).ExecuteCommand();
+                }).ToList();
+                _dbContext.Insertable<DB_ReplacementRule>(data).ExecuteCommand();
 
                 _dbContext.Ado.CommitTran();
 

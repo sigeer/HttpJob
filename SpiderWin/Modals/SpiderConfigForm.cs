@@ -60,8 +60,8 @@ namespace SpiderWin.Modals
             var templateListForm = new TemplateManageForm(_coreService, _currentSpider.Templates);
             templateListForm.OnOk += (data, evt) =>
             {
-                if (data != null)
-                    _currentSpider.Templates = (data as List<int>)!;
+                if (evt != null)
+                    _currentSpider.Templates = (evt as List<int>)!;
             };
             templateListForm.ShowDialog();
         }

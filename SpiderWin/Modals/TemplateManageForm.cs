@@ -35,7 +35,7 @@ namespace SpiderWin.Modals
             _templates.ForEach(x =>
             {
                 var row = new DataGridViewRow();
-                row.Cells.Add(new DataGridViewCheckBoxCell() { Value = _selected.Contains(x.Id) });
+                row.Cells.Add(new DataGridViewCheckBoxCell() { Value = _selected.Contains(x.Id), ValueType = typeof(bool) });
                 row.Cells.Add(new DataGridViewButtonCell() { Value = "编辑", Tag = x });
                 row.Cells.Add(new DataGridViewTextBoxCell() { Value = x.Id, ValueType = typeof(int) });
                 row.Cells.Add(new DataGridViewTextBoxCell() { Value = x.Name });
@@ -57,7 +57,7 @@ namespace SpiderWin.Modals
         private void BtnOK_Click(object sender, EventArgs e)
         {
             var selected = new List<int>();
-            for (int i = 1; i < dataGridView1.Rows.Count; i++)
+            for (int i = 0; i < dataGridView1.Rows.Count - 1; i++)
             {
                 var row = dataGridView1.Rows[i];
                 if (row.Cells[0].Value != null && (bool)row.Cells[0].Value == true)
@@ -81,6 +81,12 @@ namespace SpiderWin.Modals
                 var form = new ContentConfigForm(_service, btn.Tag as TemplateDto);
                 form.ShowDialog();
             }
+        }
+
+        private void BtnAdd_Click(object sender, EventArgs e)
+        {
+            var form = new ContentConfigForm(_service);
+            form.ShowDialog();
         }
     }
 }

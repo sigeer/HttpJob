@@ -98,8 +98,8 @@ namespace SpiderWin.Modals
                 Id = edittingModel.Id,
                 Name = txtName.Text,
                 TemplateStr = txtXPath.Text,
-                Type = (int)(comboType.SelectedItem),
-                LinkedSpiderId = (int)(comboType.SelectedItem),
+                Type = (int)(comboType.SelectedValue),
+                LinkedSpiderId = (int)(comboSpider.SelectedValue),
                 ReplacementRules = edittingModel.ReplacementRules
             });
             DialogResult = DialogResult.OK;
