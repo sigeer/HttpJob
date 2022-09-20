@@ -1,4 +1,6 @@
-﻿using SpiderTool.IService;
+﻿using SpiderTool.Dto.Spider;
+using SpiderTool.IService;
+using Utility.Extensions;
 
 namespace SpiderWin.Modals
 {
@@ -6,13 +8,35 @@ namespace SpiderWin.Modals
     {
         int _flag = 0;
         public List<Control> extraControlList = new List<Control>();
+        List<ReplacementRuleDto> backup;
+        List<ReplacementRuleDto> edittingModel;
+
+        public event EventHandler<List<ReplacementRuleDto>>? OnOk;
 
         readonly ISpiderService _service;
-        public TxtReplaceRuleForm(ISpiderService service)
+        public TxtReplaceRuleForm(ISpiderService service, List<ReplacementRuleDto>? data = null)
         {
             _service = service;
+            backup = data ?? new List<ReplacementRuleDto>();
+            edittingModel = backup.Clone();
+
             InitializeComponent();
         }
+
+        private void TxtReplaceRuleForm_Load(object sender, EventArgs e)
+        {
+            UpdateUIByData();
+        }
+
+        private void UpdateUIByData()
+        {
+            edittingModel.ForEach(x =>
+            {
+                AddControl(x.ReplacementOldStr ?? "", x.ReplacementNewlyStr ?? "");
+            });
+            SortExtraControls();
+        }
+
         private void SortExtraControls()
         {
             for (int i = 0; i < extraControlList.Count; i += 3)
@@ -27,17 +51,19 @@ namespace SpiderWin.Modals
             BtnAdd.Location = new Point(30, 30 + (extraControlList.Count / 2) * 30);
         }
 
-        private void BtnAdd_Click(object sender, EventArgs e)
+        private void AddControl(string valOld = "", string valNew = "")
         {
             var txtOld = new TextBox()
             {
                 Name = $"txtOld{_flag}",
-                Size = new System.Drawing.Size(180, 25)
+                Size = new System.Drawing.Size(180, 25),
+                Text = valOld
             };
             var txtNew = new TextBox()
             {
                 Name = $"txtNew{_flag}",
-                Size = new System.Drawing.Size(180, 25)
+                Size = new System.Drawing.Size(180, 25),
+                Text = valNew
             };
             var btnDel = new Button()
             {
@@ -53,6 +79,7 @@ namespace SpiderWin.Modals
                 this.Controls.Remove(txtOld);
                 this.Controls.Remove(txtNew);
                 this.Controls.Remove(btnDel);
+                
                 SortExtraControls();
             };
             extraControlList.Add(txtOld);
@@ -63,8 +90,35 @@ namespace SpiderWin.Modals
             this.Controls.Add(txtNew);
             this.Controls.Add(btnDel);
 
-            SortExtraControls();
             _flag++;
+        }
+
+        private void BtnAdd_Click(object sender, EventArgs e)
+        {
+            AddControl();
+            SortExtraControls();
+
+        }
+
+        private void BtnOk_Click(object sender, EventArgs e)
+        {
+            var temp = new List<ReplacementRuleDto>();
+            for (int i = 0; i < extraControlList.Count; i += 3)
+            {
+                temp.Add(new ReplacementRuleDto
+                {
+                    ReplacementOldStr = extraControlList[i].Text,
+                    ReplacementNewlyStr = extraControlList[i + 1].Text
+                });
+            }
+            edittingModel = temp;
+            OnOk?.Invoke(this, edittingModel);
+            Close();
+        }
+
+        private void BtnCancel_Click(object sender, EventArgs e)
+        {
+            Close();
         }
     }
 }

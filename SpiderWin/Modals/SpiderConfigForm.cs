@@ -1,4 +1,5 @@
 ﻿using Newtonsoft.Json;
+using SpiderTool.Constants;
 using SpiderTool.Dto.Spider;
 using SpiderTool.IService;
 using Utility.Extensions;
@@ -33,9 +34,9 @@ namespace SpiderWin.Modals
 
         private void LoadForm()
         {
-            ComboBoxNextPage.DataSource = _templateList;
+            ComboBoxNextPage.DataSource = (new List<TemplateDto>() { new TemplateDto() { Id = 0, Name = "" } }.Concat(_templateList)).ToList();
             ComboBoxNextPage.ValueMember = nameof(TemplateDto.Id);
-            ComboBoxNextPage.DisplayMember = nameof(TemplateDto.TemplateStr);
+            ComboBoxNextPage.DisplayMember = nameof(TemplateDto.Name);
 
             if (_currentSpider != null)
             {
@@ -98,10 +99,9 @@ namespace SpiderWin.Modals
             _currentSpider.PostObjStr = TxtPostObj.Text;
             _currentSpider.Method = ComboMethod.Text;
             _currentSpider.NextPageTemplateId = (int)ComboBoxNextPage.SelectedValue;
-            await Task.Run(() =>
-            {
-                _coreService.SubmitSpider(_currentSpider);
-            });
+            var submitResult = await Task.Run(() => _coreService.SubmitSpider(_currentSpider));
+            if (submitResult != StatusMessage.Success)
+                MessageBox.Show(submitResult);
             FormEnabled();
             Close();
         }

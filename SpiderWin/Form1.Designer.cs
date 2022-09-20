@@ -37,11 +37,13 @@
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.设置ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.工作设置ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.本地ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.服务器ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.UseLocalMenu = new System.Windows.Forms.ToolStripMenuItem();
+            this.UseServiceMenu = new System.Windows.Forms.ToolStripMenuItem();
+            this.MenuNewSpider = new System.Windows.Forms.ToolStripMenuItem();
             this.listBoxUrl = new System.Windows.Forms.ListBox();
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
             this.mainModalStatusLabel = new System.Windows.Forms.ToolStripStatusLabel();
+            this.ResultTxtBox = new System.Windows.Forms.RichTextBox();
             this.menuStrip1.SuspendLayout();
             this.statusStrip1.SuspendLayout();
             this.SuspendLayout();
@@ -114,7 +116,8 @@
             // 设置ToolStripMenuItem
             // 
             this.设置ToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.工作设置ToolStripMenuItem});
+            this.工作设置ToolStripMenuItem,
+            this.MenuNewSpider});
             this.设置ToolStripMenuItem.Name = "设置ToolStripMenuItem";
             this.设置ToolStripMenuItem.Size = new System.Drawing.Size(44, 21);
             this.设置ToolStripMenuItem.Text = "设置";
@@ -122,23 +125,34 @@
             // 工作设置ToolStripMenuItem
             // 
             this.工作设置ToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.本地ToolStripMenuItem,
-            this.服务器ToolStripMenuItem});
+            this.UseLocalMenu,
+            this.UseServiceMenu});
             this.工作设置ToolStripMenuItem.Name = "工作设置ToolStripMenuItem";
-            this.工作设置ToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.工作设置ToolStripMenuItem.Size = new System.Drawing.Size(124, 22);
             this.工作设置ToolStripMenuItem.Text = "工作设置";
             // 
-            // 本地ToolStripMenuItem
+            // UseLocalMenu
             // 
-            this.本地ToolStripMenuItem.Name = "本地ToolStripMenuItem";
-            this.本地ToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
-            this.本地ToolStripMenuItem.Text = "本地";
+            this.UseLocalMenu.CheckOnClick = true;
+            this.UseLocalMenu.Name = "UseLocalMenu";
+            this.UseLocalMenu.Size = new System.Drawing.Size(112, 22);
+            this.UseLocalMenu.Text = "本地";
+            this.UseLocalMenu.Click += new System.EventHandler(this.UseLocalMenu_Click);
             // 
-            // 服务器ToolStripMenuItem
+            // UseServiceMenu
             // 
-            this.服务器ToolStripMenuItem.Name = "服务器ToolStripMenuItem";
-            this.服务器ToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
-            this.服务器ToolStripMenuItem.Text = "服务器";
+            this.UseServiceMenu.CheckOnClick = true;
+            this.UseServiceMenu.Name = "UseServiceMenu";
+            this.UseServiceMenu.Size = new System.Drawing.Size(112, 22);
+            this.UseServiceMenu.Text = "服务器";
+            this.UseServiceMenu.Click += new System.EventHandler(this.UseServiceMenu_Click);
+            // 
+            // MenuNewSpider
+            // 
+            this.MenuNewSpider.Name = "MenuNewSpider";
+            this.MenuNewSpider.Size = new System.Drawing.Size(124, 22);
+            this.MenuNewSpider.Text = "新增爬虫";
+            this.MenuNewSpider.Click += new System.EventHandler(this.MenuNewSpider_Click);
             // 
             // listBoxUrl
             // 
@@ -155,7 +169,7 @@
             // 
             this.statusStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.mainModalStatusLabel});
-            this.statusStrip1.Location = new System.Drawing.Point(0, 226);
+            this.statusStrip1.Location = new System.Drawing.Point(0, 324);
             this.statusStrip1.Name = "statusStrip1";
             this.statusStrip1.Size = new System.Drawing.Size(674, 22);
             this.statusStrip1.TabIndex = 10;
@@ -164,14 +178,23 @@
             // mainModalStatusLabel
             // 
             this.mainModalStatusLabel.Name = "mainModalStatusLabel";
-            this.mainModalStatusLabel.Size = new System.Drawing.Size(131, 17);
-            this.mainModalStatusLabel.Text = "toolStripStatusLabel1";
+            this.mainModalStatusLabel.Size = new System.Drawing.Size(0, 17);
+            // 
+            // ResultTxtBox
+            // 
+            this.ResultTxtBox.Location = new System.Drawing.Point(81, 213);
+            this.ResultTxtBox.Name = "ResultTxtBox";
+            this.ResultTxtBox.ReadOnly = true;
+            this.ResultTxtBox.Size = new System.Drawing.Size(545, 96);
+            this.ResultTxtBox.TabIndex = 11;
+            this.ResultTxtBox.Text = "";
             // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 17F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(674, 248);
+            this.ClientSize = new System.Drawing.Size(674, 346);
+            this.Controls.Add(this.ResultTxtBox);
             this.Controls.Add(this.statusStrip1);
             this.Controls.Add(this.listBoxUrl);
             this.Controls.Add(this.menuStrip1);
@@ -206,10 +229,12 @@
         private MenuStrip menuStrip1;
         private ToolStripMenuItem 设置ToolStripMenuItem;
         private ToolStripMenuItem 工作设置ToolStripMenuItem;
-        private ToolStripMenuItem 本地ToolStripMenuItem;
-        private ToolStripMenuItem 服务器ToolStripMenuItem;
+        private ToolStripMenuItem UseLocalMenu;
+        private ToolStripMenuItem UseServiceMenu;
         private ListBox listBoxUrl;
         private StatusStrip statusStrip1;
         private ToolStripStatusLabel mainModalStatusLabel;
+        private ToolStripMenuItem MenuNewSpider;
+        private RichTextBox ResultTxtBox;
     }
 }

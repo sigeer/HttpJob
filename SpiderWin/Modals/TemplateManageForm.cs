@@ -14,7 +14,7 @@ namespace SpiderWin.Modals
 {
     public partial class TemplateManageForm : Form
     {
-        public event EventHandler? OnOk;
+        public event EventHandler<List<int>>? OnOk;
         readonly ISpiderService _service;
         readonly List<int> _selected;
         List<TemplateDto> _templates = new List<TemplateDto>();
@@ -72,7 +72,7 @@ namespace SpiderWin.Modals
                 if (row.Cells[0].Value != null && (bool)row.Cells[0].Value == true)
                     selected.Add((int)row.Cells[2].Value);
             }
-            OnOk?.Invoke(selected, e);
+            OnOk?.Invoke(this, selected);
             Close();
         }
 

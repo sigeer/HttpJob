@@ -135,7 +135,8 @@ namespace SpiderTool.SqlSugar.Domain
             _dbContext.Updateable<DB_Spider>(dbModel).Where(x => x.Id == model.Id).ExecuteCommand();
 
             _dbContext.Deleteable<DB_SpiderTemplate>(x => x.SpiderId == dbModel.Id).ExecuteCommand();
-            _dbContext.Insertable<DB_SpiderTemplate>(model.Templates.Select(x => new DB_SpiderTemplate { SpiderId = dbModel.Id, TemplateId = x })).ExecuteCommand();
+            var data = model.Templates.Select(x => new DB_SpiderTemplate { SpiderId = dbModel.Id, TemplateId = x }).ToList();
+            _dbContext.Insertable<DB_SpiderTemplate>(data).ExecuteCommand();
 
             _dbContext.Ado.CommitTran();
             return StatusMessage.Success;
