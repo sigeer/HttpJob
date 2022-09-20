@@ -6,6 +6,7 @@ namespace SpiderTool.DataBase
     [Table("db_spider")]
     public class DB_Spider
     {
+        [Key]
         public int Id { get; set; }
         [MaxLength(100)]
         public string? Name { get; set; }

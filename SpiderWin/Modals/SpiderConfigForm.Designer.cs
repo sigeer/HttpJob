@@ -29,66 +29,73 @@
         private void InitializeComponent()
         {
             this.labelName = new System.Windows.Forms.Label();
-            this.textBox1 = new System.Windows.Forms.TextBox();
+            this.TxtName = new System.Windows.Forms.TextBox();
             this.labelDescription = new System.Windows.Forms.Label();
-            this.richTextBox1 = new System.Windows.Forms.RichTextBox();
-            this.comboBox1 = new System.Windows.Forms.ComboBox();
+            this.TxtDescription = new System.Windows.Forms.RichTextBox();
+            this.ComboMethod = new System.Windows.Forms.ComboBox();
             this.labelMethod = new System.Windows.Forms.Label();
             this.label1 = new System.Windows.Forms.Label();
-            this.richTextBox2 = new System.Windows.Forms.RichTextBox();
+            this.TxtPostObj = new System.Windows.Forms.RichTextBox();
             this.label2 = new System.Windows.Forms.Label();
-            this.dropdownContentReader = new System.Windows.Forms.ComboBox();
             this.btnAddContentReader = new System.Windows.Forms.Button();
+            this.label3 = new System.Windows.Forms.Label();
+            this.ComboBoxNextPage = new System.Windows.Forms.ComboBox();
+            this.menuStrip1 = new System.Windows.Forms.MenuStrip();
+            this.设置ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.TemplateListMenu = new System.Windows.Forms.ToolStripMenuItem();
+            this.BtnSubmit = new System.Windows.Forms.Button();
+            this.BtnCancel = new System.Windows.Forms.Button();
+            this.menuStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
             // labelName
             // 
             this.labelName.AutoSize = true;
-            this.labelName.Location = new System.Drawing.Point(22, 19);
+            this.labelName.Location = new System.Drawing.Point(22, 36);
             this.labelName.Name = "labelName";
             this.labelName.Size = new System.Drawing.Size(32, 17);
             this.labelName.TabIndex = 0;
             this.labelName.Text = "名称";
             // 
-            // textBox1
+            // TxtName
             // 
-            this.textBox1.Location = new System.Drawing.Point(89, 16);
-            this.textBox1.Name = "textBox1";
-            this.textBox1.Size = new System.Drawing.Size(547, 23);
-            this.textBox1.TabIndex = 1;
+            this.TxtName.Location = new System.Drawing.Point(89, 33);
+            this.TxtName.Name = "TxtName";
+            this.TxtName.Size = new System.Drawing.Size(547, 23);
+            this.TxtName.TabIndex = 1;
             // 
             // labelDescription
             // 
             this.labelDescription.AutoSize = true;
-            this.labelDescription.Location = new System.Drawing.Point(22, 53);
+            this.labelDescription.Location = new System.Drawing.Point(22, 70);
             this.labelDescription.Name = "labelDescription";
             this.labelDescription.Size = new System.Drawing.Size(32, 17);
             this.labelDescription.TabIndex = 2;
             this.labelDescription.Text = "描述";
             // 
-            // richTextBox1
+            // TxtDescription
             // 
-            this.richTextBox1.Location = new System.Drawing.Point(89, 53);
-            this.richTextBox1.Name = "richTextBox1";
-            this.richTextBox1.Size = new System.Drawing.Size(547, 58);
-            this.richTextBox1.TabIndex = 3;
-            this.richTextBox1.Text = "";
+            this.TxtDescription.Location = new System.Drawing.Point(89, 70);
+            this.TxtDescription.Name = "TxtDescription";
+            this.TxtDescription.Size = new System.Drawing.Size(547, 58);
+            this.TxtDescription.TabIndex = 3;
+            this.TxtDescription.Text = "";
             // 
-            // comboBox1
+            // ComboMethod
             // 
-            this.comboBox1.FormattingEnabled = true;
-            this.comboBox1.Items.AddRange(new object[] {
+            this.ComboMethod.FormattingEnabled = true;
+            this.ComboMethod.Items.AddRange(new object[] {
             "GET",
             "POST"});
-            this.comboBox1.Location = new System.Drawing.Point(89, 120);
-            this.comboBox1.Name = "comboBox1";
-            this.comboBox1.Size = new System.Drawing.Size(121, 25);
-            this.comboBox1.TabIndex = 4;
+            this.ComboMethod.Location = new System.Drawing.Point(89, 137);
+            this.ComboMethod.Name = "ComboMethod";
+            this.ComboMethod.Size = new System.Drawing.Size(121, 25);
+            this.ComboMethod.TabIndex = 4;
             // 
             // labelMethod
             // 
             this.labelMethod.AutoSize = true;
-            this.labelMethod.Location = new System.Drawing.Point(12, 123);
+            this.labelMethod.Location = new System.Drawing.Point(12, 140);
             this.labelMethod.Name = "labelMethod";
             this.labelMethod.Size = new System.Drawing.Size(56, 17);
             this.labelMethod.TabIndex = 5;
@@ -97,40 +104,32 @@
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(2, 160);
+            this.label1.Location = new System.Drawing.Point(2, 177);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(77, 17);
             this.label1.TabIndex = 6;
             this.label1.Text = "POST BODY";
             // 
-            // richTextBox2
+            // TxtPostObj
             // 
-            this.richTextBox2.Location = new System.Drawing.Point(89, 160);
-            this.richTextBox2.Name = "richTextBox2";
-            this.richTextBox2.Size = new System.Drawing.Size(547, 52);
-            this.richTextBox2.TabIndex = 7;
-            this.richTextBox2.Text = "";
+            this.TxtPostObj.Location = new System.Drawing.Point(89, 177);
+            this.TxtPostObj.Name = "TxtPostObj";
+            this.TxtPostObj.Size = new System.Drawing.Size(547, 52);
+            this.TxtPostObj.TabIndex = 7;
+            this.TxtPostObj.Text = "";
             // 
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(12, 235);
+            this.label2.Location = new System.Drawing.Point(12, 285);
             this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(43, 17);
+            this.label2.Size = new System.Drawing.Size(56, 17);
             this.label2.TabIndex = 8;
-            this.label2.Text = "label2";
-            // 
-            // dropdownContentReader
-            // 
-            this.dropdownContentReader.FormattingEnabled = true;
-            this.dropdownContentReader.Location = new System.Drawing.Point(89, 232);
-            this.dropdownContentReader.Name = "dropdownContentReader";
-            this.dropdownContentReader.Size = new System.Drawing.Size(275, 25);
-            this.dropdownContentReader.TabIndex = 9;
+            this.label2.Text = "内容读取";
             // 
             // btnAddContentReader
             // 
-            this.btnAddContentReader.Location = new System.Drawing.Point(90, 270);
+            this.btnAddContentReader.Location = new System.Drawing.Point(89, 281);
             this.btnAddContentReader.Name = "btnAddContentReader";
             this.btnAddContentReader.Size = new System.Drawing.Size(275, 25);
             this.btnAddContentReader.TabIndex = 10;
@@ -138,25 +137,96 @@
             this.btnAddContentReader.UseVisualStyleBackColor = true;
             this.btnAddContentReader.Click += new System.EventHandler(this.btnAddContentReader_Click);
             // 
+            // label3
+            // 
+            this.label3.AutoSize = true;
+            this.label3.Location = new System.Drawing.Point(11, 246);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(68, 17);
+            this.label3.TabIndex = 11;
+            this.label3.Text = "下一页设置";
+            // 
+            // ComboBoxNextPage
+            // 
+            this.ComboBoxNextPage.FormattingEnabled = true;
+            this.ComboBoxNextPage.Location = new System.Drawing.Point(89, 243);
+            this.ComboBoxNextPage.Name = "ComboBoxNextPage";
+            this.ComboBoxNextPage.Size = new System.Drawing.Size(275, 25);
+            this.ComboBoxNextPage.TabIndex = 12;
+            // 
+            // menuStrip1
+            // 
+            this.menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.设置ToolStripMenuItem});
+            this.menuStrip1.Location = new System.Drawing.Point(0, 0);
+            this.menuStrip1.Name = "menuStrip1";
+            this.menuStrip1.Size = new System.Drawing.Size(648, 25);
+            this.menuStrip1.TabIndex = 13;
+            this.menuStrip1.Text = "menuStrip1";
+            // 
+            // 设置ToolStripMenuItem
+            // 
+            this.设置ToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.TemplateListMenu});
+            this.设置ToolStripMenuItem.Name = "设置ToolStripMenuItem";
+            this.设置ToolStripMenuItem.Size = new System.Drawing.Size(44, 21);
+            this.设置ToolStripMenuItem.Text = "设置";
+            // 
+            // TemplateListMenu
+            // 
+            this.TemplateListMenu.Name = "TemplateListMenu";
+            this.TemplateListMenu.Size = new System.Drawing.Size(180, 22);
+            this.TemplateListMenu.Text = "模板列表";
+            this.TemplateListMenu.Click += new System.EventHandler(this.TemplateListMenu_Click);
+            // 
+            // BtnSubmit
+            // 
+            this.BtnSubmit.Location = new System.Drawing.Point(561, 320);
+            this.BtnSubmit.Name = "BtnSubmit";
+            this.BtnSubmit.Size = new System.Drawing.Size(75, 23);
+            this.BtnSubmit.TabIndex = 14;
+            this.BtnSubmit.Text = "保存";
+            this.BtnSubmit.UseVisualStyleBackColor = true;
+            this.BtnSubmit.Click += new System.EventHandler(this.BtnSubmit_Click);
+            // 
+            // BtnCancel
+            // 
+            this.BtnCancel.Location = new System.Drawing.Point(467, 320);
+            this.BtnCancel.Name = "BtnCancel";
+            this.BtnCancel.Size = new System.Drawing.Size(75, 23);
+            this.BtnCancel.TabIndex = 15;
+            this.BtnCancel.Text = "取消";
+            this.BtnCancel.UseVisualStyleBackColor = true;
+            this.BtnCancel.Click += new System.EventHandler(this.BtnCancel_Click);
+            // 
             // SpiderConfigForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 17F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(648, 554);
+            this.AutoScroll = true;
+            this.ClientSize = new System.Drawing.Size(648, 355);
+            this.Controls.Add(this.BtnCancel);
+            this.Controls.Add(this.BtnSubmit);
+            this.Controls.Add(this.ComboBoxNextPage);
+            this.Controls.Add(this.label3);
             this.Controls.Add(this.btnAddContentReader);
-            this.Controls.Add(this.dropdownContentReader);
             this.Controls.Add(this.label2);
-            this.Controls.Add(this.richTextBox2);
+            this.Controls.Add(this.TxtPostObj);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.labelMethod);
-            this.Controls.Add(this.comboBox1);
-            this.Controls.Add(this.richTextBox1);
+            this.Controls.Add(this.ComboMethod);
+            this.Controls.Add(this.TxtDescription);
             this.Controls.Add(this.labelDescription);
-            this.Controls.Add(this.textBox1);
+            this.Controls.Add(this.TxtName);
             this.Controls.Add(this.labelName);
+            this.Controls.Add(this.menuStrip1);
+            this.MainMenuStrip = this.menuStrip1;
             this.Name = "SpiderConfigForm";
-            this.Text = "SpiderConfigForm";
+            this.Text = "爬虫设置";
             this.Load += new System.EventHandler(this.SpiderConfigForm_Load);
+            this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.SpiderConfigForm_KeyDown);
+            this.menuStrip1.ResumeLayout(false);
+            this.menuStrip1.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -165,15 +235,21 @@
         #endregion
 
         private Label labelName;
-        private TextBox textBox1;
+        private TextBox TxtName;
         private Label labelDescription;
-        private RichTextBox richTextBox1;
-        private ComboBox comboBox1;
+        private RichTextBox TxtDescription;
+        private ComboBox ComboMethod;
         private Label labelMethod;
         private Label label1;
-        private RichTextBox richTextBox2;
+        private RichTextBox TxtPostObj;
         private Label label2;
-        private ComboBox dropdownContentReader;
         private Button btnAddContentReader;
+        private Label label3;
+        private ComboBox ComboBoxNextPage;
+        private MenuStrip menuStrip1;
+        private ToolStripMenuItem 设置ToolStripMenuItem;
+        private ToolStripMenuItem TemplateListMenu;
+        private Button BtnSubmit;
+        private Button BtnCancel;
     }
 }

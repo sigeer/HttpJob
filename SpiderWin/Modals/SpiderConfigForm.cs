@@ -1,70 +1,114 @@
-﻿using SpiderTool.Dto.Spider;
+﻿using Newtonsoft.Json;
+using SpiderTool.Dto.Spider;
 using SpiderTool.IService;
+using Utility.Extensions;
 
 namespace SpiderWin.Modals
 {
     public partial class SpiderConfigForm : Form
     {
-        readonly int _configId;
+        #region form variables
+        SpiderDtoSetter backup;
+        SpiderDtoSetter _currentSpider;
+        List<TemplateDto> _templateList = new List<TemplateDto>();
+        #endregion
+
+        #region services
         readonly ISpiderService _coreService;
-        List<Control> contentConfigControls = new List<Control>();
-        private List<TemplateDto> _templateList = new List<TemplateDto>();
-        private int _flag = 0;
-        public SpiderConfigForm(int configId, ISpiderService coreService)
+        #endregion
+
+        public SpiderConfigForm(ISpiderService coreService, SpiderDtoSetter? spider = null)
         {
-            _configId = configId;
+            backup = spider ?? new SpiderDtoSetter();
+            _currentSpider = backup.Clone();
             _coreService = coreService;
 
             InitializeComponent();
 
         }
-
         private async void LoadData()
         {
             _templateList = await _coreService.GetTemplateDtoListAsync();
-
-            this.dropdownContentReader.DisplayMember = nameof(TemplateDto.Name);
-            this.dropdownContentReader.ValueMember = nameof(TemplateDto.Name);
-            this.dropdownContentReader.DataSource = _templateList;
         }
 
-        private void SpiderConfigForm_Load(object sender, EventArgs e)
+        private void LoadForm()
         {
-            LoadData();
+            ComboBoxNextPage.DataSource = _templateList;
+            ComboBoxNextPage.ValueMember = nameof(TemplateDto.Id);
+            ComboBoxNextPage.DisplayMember = nameof(TemplateDto.TemplateStr);
+
+            if (_currentSpider != null)
+            {
+                TxtName.Text = _currentSpider.Name;
+                TxtDescription.Text = _currentSpider.Description;
+                TxtPostObj.Text = _currentSpider.PostObjStr;
+                ComboMethod.SelectedText = _currentSpider.Method;
+
+                if (_currentSpider.NextPageTemplateId != null)
+                    ComboBoxNextPage.SelectedValue = _currentSpider.NextPageTemplateId;
+            } 
+        }
+
+        private async void SpiderConfigForm_Load(object sender, EventArgs e)
+        {
+            await Task.Run(() => LoadData());
+            LoadForm();
         }
 
         private void btnAddContentReader_Click(object sender, EventArgs e)
         {
-            var btnFlag = new Button()
+            var templateListForm = new TemplateManageForm(_coreService, _currentSpider.Templates);
+            templateListForm.OnOk += (data, evt) =>
             {
-                Name = $"btn{_flag}",
-                Text = "删除",
-                Location = new System.Drawing.Point(400, 260 + (contentConfigControls.Count / 2) * 30),
-                Size = new System.Drawing.Size(75, 25)
+                if (data != null)
+                    _currentSpider.Templates = (data as List<int>)!;
             };
-            var txtFlag = new ComboBox()
+            templateListForm.ShowDialog();
+        }
+
+        private void SpiderConfigForm_KeyDown(object sender, KeyEventArgs e)
+        {
+            if(e.KeyCode == Keys.S && e.Modifiers == Keys.Control)
             {
-                Name = $"txt{_flag}",
-                Location = new System.Drawing.Point(90, 260 + (contentConfigControls.Count / 2) * 30),
-                Size = new System.Drawing.Size(275, 25),
-                DisplayMember = nameof(TemplateDto.Name),
-                ValueMember = nameof(TemplateDto.Id),
-                DataSource = _templateList
-            };
-            btnFlag.Click += (sender, e) =>
+                MessageBox.Show("ctrl + s");
+            }
+        }
+
+        private void TemplateListMenu_Click(object sender, EventArgs e)
+        {
+            new TemplateManageForm(_coreService).ShowDialog();
+        }
+
+        private void FormDisabled()
+        {
+            BtnSubmit.Enabled = false;
+            BtnCancel.Enabled = false;
+        }
+        private void FormEnabled()
+        {
+            BtnSubmit.Enabled = true;
+            BtnCancel.Enabled = true;
+        }
+
+        private async void BtnSubmit_Click(object sender, EventArgs e)
+        {
+            FormDisabled();
+            _currentSpider.Name = TxtName.Text;
+            _currentSpider.Description = TxtDescription.Text;
+            _currentSpider.PostObjStr = TxtPostObj.Text;
+            _currentSpider.Method = ComboMethod.Text;
+            _currentSpider.NextPageTemplateId = (int)ComboBoxNextPage.SelectedValue;
+            await Task.Run(() =>
             {
-                contentConfigControls.Remove(btnFlag);
-                contentConfigControls.Remove(txtFlag);
-                this.Controls.Remove(btnFlag);
-                this.Controls.Remove(txtFlag);
-                this.btnAddContentReader.Location = new Point(90, 260 + (contentConfigControls.Count / 2) * 30);
-            };
-            contentConfigControls.Add(txtFlag);
-            contentConfigControls.Add(btnFlag);
-            this.Controls.Add(txtFlag);
-            this.Controls.Add(btnFlag);
-            this.btnAddContentReader.Location = new Point(90, 260 + (contentConfigControls.Count / 2) * 30);
-            _flag++;
+                _coreService.SubmitSpider(_currentSpider);
+            });
+            FormEnabled();
+            Close();
+        }
+
+        private void BtnCancel_Click(object sender, EventArgs e)
+        {
+            Close();
         }
     }
 }

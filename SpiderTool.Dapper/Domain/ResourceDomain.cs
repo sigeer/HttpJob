@@ -22,7 +22,12 @@ namespace SpiderTool.Dapper.Domain
 
         public List<ResourceHistoryDto> GetResourceDtoList()
         {
-            return _dbConn.Query<ResourceHistoryDto>("select Id, Name, Url from " + resouceTable).ToList();
+            return _dbConn.Query<ResourceHistoryDto>("select Id, Name, Url from " + resouceTable + " order by lastUpdatedTime desc").ToList();
+        }
+
+        public async Task<List<ResourceHistoryDto>> GetResourceDtoListAsync()
+        {
+            return (await _dbConn.QueryAsync<ResourceHistoryDto>("select Id, Name, Url from " + resouceTable + " order by lastUpdatedTime desc")).ToList();
         }
 
         public string Submit(ResourceHistorySetter model)
