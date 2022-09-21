@@ -105,7 +105,7 @@ namespace SpiderTool.SqlSugar.Domain
                             Id = x.Id,
                             NextPageTemplateId = x.NextPageTemplateId,
                             PostObjStr = x.PostObjStr,
-                            Templates = b.Select(y => y.TemplateId).ToList()
+                            Templates = b.Where(m => m.SpiderId == x.Id).Select(y => y.TemplateId).ToList()
                         });
             return data.ToList();
         }

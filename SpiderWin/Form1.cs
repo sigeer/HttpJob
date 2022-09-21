@@ -28,6 +28,10 @@ namespace SpiderWin
         private void btnShowConfig_Click(object sender, EventArgs e)
         {
             var form = new SpiderConfigForm(_coreService, dropConfig.SelectedItem as SpiderDtoSetter);
+            form.OnSubmit += (obj, evt) =>
+            {
+                LoadSpiderList();
+            };
             form.ShowDialog();
         }
 
@@ -39,13 +43,6 @@ namespace SpiderWin
 
             ComboxUrl.DisplayMember = nameof(TaskDto.RootUrl);
             ComboxUrl.ValueMember = nameof(TaskDto.RootUrl);
-        }
-
-        private void LoadForm()
-        {
-            dropConfig.DataSource = (new List<SpiderDtoSetter>() { new SpiderDtoSetter() { Id = 0, Name = "" } }.Concat(_spiderList)).ToList();
-
-            ComboxUrl.DataSource = Enumerable.DistinctBy(_taskList, x => x.RootUrl).ToList();
 
             DataGridTasks.ReadOnly = true;
             DataGridTasks.Columns.Add(nameof(TaskDto.Id), nameof(TaskDto.Id));
@@ -54,22 +51,37 @@ namespace SpiderWin
             DataGridTasks.Columns.Add(nameof(TaskDto.CreateTime), "创建时间");
             DataGridTasks.Columns.Add(nameof(TaskDto.Status), "状态");
             DataGridTasks.Columns.Add(nameof(TaskDto.CompleteTime), "完成时间");
-            LoadDataGridTask();
         }
 
-        private async void LoadData()
+        private void LoadForm()
+        {
+            LoadTaskList();
+            LoadSpiderList();
+        }
+
+        private void LoadData()
         {
             PreLoadForm();
-            await Task.Run(() =>
-            {
-                _spiderList = _coreService.GetSpiderDtoList();
-                _taskList = _coreService.GetTaskList();
-            });
+
             LoadForm();
         }
 
-        private void LoadDataGridTask()
+        private async void LoadSpiderList()
         {
+            await Task.Run(() =>
+            {
+                _spiderList = _coreService.GetSpiderDtoList();
+            });
+            dropConfig.DataSource = (new List<SpiderDtoSetter>() { new SpiderDtoSetter() { Id = 0, Name = "" } }.Concat(_spiderList)).ToList();
+        }
+
+        private async void LoadTaskList()
+        {
+            await Task.Run(() =>
+            {
+                _taskList = _coreService.GetTaskList();
+            });
+            ComboxUrl.DataSource = Enumerable.DistinctBy(_taskList, x => x.RootUrl).ToList();
             DataGridTasks.Rows.Clear();
             _taskList.ForEach(x =>
             {
@@ -108,14 +120,12 @@ namespace SpiderWin
                    sw.Stop();
                    mainModalStatusLabel.Text = $"共耗时：{sw.Elapsed.TotalSeconds.ToFixed(2)}秒";
                    ResultTxtBox.Text += $"[{DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")}] file:///{evt} \r\n";
+
+                   MessageBox.Show($"任务完成，共耗时{sw.Elapsed.TotalSeconds.ToFixed(2)}秒。");
                };
-               worker.OnLog += async (obj, evt) =>
+               worker.OnLog += (obj, evt) =>
                {
-                   await Task.Run(() =>
-                   {
-                       _taskList = _coreService.GetTaskList();
-                   });
-                   LoadDataGridTask();
+                   LoadTaskList();
                };
 
                BeginInvoke(new MethodInvoker(async () =>
@@ -128,7 +138,12 @@ namespace SpiderWin
 
         private void MenuNewSpider_Click(object sender, EventArgs e)
         {
-            new SpiderConfigForm(_coreService).ShowDialog();
+            var form = new SpiderConfigForm(_coreService);
+            form.OnSubmit += (obj, evt) =>
+            {
+                LoadSpiderList();
+            };
+            form.ShowDialog();
         }
 
         private void UseLocalMenu_Click(object sender, EventArgs e)

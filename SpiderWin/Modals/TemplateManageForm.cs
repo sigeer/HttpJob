@@ -21,9 +21,8 @@ namespace SpiderWin.Modals
             _templates = await _service.GetTemplateDtoListAsync();
         }
 
-        private void LoadForm()
+        private void PreLoadForm()
         {
-            //dataGridView1.DataSource = _templates;
             dataGridView1.Columns.Add("Checked", "勾选");
             dataGridView1.Columns.Add("Operation", "操作");
             dataGridView1.Columns.Add(nameof(TemplateDto.Id), nameof(TemplateDto.Id));
@@ -31,7 +30,11 @@ namespace SpiderWin.Modals
             dataGridView1.Columns.Add(nameof(TemplateDto.Type), nameof(TemplateDto.Type));
             dataGridView1.Columns.Add("XPath", nameof(TemplateDto.TemplateStr));
             dataGridView1.Columns.Add(nameof(TemplateDto.LinkedSpiderId), nameof(TemplateDto.LinkedSpiderId));
+        }
 
+        private void LoadForm()
+        {
+            dataGridView1.Rows.Clear();
             _templates.ForEach(x =>
             {
                 var row = new DataGridViewRow();
@@ -47,6 +50,7 @@ namespace SpiderWin.Modals
         }
         private async void TemplateManageForm_Load(object sender, EventArgs e)
         {
+            PreLoadForm();
             await Task.Run(async () =>
             {
                 await LoadData();
@@ -79,6 +83,14 @@ namespace SpiderWin.Modals
                 var row = dataGridView1.Rows[e.RowIndex];
                 var btn = row.Cells[e.ColumnIndex];
                 var form = new ContentConfigForm(_service, btn.Tag as TemplateDto);
+                form.OnSubmit += async (obj, evt) =>
+                {
+                    await Task.Run(async () =>
+                    {
+                        await LoadData();
+                    });
+                    LoadForm();
+                };
                 form.ShowDialog();
             }
         }
