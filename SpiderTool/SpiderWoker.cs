@@ -2,8 +2,10 @@
 using SpiderTool.Constants;
 using SpiderTool.Dto.Resource;
 using SpiderTool.Dto.Spider;
-using SpiderTool.IDomain;
 using SpiderTool.IService;
+using SpiderTool.Tasks;
+using System.Text;
+using System.Text.RegularExpressions;
 using System.Web;
 using Utility.Extensions;
 using Utility.Http;
@@ -23,7 +25,7 @@ namespace SpiderTool
         }
         private string DocumentTitle => HttpUtility.HtmlDecode(_currentDoc?.DocumentNode?.SelectSingleNode("//title")?.InnerText) ?? _rootUrl;
         /// <summary>
-        /// 经过下一页设置进行变换
+        /// 会经过下一页设置进行变换
         /// </summary>
         private string? _currentUrl;
         private string? _currentDir;
@@ -33,11 +35,7 @@ namespace SpiderTool
             {
                 if (string.IsNullOrEmpty(_currentDir))
                 {
-                    var sub = string.Empty;
-                    var docTitle = _currentDoc.DocumentNode.SelectSingleNode("//title");
-                    if (docTitle != null)
-                        sub = HttpUtility.HtmlDecode(docTitle.InnerText);
-                    _currentDir = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "wwwroot", "download", sub ?? DateTime.Now.Ticks.ToString());
+                    _currentDir = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "wwwroot", "download", $"task{_taskId}");
                     _currentDir.GetDirectory();
                 }
                 return _currentDir;
@@ -48,6 +46,7 @@ namespace SpiderTool
         /// 在同一个爬虫任务内始终一致
         /// </summary>
         private string _rootUrl = string.Empty;
+        private int _taskId;
         private string HostUrl => _rootUrl.GetHostUrl();
 
         readonly ISpiderService _service;
@@ -67,20 +66,28 @@ namespace SpiderTool
                 return;
 
             _rootUrl = url;
-            await Process(url);
-            FinishSpider();
-
+            _taskId = _service.AddTask(new Tasks.TaskSetter
+            {
+                RootUrl = _rootUrl,
+                SpiderId = spiderId,
+                Status = (int)TaskType.NotEffective
+            });
+            OnLog?.Invoke(this, "AddTask");
+            await ProcessUrl(url);
+            CompleteTask();
         }
 
-        public void FinishSpider()
+        public void CompleteTask()
         {
-            _service.SubmitResouceHistory(new ResourceHistorySetter()
-            {
-                Url = _rootUrl,
-                Name = DocumentTitle,
-                SpiderId = Spider.Id
-            });
+            //_service.SubmitResouceHistory(new ResourceHistorySetter()
+            //{
+            //    Url = _rootUrl,
+            //    Name = DocumentTitle,
+            //    SpiderId = Spider.Id
+            //});
+            _service.SetTaskStatus(_taskId, (int)TaskType.Completed);
             TaskComplete?.Invoke(this, CurrentDir);
+            OnLog?.Invoke(this, "ProcessComplete");
             MergeTextFile(CurrentDir);
         }
 
@@ -92,16 +99,27 @@ namespace SpiderTool
                 res = await HttpRequest.PostRawAsync(url, Spider.PostObj, Spider.GetHeaders());
             else
                 res = await HttpRequest.GetRawAsync(url, Spider.GetHeaders());
-            return (await res.Content.ReadAsStreamAsync()).DecodeData(res.Content.Headers.ContentType?.ToString() ?? "");
+
+            var responseStream = await res.Content.ReadAsStreamAsync();
+            return responseStream.DecodeData(res.Content.Headers.ContentType?.CharSet);
         }
 
-        public async Task Process(string currentUrl)
+        public async Task ProcessUrl(string currentUrl)
         {
             _currentUrl = currentUrl;
 
             var documentContent = await LoadDocumentContent();
             _currentDoc.LoadHtml(documentContent);
-            ExtractContent();
+
+            _service.UpdateTask(new Tasks.TaskSetter
+            {
+                Id = _taskId,
+                Description = DocumentTitle,
+                Status = (int)TaskType.InProgress
+            });
+            OnLog?.Invoke(this, "请求成功");
+
+            ProcessContent();
             await MoveToNextPage();
             OnLog?.Invoke(this, "====开始合并====");
 
@@ -110,7 +128,7 @@ namespace SpiderTool
             //Console.WriteLine("打包完成：" + filePath);
         }
 
-        private void ExtractContent()
+        private void ProcessContent()
         {
             foreach (var rule in Spider.TemplateList)
             {
@@ -195,7 +213,7 @@ namespace SpiderTool
             {
                 _currentUrl = (nextPageNode.Attributes["href"] ?? nextPageNode.Attributes["data-href"])?.Value;
                 if (_currentUrl != null)
-                    await Process(_currentUrl);
+                    await ProcessUrl(_currentUrl);
             }
         }
 

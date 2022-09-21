@@ -2,6 +2,7 @@ using SpiderTool;
 using SpiderTool.Dto.Resource;
 using SpiderTool.Dto.Spider;
 using SpiderTool.IService;
+using SpiderTool.Tasks;
 using SpiderWin.Modals;
 using System.Diagnostics;
 using Utility.Extensions;
@@ -13,7 +14,8 @@ namespace SpiderWin
         readonly ISpiderService _coreService;
         List<SpiderDtoSetter> _spiderList = new List<SpiderDtoSetter>();
         List<ResourceHistoryDto> _historyList = new List<ResourceHistoryDto>();
-        Stopwatch _sw = new Stopwatch();
+        List<TaskDto> _taskList = new List<TaskDto>();
+
 
         public Form1(ISpiderService coreService)
         {
@@ -35,15 +37,24 @@ namespace SpiderWin
             dropConfig.ValueMember = nameof(SpiderDtoSetter.Id);
 
 
-            ComboxUrl.DisplayMember = nameof(ResourceHistoryDto.Url);
-            ComboxUrl.ValueMember = nameof(ResourceHistoryDto.Url);
+            ComboxUrl.DisplayMember = nameof(TaskDto.RootUrl);
+            ComboxUrl.ValueMember = nameof(TaskDto.RootUrl);
         }
 
         private void LoadForm()
         {
             dropConfig.DataSource = (new List<SpiderDtoSetter>() { new SpiderDtoSetter() { Id = 0, Name = "" } }.Concat(_spiderList)).ToList();
 
-            ComboxUrl.DataSource = _historyList;
+            ComboxUrl.DataSource = Enumerable.DistinctBy(_taskList, x => x.RootUrl).ToList();
+
+            DataGridTasks.ReadOnly = true;
+            DataGridTasks.Columns.Add(nameof(TaskDto.Id), nameof(TaskDto.Id));
+            DataGridTasks.Columns.Add(nameof(TaskDto.RootUrl), nameof(TaskDto.RootUrl));
+            DataGridTasks.Columns.Add(nameof(TaskDto.SpiderId), nameof(TaskDto.SpiderId));
+            DataGridTasks.Columns.Add(nameof(TaskDto.CreateTime), "创建时间");
+            DataGridTasks.Columns.Add(nameof(TaskDto.Status), "状态");
+            DataGridTasks.Columns.Add(nameof(TaskDto.CompleteTime), "完成时间");
+            LoadDataGridTask();
         }
 
         private async void LoadData()
@@ -52,9 +63,25 @@ namespace SpiderWin
             await Task.Run(() =>
             {
                 _spiderList = _coreService.GetSpiderDtoList();
-                _historyList = _coreService.GetResourceHistoryDtoList();
+                _taskList = _coreService.GetTaskList();
             });
             LoadForm();
+        }
+
+        private void LoadDataGridTask()
+        {
+            DataGridTasks.Rows.Clear();
+            _taskList.ForEach(x =>
+            {
+                var row = new DataGridViewRow();
+                row.Cells.Add(new DataGridViewTextBoxCell() { Value = x.Id, ValueType = typeof(int) });
+                row.Cells.Add(new DataGridViewTextBoxCell() { Value = x.RootUrl });
+                row.Cells.Add(new DataGridViewTextBoxCell() { Value = x.SpiderId, ValueType = typeof(int) });
+                row.Cells.Add(new DataGridViewTextBoxCell() { Value = x.CreateTime.ToString("yyyy-MM-dd HH:mm:ss") });
+                row.Cells.Add(new DataGridViewTextBoxCell() { Value = x.StatusName });
+                row.Cells.Add(new DataGridViewTextBoxCell() { Value = x.CompleteTime == null ? "-" : x.CompleteTime.Value.ToString("yyyy-MM-dd HH:mm:ss") });
+                DataGridTasks.Rows.Add(row);
+            });
         }
 
         private void Form1_Load(object sender, EventArgs e)
@@ -70,28 +97,30 @@ namespace SpiderWin
                 return;
             }
             mainModalStatusLabel.Text = "运行中...";
-            _sw.Restart();
-            btnRun.Enabled = false;
             var spiderId = (int)dropConfig.SelectedValue;
             new Task(() =>
            {
+               Stopwatch sw = new Stopwatch();
                var worker = new SpiderWorker(_coreService);
-               worker.TaskComplete += async (obj, evt) =>
+               worker.TaskComplete += (obj, evt) =>
                {
                    btnRun.Enabled = true;
-                   _sw.Stop();
-                   mainModalStatusLabel.Text = $"共耗时：{_sw.Elapsed.TotalSeconds.ToFixed(2)}秒";
+                   sw.Stop();
+                   mainModalStatusLabel.Text = $"共耗时：{sw.Elapsed.TotalSeconds.ToFixed(2)}秒";
                    ResultTxtBox.Text += $"[{DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")}] file:///{evt} \r\n";
-
+               };
+               worker.OnLog += async (obj, evt) =>
+               {
                    await Task.Run(() =>
                    {
-                       _historyList = _coreService.GetResourceHistoryDtoList();
+                       _taskList = _coreService.GetTaskList();
                    });
-                   ComboxUrl.DataSource = _historyList;
+                   LoadDataGridTask();
                };
 
                BeginInvoke(new MethodInvoker(async () =>
                {
+                   sw.Restart();
                    await worker.Start(ComboxUrl.Text, spiderId);
                }));
            }).Start();
