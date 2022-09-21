@@ -45,6 +45,14 @@ namespace SpiderWin.Modals
 
             comboSpider.DisplayMember = nameof(SpiderDtoSetter.Name);
             comboSpider.ValueMember = nameof(SpiderDtoSetter.Id);
+        }
+
+        private void LoadForm()
+        {
+            comboType.DataSource = types;
+
+            var ds = (new List<SpiderDtoSetter>() { new SpiderDtoSetter { Id = 0, Name = "" } }.Concat(spiderList)).ToList();
+            comboSpider.DataSource = ds;
 
             txtName.Text = edittingModel.Name;
             txtXPath.Text = edittingModel.TemplateStr;
@@ -60,15 +68,6 @@ namespace SpiderWin.Modals
 
         }
 
-        private void LoadForm()
-        {
-            comboType.DataSource = types;
-
-            var ds = (new List<SpiderDtoSetter>() { new SpiderDtoSetter { Id = 0, Name = "" } }.Concat(spiderList)).ToList();
-            comboSpider.DataSource = ds;
-
-        }
-
         private void btnReplaceRule_Click(object sender, EventArgs e)
         {
             var txtReplaceRuleForm = new TxtReplaceRuleForm(_service, edittingModel.ReplacementRules);
@@ -81,7 +80,7 @@ namespace SpiderWin.Modals
 
         private bool Valid()
         {
-            if (string.IsNullOrEmpty(txtName.Text) || string.IsNullOrEmpty(txtXPath.Text))
+            if (string.IsNullOrEmpty(txtName.Text) || string.IsNullOrEmpty(txtXPath.Text) || comboType.SelectedValue == null)
                 return false;
             return true;
         }

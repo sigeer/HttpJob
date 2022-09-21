@@ -129,15 +129,14 @@ namespace SpiderTool
                 {
                     foreach (var item in nodes)
                     {
-                        var finalText = HttpUtility.HtmlDecode(item.InnerText);
-                        SpiderUtility.SaveText(CurrentDir, finalText);
+                        SpiderUtility.SaveText(CurrentDir, ReadHtmlNodeInnerHtml(item, rule));
                     }
                 }
                 if (rule.Type == (int)TemplateTypeEnum.Html)
                 {
                     foreach (var item in nodes)
                     {
-                        SpiderUtility.SaveText(CurrentDir, ReadHtmlNodeInnerHtml(item, rule));
+                        SpiderUtility.SaveText(CurrentDir, item.InnerHtml);
                     }
                 }
                 if (rule.Type == (int)TemplateTypeEnum.JumpLink)
