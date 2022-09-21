@@ -2,6 +2,7 @@
 using SpiderTool.Dto.Spider;
 using SpiderTool.IDomain;
 using SpiderTool.IService;
+using SpiderTool.Tasks;
 
 namespace SpiderTool.Service
 {
@@ -10,13 +11,19 @@ namespace SpiderTool.Service
         readonly IResourceDomain _resourceDomain;
         readonly ISpiderDomain _spiderDomain;
         readonly ITemplateDomain _templateDomain;
+        readonly ITaskDomain _taskDomain;
 
-        public SpiderService(IResourceDomain resourceDomain, ISpiderDomain spiderDomain, ITemplateDomain templateDomain)
+        public SpiderService(IResourceDomain resourceDomain, ISpiderDomain spiderDomain, ITemplateDomain templateDomain, ITaskDomain taskDomain)
         {
             _resourceDomain = resourceDomain;
             _spiderDomain = spiderDomain;
             _templateDomain = templateDomain;
+            _taskDomain = taskDomain;
+        }
 
+        public int AddTask(TaskSetter model)
+        {
+            return _taskDomain.AddTask(model);
         }
 
         public string DeleteResource(ResourceHistorySetter model)
@@ -49,6 +56,11 @@ namespace SpiderTool.Service
             return _spiderDomain.GetSpiderDtoList();
         }
 
+        public List<TaskDto> GetTaskList()
+        {
+            return _taskDomain.GetTaskList();
+        }
+
         public List<TemplateDto> GetTemplateDtoList()
         {
             return _templateDomain.GetTemplateDtoList();
@@ -57,6 +69,16 @@ namespace SpiderTool.Service
         public async Task<List<TemplateDto>> GetTemplateDtoListAsync()
         {
             return await _templateDomain.GetTemplateDtoListAsync();
+        }
+
+        public void UpdateTask(TaskSetter model)
+        {
+            _taskDomain.UpdateTask(model);
+        }
+
+        public void SetTaskStatus(int taskId, int taskStatus)
+        {
+            _taskDomain.SetTaskStatus(taskId, taskStatus);
         }
 
         public string SubmitResouceHistory(ResourceHistorySetter model)

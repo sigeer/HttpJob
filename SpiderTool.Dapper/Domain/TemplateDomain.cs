@@ -1,12 +1,11 @@
-﻿using SpiderTool.Constants;
+﻿using Dapper;
+using Dapper.Contrib.Extensions;
+using SpiderTool.Constants;
+using SpiderTool.Dapper.Utility;
 using SpiderTool.DataBase;
 using SpiderTool.Dto.Spider;
 using SpiderTool.IDomain;
 using System.Data;
-using Dapper;
-using Dapper.Contrib;
-using SpiderTool.Dapper.Utility;
-using Dapper.Contrib.Extensions;
 
 namespace SpiderTool.Dapper.Domain
 {

@@ -65,3 +65,15 @@ CREATE TABLE `db_template` (
   `LinkedSpiderId` int DEFAULT NULL,
   PRIMARY KEY (`Id`)
 );
+
+CREATE TABLE `mineserver`.`db_task`( 
+	`Id` INT NOT NULL AUTO_INCREMENT, 
+	`Description` VARCHAR(100) DEFAULT NULL, 
+	`RootUrl` VARCHAR(500) NOT NULL, 
+	`SpiderId` INT NOT NULL, 
+	`Status` INT NOT NULL, 
+	`CreateTime` DATETIME NOT NULL, 
+	`CompleteTime` DATETIME, 
+	`CronExpression` CHAR(50), 
+	PRIMARY KEY (`Id`) 
+); 

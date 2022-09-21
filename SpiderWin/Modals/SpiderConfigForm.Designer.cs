@@ -45,6 +45,7 @@
             this.TemplateListMenu = new System.Windows.Forms.ToolStripMenuItem();
             this.BtnSubmit = new System.Windows.Forms.Button();
             this.BtnCancel = new System.Windows.Forms.Button();
+            this.labelTemplateInfo = new System.Windows.Forms.LinkLabel();
             this.menuStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -132,9 +133,9 @@
             // 
             this.btnAddContentReader.Location = new System.Drawing.Point(89, 281);
             this.btnAddContentReader.Name = "btnAddContentReader";
-            this.btnAddContentReader.Size = new System.Drawing.Size(275, 25);
+            this.btnAddContentReader.Size = new System.Drawing.Size(121, 25);
             this.btnAddContentReader.TabIndex = 10;
-            this.btnAddContentReader.Text = "添加读取模板";
+            this.btnAddContentReader.Text = "选择模板";
             this.btnAddContentReader.UseVisualStyleBackColor = true;
             this.btnAddContentReader.Click += new System.EventHandler(this.btnAddContentReader_Click);
             // 
@@ -201,12 +202,22 @@
             this.BtnCancel.UseVisualStyleBackColor = true;
             this.BtnCancel.Click += new System.EventHandler(this.BtnCancel_Click);
             // 
+            // labelTemplateInfo
+            // 
+            this.labelTemplateInfo.AutoSize = true;
+            this.labelTemplateInfo.Location = new System.Drawing.Point(216, 285);
+            this.labelTemplateInfo.Name = "labelTemplateInfo";
+            this.labelTemplateInfo.Size = new System.Drawing.Size(0, 17);
+            this.labelTemplateInfo.TabIndex = 16;
+            this.labelTemplateInfo.Click += new System.EventHandler(this.labelTemplateInfo_Click);
+            // 
             // SpiderConfigForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 17F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.AutoScroll = true;
             this.ClientSize = new System.Drawing.Size(648, 355);
+            this.Controls.Add(this.labelTemplateInfo);
             this.Controls.Add(this.BtnCancel);
             this.Controls.Add(this.BtnSubmit);
             this.Controls.Add(this.ComboBoxNextPage);
@@ -253,5 +264,6 @@
         private ToolStripMenuItem TemplateListMenu;
         private Button BtnSubmit;
         private Button BtnCancel;
+        private LinkLabel labelTemplateInfo;
     }
 }

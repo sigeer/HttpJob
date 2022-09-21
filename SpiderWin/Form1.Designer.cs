@@ -43,17 +43,19 @@
             this.mainModalStatusLabel = new System.Windows.Forms.ToolStripStatusLabel();
             this.ResultTxtBox = new System.Windows.Forms.RichTextBox();
             this.ComboxUrl = new System.Windows.Forms.ComboBox();
+            this.DataGridTasks = new System.Windows.Forms.DataGridView();
             this.menuStrip1.SuspendLayout();
             this.statusStrip1.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.DataGridTasks)).BeginInit();
             this.SuspendLayout();
             // 
             // btnShowConfig
             // 
-            this.btnShowConfig.Location = new System.Drawing.Point(80, 136);
+            this.btnShowConfig.Location = new System.Drawing.Point(554, 84);
             this.btnShowConfig.Name = "btnShowConfig";
-            this.btnShowConfig.Size = new System.Drawing.Size(129, 23);
+            this.btnShowConfig.Size = new System.Drawing.Size(73, 25);
             this.btnShowConfig.TabIndex = 0;
-            this.btnShowConfig.Text = "查看爬虫配置";
+            this.btnShowConfig.Text = "编辑爬虫";
             this.btnShowConfig.UseVisualStyleBackColor = true;
             this.btnShowConfig.Click += new System.EventHandler(this.btnShowConfig_Click);
             // 
@@ -81,12 +83,12 @@
             this.dropConfig.FormattingEnabled = true;
             this.dropConfig.Location = new System.Drawing.Point(80, 84);
             this.dropConfig.Name = "dropConfig";
-            this.dropConfig.Size = new System.Drawing.Size(547, 25);
+            this.dropConfig.Size = new System.Drawing.Size(468, 25);
             this.dropConfig.TabIndex = 5;
             // 
             // btnRun
             // 
-            this.btnRun.Location = new System.Drawing.Point(79, 184);
+            this.btnRun.Location = new System.Drawing.Point(79, 124);
             this.btnRun.Name = "btnRun";
             this.btnRun.Size = new System.Drawing.Size(75, 23);
             this.btnRun.TabIndex = 6;
@@ -149,7 +151,7 @@
             // 
             this.statusStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.mainModalStatusLabel});
-            this.statusStrip1.Location = new System.Drawing.Point(0, 324);
+            this.statusStrip1.Location = new System.Drawing.Point(0, 395);
             this.statusStrip1.Name = "statusStrip1";
             this.statusStrip1.Size = new System.Drawing.Size(674, 22);
             this.statusStrip1.TabIndex = 10;
@@ -162,10 +164,10 @@
             // 
             // ResultTxtBox
             // 
-            this.ResultTxtBox.Location = new System.Drawing.Point(81, 213);
+            this.ResultTxtBox.Location = new System.Drawing.Point(78, 296);
             this.ResultTxtBox.Name = "ResultTxtBox";
             this.ResultTxtBox.ReadOnly = true;
-            this.ResultTxtBox.Size = new System.Drawing.Size(545, 96);
+            this.ResultTxtBox.Size = new System.Drawing.Size(548, 96);
             this.ResultTxtBox.TabIndex = 11;
             this.ResultTxtBox.Text = "";
             // 
@@ -177,11 +179,21 @@
             this.ComboxUrl.Size = new System.Drawing.Size(547, 25);
             this.ComboxUrl.TabIndex = 12;
             // 
+            // DataGridTasks
+            // 
+            this.DataGridTasks.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.DataGridTasks.Location = new System.Drawing.Point(78, 153);
+            this.DataGridTasks.Name = "DataGridTasks";
+            this.DataGridTasks.RowTemplate.Height = 25;
+            this.DataGridTasks.Size = new System.Drawing.Size(548, 137);
+            this.DataGridTasks.TabIndex = 13;
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 17F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(674, 346);
+            this.ClientSize = new System.Drawing.Size(674, 417);
+            this.Controls.Add(this.DataGridTasks);
             this.Controls.Add(this.ComboxUrl);
             this.Controls.Add(this.ResultTxtBox);
             this.Controls.Add(this.statusStrip1);
@@ -199,6 +211,7 @@
             this.menuStrip1.PerformLayout();
             this.statusStrip1.ResumeLayout(false);
             this.statusStrip1.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.DataGridTasks)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -221,5 +234,6 @@
         private ToolStripMenuItem MenuNewSpider;
         private RichTextBox ResultTxtBox;
         private ComboBox ComboxUrl;
+        private DataGridView DataGridTasks;
     }
 }

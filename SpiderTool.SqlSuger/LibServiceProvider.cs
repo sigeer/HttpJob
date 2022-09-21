@@ -3,6 +3,7 @@ using SpiderTool.IDomain;
 using SpiderTool.IService;
 using SpiderTool.Service;
 using SpiderTool.SqlSugar.Domain;
+using SpiderTool.Tasks;
 using SqlSugar;
 
 namespace SpiderTool.SqlSugar
@@ -18,6 +19,7 @@ namespace SpiderTool.SqlSugar
             services.Add(new ServiceDescriptor(typeof(IResourceDomain), typeof(ResourceDomain), serviceLifetime));
             services.Add(new ServiceDescriptor(typeof(ISpiderDomain), typeof(SpiderDomain), serviceLifetime));
             services.Add(new ServiceDescriptor(typeof(ITemplateDomain), typeof(TemplateDomain), serviceLifetime));
+            services.Add(new ServiceDescriptor(typeof(ITaskDomain), typeof(TaskDomain), serviceLifetime));
 
             services.Add(new ServiceDescriptor(typeof(ISpiderService), typeof(SpiderService), serviceLifetime));
             services.Add(new ServiceDescriptor(typeof(SpiderWorker), typeof(SpiderWorker), serviceLifetime));

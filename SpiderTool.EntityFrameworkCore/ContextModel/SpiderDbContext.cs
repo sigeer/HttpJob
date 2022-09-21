@@ -14,6 +14,7 @@ namespace SpiderTool.EntityFrameworkCore.ContextModel
         public DbSet<DB_Template> Templates { get; set; }
         public DbSet<DB_SpiderTemplate> SpiderTemplates { get; set; }
         public DbSet<DB_ReplacementRule> ReplacementRules { get; set; }
+        public DbSet<DB_Task> Tasks { get; set; }
 
         public SpiderDbContext(DbContextOptions<SpiderDbContext> options) : base(options)
         {

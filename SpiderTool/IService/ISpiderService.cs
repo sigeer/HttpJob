@@ -1,5 +1,6 @@
 ﻿using SpiderTool.Dto.Resource;
 using SpiderTool.Dto.Spider;
+using SpiderTool.Tasks;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -23,6 +24,11 @@ namespace SpiderTool.IService
         Task<List<TemplateDto>> GetTemplateDtoListAsync();
         string SubmitTemplate(TemplateDto model);
         string DeleteTemplate(TemplateDto model);
+
+        List<TaskDto> GetTaskList();
+        int AddTask(TaskSetter model);
+        void UpdateTask(TaskSetter model);
+        void SetTaskStatus(int taskId, int taskStatus);
 
 
         SpiderDto? GetSpider(int id);

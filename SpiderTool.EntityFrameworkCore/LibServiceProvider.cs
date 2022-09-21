@@ -5,6 +5,7 @@ using SpiderTool.EntityFrameworkCore.Domain;
 using SpiderTool.IDomain;
 using SpiderTool.IService;
 using SpiderTool.Service;
+using SpiderTool.Tasks;
 
 namespace SpiderTool.EntityFrameworkCore
 {
@@ -16,10 +17,11 @@ namespace SpiderTool.EntityFrameworkCore
 
             services.AddDbContext<SpiderDbContext>(options, serviceLifetime);
 
-
             services.Add(new ServiceDescriptor(typeof(IResourceDomain), typeof(ResourceDomain), serviceLifetime));
             services.Add(new ServiceDescriptor(typeof(ISpiderDomain), typeof(SpiderDomain), serviceLifetime));
             services.Add(new ServiceDescriptor(typeof(ITemplateDomain), typeof(TemplateDomain), serviceLifetime));
+            services.Add(new ServiceDescriptor(typeof(ITaskDomain), typeof(TaskDomain), serviceLifetime));
+
             services.Add(new ServiceDescriptor(typeof(ISpiderService), typeof(SpiderService), serviceLifetime));
             services.Add(new ServiceDescriptor(typeof(SpiderWorker), typeof(SpiderWorker), serviceLifetime));
             return services;

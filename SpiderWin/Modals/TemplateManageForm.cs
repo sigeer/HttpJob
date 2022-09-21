@@ -29,7 +29,7 @@ namespace SpiderWin.Modals
             dataGridView1.Columns.Add(nameof(TemplateDto.Id), nameof(TemplateDto.Id));
             dataGridView1.Columns.Add(nameof(TemplateDto.Name), nameof(TemplateDto.Name));
             dataGridView1.Columns.Add(nameof(TemplateDto.Type), nameof(TemplateDto.Type));
-            dataGridView1.Columns.Add(nameof(TemplateDto.TemplateStr), nameof(TemplateDto.TemplateStr));
+            dataGridView1.Columns.Add("XPath", nameof(TemplateDto.TemplateStr));
             dataGridView1.Columns.Add(nameof(TemplateDto.LinkedSpiderId), nameof(TemplateDto.LinkedSpiderId));
 
             _templates.ForEach(x =>
