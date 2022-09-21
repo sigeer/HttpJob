@@ -8,12 +8,15 @@
 
   <ItemGroup>
 
-    <PackageReference Include="SqlSugarCoreNoDrive" Version="5.1.2.7" />
+    <PackageReference Include="SqlSugarCoreNoDrive" Version="5.1.2.9" />
 	<PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="6.0.0" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\SpiderTool\SpiderTool.csproj" />
+	  
+	  <EmbeddedResource Include="..\Solution\mysql.sql" />
+	  <EmbeddedResource Include="..\Solution\sqlite.sql" />
   </ItemGroup>
 
 </Project>

@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
 
-namespace SpiderTool.Dapper.Utility
+namespace SpiderTool.Constants
 {
     public static class CommonExtension
     {

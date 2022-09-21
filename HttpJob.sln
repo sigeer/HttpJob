@@ -15,8 +15,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SpiderTool.Dapper", "Spider
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution", "Solution", "{570530B1-8C31-4BAA-8A1E-434052A7403A}"
 	ProjectSection(SolutionItems) = preProject
-		Solution\db.sql = Solution\db.sql
+		Solution\mysql.sql = Solution\mysql.sql
 		Solution\NuGet.Config = Solution\NuGet.Config
+		Solution\sqlite.sql = Solution\sqlite.sql
 	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SpiderTool.SqlSugar", "SpiderTool.SqlSuger\SpiderTool.SqlSugar.csproj", "{D5DB4A5F-26BB-4437-803D-190AD824779F}"

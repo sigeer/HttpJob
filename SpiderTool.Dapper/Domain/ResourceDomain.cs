@@ -1,7 +1,6 @@
 ﻿using Dapper;
 using Dapper.Contrib.Extensions;
 using SpiderTool.Constants;
-using SpiderTool.Dapper.Utility;
 using SpiderTool.DataBase;
 using SpiderTool.Dto.Resource;
 using SpiderTool.IDomain;

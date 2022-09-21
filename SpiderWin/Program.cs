@@ -28,15 +28,16 @@ namespace SpiderWin
             services.AddSingleton<IConfiguration>(configuration);
 
             services.AddScoped<Form1>();
-            services.AddSpiderService(new SqlSugarScope(new ConnectionConfig
+            var sqlClient = new SqlSugarScope(new ConnectionConfig
             {
-                ConnectionString = configuration.GetConnectionString("MySql"),
-                DbType = DbType.MySql
-            }), ServiceLifetime.Singleton);
+                ConnectionString = "data source=database.db",
+                DbType = DbType.Sqlite
+            });
+            services.AddSpiderService(sqlClient, ServiceLifetime.Singleton);
 
             var serviceProvider = services.BuildServiceProvider();
             System.Text.Encoding.RegisterProvider(System.Text.CodePagesEncodingProvider.Instance);
-
+            sqlClient.CreateDatabase(DbType.Sqlite);
             Application.Run(serviceProvider.GetService<Form1>()!);
         }
 
