@@ -11,6 +11,7 @@ namespace SpiderTool.DataBase
     [Table("db_replacementrule")]
     public class DB_ReplacementRule
     {
+        [Key]
         public int Id { get; set; }
         public int TemplateId { get; set; }
         [MaxLength(100)]

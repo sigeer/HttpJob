@@ -11,6 +11,7 @@ namespace SpiderTool.DataBase
     [Table("db_resourcehistory")]
     public class DB_ResourceHistory
     {
+        [Key]
         public int Id { get; set; }
         [MaxLength(100)]
         public string? Name { get; set; }
