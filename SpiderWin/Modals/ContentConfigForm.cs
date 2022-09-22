@@ -8,7 +8,6 @@ namespace SpiderWin.Modals
     {
         readonly ISpiderService _service;
 
-        TemplateDto backup;
         TemplateDto edittingModel;
 
         List<TemplateType> types = TemplateType.GetAll();
@@ -18,32 +17,32 @@ namespace SpiderWin.Modals
         public ContentConfigForm(ISpiderService service, TemplateDto? model = null)
         {
             _service = service;
-            backup = model ?? new TemplateDto();
-            edittingModel = backup.Clone();
+            edittingModel = model?.Clone() ?? new TemplateDto();
 
             InitializeComponent();
 
         }
 
-        private async void ContentConfigForm_Load(object sender, EventArgs e)
+        private void ContentConfigForm_Load(object sender, EventArgs e)
         {
             PreLoadForm();
-            await Task.Run(() =>
-            {
-                LoadData();
-            });
             LoadForm();
         }
 
-        private void LoadData()
+        private async void LoadData()
         {
-            spiderList = _service.GetSpiderDtoList();
+            await Task.Run(() =>
+            {
+                spiderList = _service.GetSpiderDtoList();
+            });
+            comboSpider.DataSource = (new List<SpiderDtoSetter>() { new SpiderDtoSetter { Id = 0, Name = "" } }.Concat(spiderList)).ToList();
         }
 
         private void PreLoadForm()
         {
             comboType.ValueMember = nameof(TemplateType.Id);
             comboType.DisplayMember = nameof(TemplateType.Name);
+            comboType.DataSource = types;
 
             comboSpider.DisplayMember = nameof(SpiderDtoSetter.Name);
             comboSpider.ValueMember = nameof(SpiderDtoSetter.Id);
@@ -51,11 +50,6 @@ namespace SpiderWin.Modals
 
         private void LoadForm()
         {
-            comboType.DataSource = types;
-
-            var ds = (new List<SpiderDtoSetter>() { new SpiderDtoSetter { Id = 0, Name = "" } }.Concat(spiderList)).ToList();
-            comboSpider.DataSource = ds;
-
             txtName.Text = edittingModel.Name;
             txtXPath.Text = edittingModel.TemplateStr;
             comboType.SelectedValue = edittingModel.Type;
@@ -64,6 +58,8 @@ namespace SpiderWin.Modals
                 ShowSelectSpider();
             else
                 HideSelectSpider();
+
+            LoadData();
 
             if (edittingModel.LinkedSpiderId > 0)
                 comboSpider.SelectedValue = edittingModel.LinkedSpiderId;

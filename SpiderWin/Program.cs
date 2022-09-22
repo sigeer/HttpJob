@@ -2,6 +2,8 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using SpiderTool.SqlSugar;
 using SqlSugar;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace SpiderWin
 {
@@ -31,7 +33,8 @@ namespace SpiderWin
             var sqlClient = new SqlSugarScope(new ConnectionConfig
             {
                 ConnectionString = "data source=database.db",
-                DbType = DbType.Sqlite
+                DbType = DbType.Sqlite,
+                ConfigureExternalServices = ExternalServiceDefaultBuilder.Build()
             });
             services.AddSpiderService(sqlClient, ServiceLifetime.Singleton);
 

@@ -8,7 +8,7 @@ namespace SpiderWin.Modals
     {
         int _flag = 0;
         public List<Control> extraControlList = new List<Control>();
-        List<ReplacementRuleDto> backup;
+
         List<ReplacementRuleDto> edittingModel;
 
         public event EventHandler<List<ReplacementRuleDto>>? OnOk;
@@ -17,8 +17,7 @@ namespace SpiderWin.Modals
         public TxtReplaceRuleForm(ISpiderService service, List<ReplacementRuleDto>? data = null)
         {
             _service = service;
-            backup = data ?? new List<ReplacementRuleDto>();
-            edittingModel = backup.Clone();
+            edittingModel = data?.Clone() ?? new List<ReplacementRuleDto>();
 
             InitializeComponent();
         }
