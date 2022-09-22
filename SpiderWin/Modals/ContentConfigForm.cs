@@ -13,6 +13,8 @@ namespace SpiderWin.Modals
 
         List<TemplateType> types = TemplateType.GetAll();
         List<SpiderDtoSetter> spiderList = new List<SpiderDtoSetter>();
+
+        public event EventHandler? OnSubmit;
         public ContentConfigForm(ISpiderService service, TemplateDto? model = null)
         {
             _service = service;
@@ -101,6 +103,7 @@ namespace SpiderWin.Modals
                 LinkedSpiderId = (int)(comboSpider.SelectedValue),
                 ReplacementRules = edittingModel.ReplacementRules
             });
+            OnSubmit?.Invoke(this, null);
             DialogResult = DialogResult.OK;
             Close();
         }
