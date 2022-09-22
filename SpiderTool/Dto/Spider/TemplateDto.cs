@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -15,6 +16,7 @@ namespace SpiderTool.Dto.Spider
         /// Html文本, textContent文本, 下载链接, 跳转链接
         /// </summary>
         public int Type { get; set; }
+        public string TypeName => ((TemplateTypeEnum)Type).GetDescription();
         public string? TemplateStr { get; set; }
 
         /// <summary>
@@ -31,9 +33,15 @@ namespace SpiderTool.Dto.Spider
 
     public enum TemplateTypeEnum
     {
+        [Description("错误数据")]
+        Default = 0,
+        [Description("Html")]
         Html = 1,
+        [Description("Text")]
         Text = 2,
+        [Description("资源文件")]
         Object = 3,
+        [Description("跳转链接")]
         JumpLink = 4
     }
 

@@ -31,7 +31,7 @@
             this.btnShowConfig = new System.Windows.Forms.Button();
             this.label1 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
-            this.dropConfig = new System.Windows.Forms.ComboBox();
+            this.ComboxSpider = new System.Windows.Forms.ComboBox();
             this.btnRun = new System.Windows.Forms.Button();
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.设置ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -77,14 +77,14 @@
             this.label2.TabIndex = 3;
             this.label2.Text = "选择配置";
             // 
-            // dropConfig
+            // ComboxSpider
             // 
-            this.dropConfig.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.dropConfig.FormattingEnabled = true;
-            this.dropConfig.Location = new System.Drawing.Point(80, 84);
-            this.dropConfig.Name = "dropConfig";
-            this.dropConfig.Size = new System.Drawing.Size(468, 25);
-            this.dropConfig.TabIndex = 5;
+            this.ComboxSpider.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.ComboxSpider.FormattingEnabled = true;
+            this.ComboxSpider.Location = new System.Drawing.Point(80, 84);
+            this.ComboxSpider.Name = "ComboxSpider";
+            this.ComboxSpider.Size = new System.Drawing.Size(468, 25);
+            this.ComboxSpider.TabIndex = 5;
             // 
             // btnRun
             // 
@@ -170,6 +170,7 @@
             this.ResultTxtBox.Size = new System.Drawing.Size(548, 96);
             this.ResultTxtBox.TabIndex = 11;
             this.ResultTxtBox.Text = "";
+            this.ResultTxtBox.LinkClicked += new System.Windows.Forms.LinkClickedEventHandler(this.ResultTxtBox_LinkClicked);
             // 
             // ComboxUrl
             // 
@@ -187,6 +188,7 @@
             this.DataGridTasks.RowTemplate.Height = 25;
             this.DataGridTasks.Size = new System.Drawing.Size(548, 137);
             this.DataGridTasks.TabIndex = 13;
+            this.DataGridTasks.CellContentDoubleClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.DataGridTasks_CellContentDoubleClick);
             // 
             // Form1
             // 
@@ -199,7 +201,7 @@
             this.Controls.Add(this.statusStrip1);
             this.Controls.Add(this.menuStrip1);
             this.Controls.Add(this.btnRun);
-            this.Controls.Add(this.dropConfig);
+            this.Controls.Add(this.ComboxSpider);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.btnShowConfig);
@@ -222,7 +224,7 @@
         private Button btnShowConfig;
         private Label label1;
         private Label label2;
-        private ComboBox dropConfig;
+        private ComboBox ComboxSpider;
         private Button btnRun;
         private MenuStrip menuStrip1;
         private ToolStripMenuItem 设置ToolStripMenuItem;

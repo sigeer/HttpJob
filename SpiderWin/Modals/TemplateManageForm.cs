@@ -27,7 +27,7 @@ namespace SpiderWin.Modals
             dataGridView1.Columns.Add("Operation", "操作");
             dataGridView1.Columns.Add(nameof(TemplateDto.Id), nameof(TemplateDto.Id));
             dataGridView1.Columns.Add(nameof(TemplateDto.Name), nameof(TemplateDto.Name));
-            dataGridView1.Columns.Add(nameof(TemplateDto.Type), nameof(TemplateDto.Type));
+            dataGridView1.Columns.Add("类型", nameof(TemplateDto.Type));
             dataGridView1.Columns.Add("XPath", nameof(TemplateDto.TemplateStr));
             dataGridView1.Columns.Add(nameof(TemplateDto.LinkedSpiderId), nameof(TemplateDto.LinkedSpiderId));
         }
@@ -42,7 +42,7 @@ namespace SpiderWin.Modals
                 row.Cells.Add(new DataGridViewButtonCell() { Value = "编辑", Tag = x });
                 row.Cells.Add(new DataGridViewTextBoxCell() { Value = x.Id, ValueType = typeof(int) });
                 row.Cells.Add(new DataGridViewTextBoxCell() { Value = x.Name });
-                row.Cells.Add(new DataGridViewTextBoxCell() { Value = x.Type });
+                row.Cells.Add(new DataGridViewTextBoxCell() { Value = x.TypeName });
                 row.Cells.Add(new DataGridViewTextBoxCell() { Value = x.TemplateStr });
                 row.Cells.Add(new DataGridViewTextBoxCell() { Value = x.LinkedSpiderId });
                 dataGridView1.Rows.Add(row);
@@ -98,6 +98,14 @@ namespace SpiderWin.Modals
         private void BtnAdd_Click(object sender, EventArgs e)
         {
             var form = new ContentConfigForm(_service);
+            form.OnSubmit += async (obj, evt) =>
+            {
+                await Task.Run(async () =>
+                {
+                    await LoadData();
+                });
+                LoadForm();
+            };
             form.ShowDialog();
         }
     }

@@ -8,7 +8,6 @@ namespace SpiderWin.Modals
     public partial class SpiderConfigForm : Form
     {
         #region form variables
-        SpiderDtoSetter backup;
         SpiderDtoSetter _currentSpider;
         List<TemplateDto> _templateList = new List<TemplateDto>();
 
@@ -21,8 +20,7 @@ namespace SpiderWin.Modals
 
         public SpiderConfigForm(ISpiderService coreService, SpiderDtoSetter? spider = null)
         {
-            backup = spider ?? new SpiderDtoSetter();
-            _currentSpider = backup.Clone();
+            _currentSpider = spider?.Clone() ?? new SpiderDtoSetter();
             _coreService = coreService;
 
             InitializeComponent();

@@ -12,10 +12,9 @@ namespace SpiderWin
     public partial class Form1 : Form
     {
         readonly ISpiderService _coreService;
-        List<SpiderDtoSetter> _spiderList = new List<SpiderDtoSetter>();
-        List<ResourceHistoryDto> _historyList = new List<ResourceHistoryDto>();
-        List<TaskDto> _taskList = new List<TaskDto>();
 
+        List<SpiderDtoSetter> _spiderList = new List<SpiderDtoSetter>();
+        List<TaskDto> _taskList = new List<TaskDto>();
 
         public Form1(ISpiderService coreService)
         {
@@ -27,7 +26,7 @@ namespace SpiderWin
 
         private void btnShowConfig_Click(object sender, EventArgs e)
         {
-            var form = new SpiderConfigForm(_coreService, dropConfig.SelectedItem as SpiderDtoSetter);
+            var form = new SpiderConfigForm(_coreService, ComboxSpider.SelectedItem as SpiderDtoSetter);
             form.OnSubmit += (obj, evt) =>
             {
                 LoadSpiderList();
@@ -37,8 +36,8 @@ namespace SpiderWin
 
         private void PreLoadForm()
         {
-            dropConfig.DisplayMember = nameof(SpiderDtoSetter.Name);
-            dropConfig.ValueMember = nameof(SpiderDtoSetter.Id);
+            ComboxSpider.DisplayMember = nameof(SpiderDtoSetter.Name);
+            ComboxSpider.ValueMember = nameof(SpiderDtoSetter.Id);
 
 
             ComboxUrl.DisplayMember = nameof(TaskDto.RootUrl);
@@ -72,7 +71,7 @@ namespace SpiderWin
             {
                 _spiderList = _coreService.GetSpiderDtoList();
             });
-            dropConfig.DataSource = (new List<SpiderDtoSetter>() { new SpiderDtoSetter() { Id = 0, Name = "" } }.Concat(_spiderList)).ToList();
+            ComboxSpider.DataSource = (new List<SpiderDtoSetter>() { new SpiderDtoSetter() { Id = 0, Name = "" } }.Concat(_spiderList)).ToList();
         }
 
         private async void LoadTaskList()
@@ -103,13 +102,13 @@ namespace SpiderWin
 
         private void btnRun_Click(object sender, EventArgs e)
         {
-            if (string.IsNullOrEmpty(ComboxUrl.Text) || dropConfig.SelectedValue == null || (int)dropConfig.SelectedValue == 0)
+            if (string.IsNullOrEmpty(ComboxUrl.Text) || ComboxSpider.SelectedValue == null || (int)ComboxSpider.SelectedValue == 0)
             {
                 MessageBox.Show("请输入URL");
                 return;
             }
             mainModalStatusLabel.Text = "运行中...";
-            var spiderId = (int)dropConfig.SelectedValue;
+            var spiderId = (int)ComboxSpider.SelectedValue;
             new Task(() =>
            {
                Stopwatch sw = new Stopwatch();
@@ -118,10 +117,12 @@ namespace SpiderWin
                {
                    btnRun.Enabled = true;
                    sw.Stop();
-                   mainModalStatusLabel.Text = $"共耗时：{sw.Elapsed.TotalSeconds.ToFixed(2)}秒";
-                   ResultTxtBox.Text += $"[{DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")}] file:///{evt} \r\n";
 
-                   MessageBox.Show($"任务完成，共耗时{sw.Elapsed.TotalSeconds.ToFixed(2)}秒。");
+                   var cost = $"共耗时：{sw.Elapsed.TotalSeconds.ToFixed(2)}秒";
+                   mainModalStatusLabel.Text = cost;
+                   ResultTxtBox.Text += $"[{DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")}] {cost} file:///{evt} \r\n";
+
+                   MessageBox.Show($"任务完成，{cost}。");
                };
                worker.OnLog += (obj, evt) =>
                {
@@ -154,6 +155,22 @@ namespace SpiderWin
         private void UseServiceMenu_Click(object sender, EventArgs e)
         {
             //使用服务器服务
+        }
+
+        private void DataGridTasks_CellContentDoubleClick(object sender, DataGridViewCellEventArgs e)
+        {
+            var selectedRow = DataGridTasks.Rows[e.RowIndex];
+            if (selectedRow != null)
+            {
+                ComboxUrl.SelectedValue = selectedRow.Cells[1].Value;
+                ComboxSpider.SelectedValue = selectedRow.Cells[2].Value;
+            }
+        }
+
+        private void ResultTxtBox_LinkClicked(object sender, LinkClickedEventArgs e)
+        {
+            if (!string.IsNullOrEmpty(e.LinkText) && Directory.Exists(e.LinkText))
+                Process.Start("explorer.exe", e.LinkText);
         }
     }
 }
