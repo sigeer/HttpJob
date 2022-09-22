@@ -272,12 +272,14 @@ namespace SpiderTool
 
         public static void BulkDownload(string dir, List<string> urls)
         {
+            var snowFlake = Utility.GuidHelper.Snowflake.GetInstance(1);
+            var data  = urls.Distinct().ToDictionary(x => x, x => snowFlake.NextId().ToString());
             var dirRoot = dir.GetDirectory();
             using var httpRequestPool = new HttpClientPool();
-            Parallel.ForEach(urls, async url =>
+            Parallel.ForEach(data, async url =>
              {
                  var client = httpRequestPool.GetHttpClient();
-                 var uri = new Uri(url);
+                 var uri = new Uri(url.Key);
                  var result = await client.HttpGetCore(uri.ToString());
                  var fileName = uri.Segments.Last();
                  if (!TryGetExtension(fileName, out var extension))
@@ -287,7 +289,7 @@ namespace SpiderTool
                      if (extension == null)
                          return;
 
-                     fileName = Utility.GuidHelper.Snowflake.GetInstance(1).NextId().ToString() + extension;
+                     fileName = url.Value + extension;
                  }
                  var path = Path.Combine(dirRoot, fileName);
                  await File.WriteAllBytesAsync(path, await result.Content.ReadAsByteArrayAsync());
