@@ -136,7 +136,7 @@ namespace SpiderTool
                     ? new HtmlNodeCollection(_currentDoc.DocumentNode)
                     : _currentDoc.DocumentNode.SelectNodes(rule.TemplateStr ?? "");
                 if (nodes == null)
-                    return;
+                    continue;
 
                 if (rule.Type == (int)TemplateTypeEnum.Object)
                 {

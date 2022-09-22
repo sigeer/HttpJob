@@ -11,6 +11,8 @@ namespace SpiderWin.Modals
         SpiderDtoSetter backup;
         SpiderDtoSetter _currentSpider;
         List<TemplateDto> _templateList = new List<TemplateDto>();
+
+        public event EventHandler? OnSubmit;
         #endregion
 
         #region services
@@ -65,19 +67,6 @@ namespace SpiderWin.Modals
             LoadForm();
         }
 
-        private void btnAddContentReader_Click(object sender, EventArgs e)
-        {
-            var templateListForm = new TemplateManageForm(_coreService, _currentSpider.Templates);
-            templateListForm.OnOk += (data, evt) =>
-            {
-                if (evt != null)
-                    _currentSpider.Templates = (evt as List<int>)!;
-
-                labelTemplateInfo.Text = $"已选择{_currentSpider.Templates.Count}项";
-            };
-            templateListForm.ShowDialog();
-        }
-
         private void SpiderConfigForm_KeyDown(object sender, KeyEventArgs e)
         {
             if (e.KeyCode == Keys.S && e.Modifiers == Keys.Control)
@@ -113,6 +102,8 @@ namespace SpiderWin.Modals
             var submitResult = await Task.Run(() => _coreService.SubmitSpider(_currentSpider));
             if (submitResult != StatusMessage.Success)
                 MessageBox.Show(submitResult);
+            else
+                OnSubmit?.Invoke(this, e);
             FormEnabled();
             Close();
         }
@@ -122,10 +113,10 @@ namespace SpiderWin.Modals
             Close();
         }
 
-        private void labelTemplateInfo_Click(object sender, EventArgs e)
+        private void ShowTemplateManagerForm()
         {
             var templateListForm = new TemplateManageForm(_coreService, _currentSpider.Templates);
-            templateListForm.OnOk += (data, evt) =>
+            templateListForm.OnSelect += (data, evt) =>
             {
                 if (evt != null)
                     _currentSpider.Templates = (evt as List<int>)!;
@@ -133,6 +124,17 @@ namespace SpiderWin.Modals
                 labelTemplateInfo.Text = $"已选择{_currentSpider.Templates.Count}项";
             };
             templateListForm.ShowDialog();
+        }
+
+        private void btnAddContentReader_Click(object sender, EventArgs e)
+        {
+            ShowTemplateManagerForm();
+        }
+
+
+        private void labelTemplateInfo_Click(object sender, EventArgs e)
+        {
+            ShowTemplateManagerForm();
         }
     }
 }
