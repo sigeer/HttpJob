@@ -116,7 +116,7 @@ namespace SpiderWin.Modals
         private void ShowTemplateManagerForm()
         {
             var templateListForm = new TemplateManageForm(_coreService, _currentSpider.Templates);
-            templateListForm.OnOk += (data, evt) =>
+            templateListForm.OnSelect += (data, evt) =>
             {
                 if (evt != null)
                     _currentSpider.Templates = (evt as List<int>)!;
