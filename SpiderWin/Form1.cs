@@ -117,10 +117,12 @@ namespace SpiderWin
                {
                    btnRun.Enabled = true;
                    sw.Stop();
-                   mainModalStatusLabel.Text = $"共耗时：{sw.Elapsed.TotalSeconds.ToFixed(2)}秒";
-                   ResultTxtBox.Text += $"[{DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")}] file:///{evt} \r\n";
 
-                   MessageBox.Show($"任务完成，共耗时{sw.Elapsed.TotalSeconds.ToFixed(2)}秒。");
+                   var cost = $"共耗时：{sw.Elapsed.TotalSeconds.ToFixed(2)}秒";
+                   mainModalStatusLabel.Text = cost;
+                   ResultTxtBox.Text += $"[{DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")}] {cost} file:///{evt} \r\n";
+
+                   MessageBox.Show($"任务完成，{cost}。");
                };
                worker.OnLog += (obj, evt) =>
                {
@@ -163,6 +165,12 @@ namespace SpiderWin
                 ComboxUrl.SelectedValue = selectedRow.Cells[1].Value;
                 ComboxSpider.SelectedValue = selectedRow.Cells[2].Value;
             }
+        }
+
+        private void ResultTxtBox_LinkClicked(object sender, LinkClickedEventArgs e)
+        {
+            if (!string.IsNullOrEmpty(e.LinkText) && Directory.Exists(e.LinkText))
+                Process.Start("explorer.exe", e.LinkText);
         }
     }
 }

@@ -77,12 +77,12 @@
             this.label2.TabIndex = 3;
             this.label2.Text = "选择配置";
             // 
-            // dropConfig
+            // ComboxSpider
             // 
             this.ComboxSpider.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.ComboxSpider.FormattingEnabled = true;
             this.ComboxSpider.Location = new System.Drawing.Point(80, 84);
-            this.ComboxSpider.Name = "dropConfig";
+            this.ComboxSpider.Name = "ComboxSpider";
             this.ComboxSpider.Size = new System.Drawing.Size(468, 25);
             this.ComboxSpider.TabIndex = 5;
             // 
@@ -170,6 +170,7 @@
             this.ResultTxtBox.Size = new System.Drawing.Size(548, 96);
             this.ResultTxtBox.TabIndex = 11;
             this.ResultTxtBox.Text = "";
+            this.ResultTxtBox.LinkClicked += new System.Windows.Forms.LinkClickedEventHandler(this.ResultTxtBox_LinkClicked);
             // 
             // ComboxUrl
             // 
