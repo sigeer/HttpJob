@@ -111,35 +111,50 @@ namespace SpiderWin
             }
             mainModalStatusLabel.Text = "运行中...";
             var spiderId = (int)ComboxSpider.SelectedValue;
-            new Task(() =>
-           {
-               Stopwatch sw = new Stopwatch();
-               var worker = new SpiderWorker(_coreService);
-               worker.OnTaskStart += (obj, taskId) =>
-               {
-                   sw.Start();
-                   ResultTxtBox.AppendText($"[{DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")}] >>任务{taskId}开始==========\r\n");
-               };
-               worker.OnTaskComplete += (obj, evt) =>
-               {
-                   sw.Stop();
 
-                   var cost = $"共耗时：{sw.Elapsed.TotalSeconds.ToFixed(2)}秒";
-                   mainModalStatusLabel.Text = cost;
-                   ResultTxtBox.AppendText($"[{DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")}] >>结束=========={cost} file:///{evt} \r\n");
+            var worker = new SpiderWorker(spiderId, _coreService);
+            OnNewWorkTask(worker, ComboxUrl.Text);
+        }
 
-                   MessageBox.Show($"任务完成，{cost}。");
-               };
-               worker.OnTaskStatusChanged += (obj, taskId) =>
-               {
-                   LoadTaskList();
-               };
+        private void OnNewWorkTask(SpiderWorker worker, string url)
+        {
+            Task.Run(() =>
+            {
+                Stopwatch childSW = new Stopwatch();
+                worker.OnTaskStart += (obj, taksId) => OnTaskStart(childSW, taksId);
+                worker.OnTaskComplete += (obj, taskId) => OnTaskComplete(childSW, worker.CurrentDir, taskId);
+                worker.OnTaskStatusChanged += OnTaskStatusChanged;
+                worker.OnNewTask += (obj, unit) =>
+                {
+                    OnNewWorkTask(unit.SpiderWorker!, unit.Url!);
+                };
 
-               BeginInvoke(new MethodInvoker(async () =>
-               {
-                   await worker.Start(ComboxUrl.Text, spiderId);
-               }));
-           }).Start();
+                BeginInvoke(new MethodInvoker(async () =>
+                {
+                    await worker.Start(url);
+                }));
+            });
+        }
+
+        private void OnTaskStart(Stopwatch sw, int taskId)
+        {
+            sw.Start();
+            ResultTxtBox.AppendText($"[{DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")}] >>任务{taskId}开始==========\r\n");
+        }
+        private void OnTaskComplete(Stopwatch sw, string dir, int taskId)
+        {
+            sw.Stop();
+
+            var cost = $"共耗时：{sw.Elapsed.TotalSeconds.ToFixed(2)}秒";
+            mainModalStatusLabel.Text = cost;
+            ResultTxtBox.AppendText($"[{DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")}] >>任务{taskId}结束=========={cost} file:///{dir} \r\n");
+
+            MessageBox.Show($"任务完成，{cost}。");
+        }
+
+        private void OnTaskStatusChanged(object? obj, int taskId)
+        {
+            LoadTaskList();
         }
 
         private void MenuNewSpider_Click(object sender, EventArgs e)

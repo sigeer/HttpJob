@@ -126,9 +126,11 @@
             // 
             // UseLocalMenu
             // 
+            this.UseLocalMenu.Checked = true;
             this.UseLocalMenu.CheckOnClick = true;
+            this.UseLocalMenu.CheckState = System.Windows.Forms.CheckState.Checked;
             this.UseLocalMenu.Name = "UseLocalMenu";
-            this.UseLocalMenu.Size = new System.Drawing.Size(112, 22);
+            this.UseLocalMenu.Size = new System.Drawing.Size(180, 22);
             this.UseLocalMenu.Text = "本地";
             this.UseLocalMenu.Click += new System.EventHandler(this.UseLocalMenu_Click);
             // 
@@ -136,7 +138,7 @@
             // 
             this.UseServiceMenu.CheckOnClick = true;
             this.UseServiceMenu.Name = "UseServiceMenu";
-            this.UseServiceMenu.Size = new System.Drawing.Size(112, 22);
+            this.UseServiceMenu.Size = new System.Drawing.Size(180, 22);
             this.UseServiceMenu.Text = "服务器";
             this.UseServiceMenu.Click += new System.EventHandler(this.UseServiceMenu_Click);
             // 
