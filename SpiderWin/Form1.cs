@@ -45,6 +45,7 @@ namespace SpiderWin
 
             DataGridTasks.ReadOnly = true;
             DataGridTasks.Columns.Add(nameof(TaskDto.Id), nameof(TaskDto.Id));
+            DataGridTasks.Columns.Add("描述", nameof(TaskDto.Description));
             DataGridTasks.Columns.Add(nameof(TaskDto.RootUrl), nameof(TaskDto.RootUrl));
             DataGridTasks.Columns.Add(nameof(TaskDto.SpiderId), nameof(TaskDto.SpiderId));
             DataGridTasks.Columns.Add(nameof(TaskDto.CreateTime), "创建时间");
@@ -71,7 +72,7 @@ namespace SpiderWin
             {
                 _spiderList = _coreService.GetSpiderDtoList();
             });
-            ComboxSpider.DataSource = (new List<SpiderDtoSetter>() { new SpiderDtoSetter() { Id = 0, Name = "" } }.Concat(_spiderList)).ToList();
+            ComboxSpider.DataSource = (new List<SpiderDtoSetter>() { new SpiderDtoSetter() { Id = 0, Name = "--请选择--" } }.Concat(_spiderList)).ToList();
         }
 
         private async void LoadTaskList()
@@ -86,6 +87,7 @@ namespace SpiderWin
             {
                 var row = new DataGridViewRow();
                 row.Cells.Add(new DataGridViewTextBoxCell() { Value = x.Id, ValueType = typeof(int) });
+                row.Cells.Add(new DataGridViewTextBoxCell() { Value = x.Description });
                 row.Cells.Add(new DataGridViewTextBoxCell() { Value = x.RootUrl });
                 row.Cells.Add(new DataGridViewTextBoxCell() { Value = x.SpiderId, ValueType = typeof(int) });
                 row.Cells.Add(new DataGridViewTextBoxCell() { Value = x.CreateTime.ToString("yyyy-MM-dd HH:mm:ss") });
@@ -113,25 +115,28 @@ namespace SpiderWin
            {
                Stopwatch sw = new Stopwatch();
                var worker = new SpiderWorker(_coreService);
-               worker.TaskComplete += (obj, evt) =>
+               worker.OnTaskStart += (obj, taskId) =>
                {
-                   btnRun.Enabled = true;
+                   sw.Start();
+                   ResultTxtBox.AppendText($"[{DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")}] >>任务{taskId}开始==========\r\n");
+               };
+               worker.OnTaskComplete += (obj, evt) =>
+               {
                    sw.Stop();
 
                    var cost = $"共耗时：{sw.Elapsed.TotalSeconds.ToFixed(2)}秒";
                    mainModalStatusLabel.Text = cost;
-                   ResultTxtBox.Text += $"[{DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")}] {cost} file:///{evt} \r\n";
+                   ResultTxtBox.AppendText($"[{DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")}] >>结束=========={cost} file:///{evt} \r\n");
 
                    MessageBox.Show($"任务完成，{cost}。");
                };
-               worker.OnLog += (obj, evt) =>
+               worker.OnTaskStatusChanged += (obj, taskId) =>
                {
                    LoadTaskList();
                };
 
                BeginInvoke(new MethodInvoker(async () =>
                {
-                   sw.Restart();
                    await worker.Start(ComboxUrl.Text, spiderId);
                }));
            }).Start();
@@ -157,20 +162,23 @@ namespace SpiderWin
             //使用服务器服务
         }
 
-        private void DataGridTasks_CellContentDoubleClick(object sender, DataGridViewCellEventArgs e)
-        {
-            var selectedRow = DataGridTasks.Rows[e.RowIndex];
-            if (selectedRow != null)
-            {
-                ComboxUrl.SelectedValue = selectedRow.Cells[1].Value;
-                ComboxSpider.SelectedValue = selectedRow.Cells[2].Value;
-            }
-        }
-
         private void ResultTxtBox_LinkClicked(object sender, LinkClickedEventArgs e)
         {
-            if (!string.IsNullOrEmpty(e.LinkText) && Directory.Exists(e.LinkText))
+            if (!string.IsNullOrEmpty(e.LinkText))
                 Process.Start("explorer.exe", e.LinkText);
+        }
+
+        private void DataGridTasks_CellDoubleClick(object sender, DataGridViewCellEventArgs e)
+        {
+            if (e.RowIndex >= 0 && e.RowIndex < DataGridTasks.Rows.Count - 1)
+            {
+                var selectedRow = DataGridTasks.Rows[e.RowIndex];
+                if (selectedRow != null)
+                {
+                    ComboxUrl.SelectedValue = selectedRow.Cells[2].Value;
+                    ComboxSpider.SelectedValue = selectedRow.Cells[3].Value;
+                }
+            }
         }
     }
 }
