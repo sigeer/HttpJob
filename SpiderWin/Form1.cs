@@ -120,13 +120,13 @@ namespace SpiderWin
                    sw.Start();
                    ResultTxtBox.AppendText($"[{DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")}] >>任务{taskId}开始==========\r\n");
                };
-               worker.OnTaskComplete += (obj, evt) =>
+               worker.OnTaskComplete += (obj, taskId) =>
                {
                    sw.Stop();
 
                    var cost = $"共耗时：{sw.Elapsed.TotalSeconds.ToFixed(2)}秒";
                    mainModalStatusLabel.Text = cost;
-                   ResultTxtBox.AppendText($"[{DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")}] >>结束=========={cost} file:///{evt} \r\n");
+                   ResultTxtBox.AppendText($"[{DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")}] >>任务{taskId}结束=========={cost} file:///{worker.CurrentDir} \r\n");
 
                    MessageBox.Show($"任务完成，{cost}。");
                };

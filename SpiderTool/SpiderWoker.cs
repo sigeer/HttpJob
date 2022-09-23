@@ -47,14 +47,14 @@ namespace SpiderTool
         /// </summary>
         private string _rootUrl = string.Empty;
         private int _taskId;
-        private string HostUrl => _rootUrl.GetHostUrl();
+        public string HostUrl => _rootUrl.GetHostUrl();
 
         readonly ISpiderService _service;
 
-        public event EventHandler<string>? OnTaskComplete;
-        public event EventHandler<string>? OnLog;
         public event EventHandler<int>? OnTaskStart;
         public event EventHandler<int>? OnTaskStatusChanged;
+        public event EventHandler<int>? OnTaskComplete;
+        public event EventHandler<string>? OnLog;
 
         public SpiderWorker(ISpiderService service)
         {
@@ -77,21 +77,15 @@ namespace SpiderTool
             OnTaskStart?.Invoke(this, _taskId);
             OnTaskStatusChanged?.Invoke(this, _taskId);
             await ProcessUrl(url);
-            CompleteTask();
+            await CompleteTask();
         }
 
-        public void CompleteTask()
+        public async Task CompleteTask()
         {
-            //_service.SubmitResouceHistory(new ResourceHistorySetter()
-            //{
-            //    Url = _rootUrl,
-            //    Name = DocumentTitle,
-            //    SpiderId = Spider.Id
-            //});
             _service.SetTaskStatus(_taskId, (int)TaskType.Completed);
-            OnTaskComplete?.Invoke(this, CurrentDir);
+            OnTaskComplete?.Invoke(this, _taskId);
             OnTaskStatusChanged?.Invoke(this, _taskId);
-            MergeTextFile(CurrentDir);
+            await SpiderUtility.MergeTextFileAsync(CurrentDir);
         }
 
         public async Task<string> LoadDocumentContent()
@@ -122,7 +116,7 @@ namespace SpiderTool
             });
             OnTaskStatusChanged?.Invoke(this, _taskId);
 
-            ProcessContent();
+            await ProcessContent();
             await MoveToNextPage();
             //OnLog?.Invoke(this, "====开始合并====");
 
@@ -131,7 +125,7 @@ namespace SpiderTool
             //Console.WriteLine("打包完成：" + filePath);
         }
 
-        private void ProcessContent()
+        private async Task ProcessContent()
         {
             foreach (var rule in Spider.TemplateList)
             {
@@ -150,14 +144,14 @@ namespace SpiderTool
                 {
                     foreach (var item in nodes)
                     {
-                        SpiderUtility.SaveText(CurrentDir, ReadHtmlNodeInnerHtml(item, rule));
+                        await SpiderUtility.SaveTextAsync(CurrentDir, SpiderUtility.ReadHtmlNodeInnerHtml(item, rule));
                     }
                 }
                 if (rule.Type == (int)TemplateTypeEnum.Html)
                 {
                     foreach (var item in nodes)
                     {
-                        SpiderUtility.SaveText(CurrentDir, item.InnerHtml);
+                        await SpiderUtility.SaveTextAsync(CurrentDir, item.InnerHtml);
                     }
                 }
                 if (rule.Type == (int)TemplateTypeEnum.JumpLink)
@@ -172,7 +166,7 @@ namespace SpiderTool
 
                         var url = resource.GetTotalUrl(HostUrl);
 
-                        var newSpider = new SpiderWorker(_service);
+                        var newSpider = new SpiderWorker(_service, _processor);
                         newSpider.OnTaskStart += (obj, evt) =>
                         {
                             OnTaskStart?.Invoke(obj, evt);
@@ -203,18 +197,6 @@ namespace SpiderTool
             }
         }
 
-        private string ReadHtmlNodeInnerHtml(HtmlNode item, TemplateDto rule)
-        {
-            var finalText = HttpUtility.HtmlDecode(item.InnerHtml);
-            foreach (var handle in rule.ReplacementRules)
-            {
-                finalText = finalText.Replace(handle.ReplacementOldStr!, handle.ReplacementNewlyStr);
-            }
-            var temp = new HtmlDocument();
-            temp.LoadHtml(finalText);
-            return temp.DocumentNode.InnerText;
-        }
-
         private async Task MoveToNextPage()
         {
             if (Spider.NextPageTemplate == null || string.IsNullOrEmpty(Spider.NextPageTemplate.TemplateStr))
@@ -225,24 +207,6 @@ namespace SpiderTool
                 _currentUrl = (nextPageNode.Attributes["href"] ?? nextPageNode.Attributes["data-href"])?.Value;
                 if (_currentUrl != null)
                     await ProcessUrl(_currentUrl);
-            }
-        }
-
-        public void MergeTextFile(string dir)
-        {
-            var dirInfo = new DirectoryInfo(dir);
-            if (!dirInfo.Exists)
-                throw new Exception("dir not exist");
-
-            var files = dirInfo.GetFiles().Where(x => x.Extension.ToLower() == ".txt").OrderBy(x => x.CreationTime).Select(x => x.FullName).ToList();
-            if (files.Count == 0)
-                return;
-
-            var filePath = Path.Combine(dir, dirInfo.Name + DateTime.Now.ToString("yyyyMMdd") + ".txt");
-
-            foreach (var file in files)
-            {
-                File.AppendAllText(filePath, File.ReadAllText(file));
             }
         }
     }
@@ -295,7 +259,7 @@ namespace SpiderTool
                  var fileName = uri.Segments.Last();
                  if (!TryGetExtension(fileName, out var extension))
                  {
-                     var contentType = result.Content.Headers.FirstOrDefault(x => x.Key.ToLower() == "content-type").Value.FirstOrDefault()?.ToLower();
+                     var contentType = result.Content.Headers.ContentType?.MediaType;
                      extension = GetExtensionFromContentType(contentType);
                      if (extension == null)
                          return;
@@ -341,17 +305,49 @@ namespace SpiderTool
             return null;
         }
 
-        public static void SaveText(string dir, string str)
+        public static async Task SaveTextAsync(string dir, string str)
         {
             try
             {
                 var path = Path.Combine(dir.GetDirectory(), DateTime.Now.Ticks + ".txt");
-                File.WriteAllText(path, str);
+                await File.WriteAllTextAsync(path, str);
             }
             catch (Exception ex)
             {
                 Console.WriteLine(ex.Message);
             }
         }
+
+        public static string ReadHtmlNodeInnerHtml(HtmlNode item, TemplateDto rule)
+        {
+            var finalText = HttpUtility.HtmlDecode(item.InnerHtml);
+            foreach (var handle in rule.ReplacementRules)
+            {
+                finalText = finalText.Replace(handle.ReplacementOldStr!, handle.ReplacementNewlyStr);
+            }
+            var temp = new HtmlDocument();
+            temp.LoadHtml(finalText);
+            return temp.DocumentNode.InnerText;
+        }
+
+        public static async Task MergeTextFileAsync(string dir)
+        {
+            var dirInfo = new DirectoryInfo(dir);
+            if (!dirInfo.Exists)
+                throw new Exception("dir not exist");
+
+            var files = dirInfo.GetFiles().Where(x => x.Extension.ToLower() == ".txt").OrderBy(x => x.CreationTime).Select(x => x.FullName).ToList();
+            if (files.Count == 0)
+                return;
+
+            var filePath = Path.Combine(dir, dirInfo.Name + DateTime.Now.ToString("yyyyMMdd") + ".txt");
+
+            foreach (var file in files)
+            {
+                await File.AppendAllTextAsync(filePath, File.ReadAllText(file));
+                File.Delete(file);
+            }
+        }
+
     }
 }
