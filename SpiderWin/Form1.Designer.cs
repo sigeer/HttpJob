@@ -188,7 +188,7 @@
             this.DataGridTasks.RowTemplate.Height = 25;
             this.DataGridTasks.Size = new System.Drawing.Size(548, 137);
             this.DataGridTasks.TabIndex = 13;
-            this.DataGridTasks.CellContentDoubleClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.DataGridTasks_CellContentDoubleClick);
+            this.DataGridTasks.CellDoubleClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.DataGridTasks_CellDoubleClick);
             // 
             // Form1
             // 

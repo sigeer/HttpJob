@@ -51,8 +51,10 @@ namespace SpiderTool
 
         readonly ISpiderService _service;
 
-        public event EventHandler<string>? TaskComplete;
+        public event EventHandler<string>? OnTaskComplete;
         public event EventHandler<string>? OnLog;
+        public event EventHandler<int>? OnTaskStart;
+        public event EventHandler<int>? OnTaskStatusChanged;
 
         public SpiderWorker(ISpiderService service)
         {
@@ -72,7 +74,8 @@ namespace SpiderTool
                 SpiderId = spiderId,
                 Status = (int)TaskType.NotEffective
             });
-            OnLog?.Invoke(this, "AddTask");
+            OnTaskStart?.Invoke(this, _taskId);
+            OnTaskStatusChanged?.Invoke(this, _taskId);
             await ProcessUrl(url);
             CompleteTask();
         }
@@ -86,8 +89,8 @@ namespace SpiderTool
             //    SpiderId = Spider.Id
             //});
             _service.SetTaskStatus(_taskId, (int)TaskType.Completed);
-            TaskComplete?.Invoke(this, CurrentDir);
-            OnLog?.Invoke(this, "ProcessComplete");
+            OnTaskComplete?.Invoke(this, CurrentDir);
+            OnTaskStatusChanged?.Invoke(this, _taskId);
             MergeTextFile(CurrentDir);
         }
 
@@ -117,11 +120,11 @@ namespace SpiderTool
                 Description = DocumentTitle,
                 Status = (int)TaskType.InProgress
             });
-            OnLog?.Invoke(this, "请求成功");
+            OnTaskStatusChanged?.Invoke(this, _taskId);
 
             ProcessContent();
             await MoveToNextPage();
-            OnLog?.Invoke(this, "====开始合并====");
+            //OnLog?.Invoke(this, "====开始合并====");
 
             //Console.WriteLine("====开始打包");
             //var filePath = CurrentDir.PackZip();
@@ -170,9 +173,17 @@ namespace SpiderTool
                         var url = resource.GetTotalUrl(HostUrl);
 
                         var newSpider = new SpiderWorker(_service);
-                        newSpider.TaskComplete += (obj, evt) =>
+                        newSpider.OnTaskStart += (obj, evt) =>
                         {
-                            TaskComplete?.Invoke(obj, evt);
+                            OnTaskStart?.Invoke(obj, evt);
+                        };
+                        newSpider.OnTaskComplete += (obj, evt) =>
+                        {
+                            OnTaskComplete?.Invoke(obj, evt);
+                        };
+                        newSpider.OnTaskStatusChanged += (obj, evt) =>
+                        {
+                            OnTaskStatusChanged?.Invoke(obj, evt);
                         };
                         newSpider.OnLog += (obj, log) =>
                         {
@@ -180,9 +191,9 @@ namespace SpiderTool
                         };
                         ThreadStart childref = new ThreadStart(async () =>
                         {
-                            OnLog?.Invoke(this, $"{Spider.Name}_{index}号爬虫开始 Url:{url} -- thread: {Thread.CurrentThread.ManagedThreadId}");
+                            OnLog?.Invoke(this, $"子爬虫{index}开始，Url:{url} -- thread: {Thread.CurrentThread.ManagedThreadId}");
                             await newSpider.Start(url, rule.LinkedSpiderId ?? 0);
-                            OnLog?.Invoke(this, $"{Spider.Name}_{index}号爬虫结束 Url:{url} -- thread: {Thread.CurrentThread.ManagedThreadId}");
+                            OnLog?.Invoke(this, $"子爬虫{index}结束，Url:{url} -- thread: {Thread.CurrentThread.ManagedThreadId}");
                         });
                         var th = new Thread(childref);
                         th.Start();
