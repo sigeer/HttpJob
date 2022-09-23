@@ -50,28 +50,52 @@ namespace SpiderTool
         public string HostUrl => _rootUrl.GetHostUrl();
 
         readonly ISpiderService _service;
+        readonly ISpiderProcessor _processor;
 
         public event EventHandler<int>? OnTaskStart;
         public event EventHandler<int>? OnTaskStatusChanged;
         public event EventHandler<int>? OnTaskComplete;
         public event EventHandler<string>? OnLog;
+        public event EventHandler<SpiderWorkUnit>? OnNewTask;
 
-        public SpiderWorker(ISpiderService service)
+
+        public SpiderWorker(int spiderId, ISpiderService service)
         {
             _service = service;
-        }
+            _processor = new DefaultSpiderProcessor(service);
 
-        public async Task Start(string url, int spiderId)
-        {
             _spider = _service.GetSpider(spiderId);
             if (Spider == null)
-                return;
+                throw new Exception($"spider {spiderId} not existed");
+        }
 
+        public SpiderWorker(int spiderId, ISpiderService service, ISpiderProcessor processor)
+        {
+            _service = service;
+            _processor = processor;
+
+            _spider = _service.GetSpider(spiderId);
+            if (Spider == null)
+                throw new Exception($"spider {spiderId} not existed");
+        }
+
+        public void Log(string log)
+        {
+            OnLog?.Invoke(this, log);
+        }
+
+        public void CallNewWorker(SpiderWorkUnit unit)
+        {
+            OnNewTask?.Invoke(this, unit);
+        }
+
+        public async Task Start(string url)
+        {
             _rootUrl = url;
             _taskId = _service.AddTask(new Tasks.TaskSetter
             {
                 RootUrl = _rootUrl,
-                SpiderId = spiderId,
+                SpiderId = Spider.Id,
                 Status = (int)TaskType.NotEffective
             });
             OnTaskStart?.Invoke(this, _taskId);
@@ -116,85 +140,8 @@ namespace SpiderTool
             });
             OnTaskStatusChanged?.Invoke(this, _taskId);
 
-            await ProcessContent();
+            await _processor.ProcessContentAsync(this, documentContent, Spider.TemplateList);
             await MoveToNextPage();
-            //OnLog?.Invoke(this, "====开始合并====");
-
-            //Console.WriteLine("====开始打包");
-            //var filePath = CurrentDir.PackZip();
-            //Console.WriteLine("打包完成：" + filePath);
-        }
-
-        private async Task ProcessContent()
-        {
-            foreach (var rule in Spider.TemplateList)
-            {
-                var nodes = string.IsNullOrEmpty(rule.TemplateStr)
-                    ? new HtmlNodeCollection(_currentDoc.DocumentNode)
-                    : _currentDoc.DocumentNode.SelectNodes(rule.TemplateStr ?? "");
-                if (nodes == null)
-                    continue;
-
-                if (rule.Type == (int)TemplateTypeEnum.Object)
-                {
-                    var urlList = nodes.Select(item => (item.Attributes["src"] ?? item.Attributes["data-src"]).Value.GetTotalUrl(HostUrl)).ToList();
-                    SpiderUtility.BulkDownload(CurrentDir, urlList);
-                }
-                if (rule.Type == (int)TemplateTypeEnum.Text)
-                {
-                    foreach (var item in nodes)
-                    {
-                        await SpiderUtility.SaveTextAsync(CurrentDir, SpiderUtility.ReadHtmlNodeInnerHtml(item, rule));
-                    }
-                }
-                if (rule.Type == (int)TemplateTypeEnum.Html)
-                {
-                    foreach (var item in nodes)
-                    {
-                        await SpiderUtility.SaveTextAsync(CurrentDir, item.InnerHtml);
-                    }
-                }
-                if (rule.Type == (int)TemplateTypeEnum.JumpLink)
-                {
-                    //新增
-                    var index = 1;
-                    foreach (var item in nodes)
-                    {
-                        var resource = (item.Attributes["href"] ?? item.Attributes["data-href"])?.Value;
-                        if (resource == null)
-                            continue;
-
-                        var url = resource.GetTotalUrl(HostUrl);
-
-                        var newSpider = new SpiderWorker(_service, _processor);
-                        newSpider.OnTaskStart += (obj, evt) =>
-                        {
-                            OnTaskStart?.Invoke(obj, evt);
-                        };
-                        newSpider.OnTaskComplete += (obj, evt) =>
-                        {
-                            OnTaskComplete?.Invoke(obj, evt);
-                        };
-                        newSpider.OnTaskStatusChanged += (obj, evt) =>
-                        {
-                            OnTaskStatusChanged?.Invoke(obj, evt);
-                        };
-                        newSpider.OnLog += (obj, log) =>
-                        {
-                            OnLog?.Invoke(obj, log);
-                        };
-                        ThreadStart childref = new ThreadStart(async () =>
-                        {
-                            OnLog?.Invoke(this, $"子爬虫{index}开始，Url:{url} -- thread: {Thread.CurrentThread.ManagedThreadId}");
-                            await newSpider.Start(url, rule.LinkedSpiderId ?? 0);
-                            OnLog?.Invoke(this, $"子爬虫{index}结束，Url:{url} -- thread: {Thread.CurrentThread.ManagedThreadId}");
-                        });
-                        var th = new Thread(childref);
-                        th.Start();
-                        index++;
-                    }
-                }
-            }
         }
 
         private async Task MoveToNextPage()
