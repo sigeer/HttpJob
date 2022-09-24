@@ -16,7 +16,7 @@ namespace SpiderTool
         public async Task ProcessContentAsync(SpiderWorker rootSpider, string documentContent, List<TemplateDto> templateRules)
         {
             var currentDoc = new HtmlDocument();
-            currentDoc.Load(documentContent);
+            currentDoc.LoadHtml(documentContent);
             foreach (var rule in templateRules)
             {
                 var nodes = string.IsNullOrEmpty(rule.TemplateStr)
@@ -55,10 +55,9 @@ namespace SpiderTool
 
                         var url = resource.GetTotalUrl(rootSpider.HostUrl);
 
-                        var newSpider = new SpiderWorker(rule.LinkedSpiderId ?? 0, _service, this);
-                        rootSpider.CallNewWorker(new SpiderWorkUnit
+                        rootSpider.CallNewWorker(new SpiderWorkTaskUnit
                         {
-                            SpiderWorker = newSpider,
+                            SpiderId = rule.LinkedSpiderId ?? 0,
                             Url = url
                         });
                     }
