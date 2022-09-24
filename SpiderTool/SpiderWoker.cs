@@ -56,7 +56,7 @@ namespace SpiderTool
         public event EventHandler<int>? OnTaskStatusChanged;
         public event EventHandler<int>? OnTaskComplete;
         public event EventHandler<string>? OnLog;
-        public event EventHandler<SpiderWorkUnit>? OnNewTask;
+        public event EventHandler<SpiderWorkTaskUnit>? OnNewTask;
 
 
         public SpiderWorker(int spiderId, ISpiderService service)
@@ -84,7 +84,7 @@ namespace SpiderTool
             OnLog?.Invoke(this, log);
         }
 
-        public void CallNewWorker(SpiderWorkUnit unit)
+        public void CallNewWorker(SpiderWorkTaskUnit unit)
         {
             OnNewTask?.Invoke(this, unit);
         }
@@ -287,7 +287,7 @@ namespace SpiderTool
             if (files.Count == 0)
                 return;
 
-            var filePath = Path.Combine(dir, dirInfo.Name + DateTime.Now.ToString("yyyyMMdd") + ".txt");
+            var filePath = Path.Combine(dir, dirInfo.Name);
 
             foreach (var file in files)
             {

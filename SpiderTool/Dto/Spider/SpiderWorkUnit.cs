@@ -11,4 +11,10 @@ namespace SpiderTool.Dto.Spider
         public SpiderWorker? SpiderWorker { get; set; }
         public string? Url { get; set; }
     }
+
+    public class SpiderWorkTaskUnit
+    {
+        public int SpiderId { get; set; }
+        public string? Url { get; set; }
+    }
 }
