@@ -56,7 +56,7 @@ namespace SpiderTool
         public event EventHandler<int>? OnTaskStatusChanged;
         public event EventHandler<int>? OnTaskComplete;
         public event EventHandler<string>? OnLog;
-        public event EventHandler<SpiderWorkTaskUnit>? OnNewTask;
+        public event EventHandler<int>? OnNewTask;
 
 
         public SpiderWorker(int spiderId, ISpiderService service)
@@ -79,14 +79,29 @@ namespace SpiderTool
                 throw new Exception($"spider {spiderId} not existed");
         }
 
-        public void Log(string log)
-        {
-            OnLog?.Invoke(this, log);
-        }
 
-        public void CallNewWorker(SpiderWorkTaskUnit newTask)
+        public void MountChildTaskEvent(SpiderWorker childTask)
         {
-            OnNewTask?.Invoke(this, newTask);
+            childTask.OnLog += (obj, evt) =>
+            {
+                OnLog?.Invoke(obj, evt);
+            };
+            childTask.OnNewTask += (obj, evt) =>
+            {
+                OnNewTask?.Invoke(obj, evt);
+            };
+            childTask.OnTaskStart += (obj, evt) =>
+            {
+                OnTaskStart?.Invoke(obj, evt);
+            };
+            childTask.OnTaskComplete += (obj, evt) =>
+            {
+                OnTaskComplete?.Invoke(obj, evt);
+            };
+            childTask.OnTaskStatusChanged += (obj, evt) =>
+            {
+                OnTaskStatusChanged?.Invoke(obj, evt);
+            };
         }
 
         public async Task Start(string url)
@@ -125,6 +140,17 @@ namespace SpiderTool
             return responseStream.DecodeData(res.Content.Headers.ContentType?.CharSet);
         }
 
+        private async Task ProcessNextPageUrl(string url)
+        {
+            _currentUrl = url;
+
+            var documentContent = await LoadDocumentContent();
+            _currentDoc.LoadHtml(documentContent);
+
+            await _processor.ProcessContentAsync(this, documentContent, Spider.TemplateList);
+            await MoveToNextPage();
+        }
+
         public async Task ProcessUrl(string currentUrl)
         {
             _currentUrl = currentUrl;
@@ -151,9 +177,9 @@ namespace SpiderTool
             var nextPageNode = _currentDoc.DocumentNode.SelectSingleNode(Spider.NextPageTemplate.TemplateStr);
             if (nextPageNode != null)
             {
-                _currentUrl = (nextPageNode.Attributes["href"] ?? nextPageNode.Attributes["data-href"])?.Value;
-                if (_currentUrl != null)
-                    await ProcessUrl(_currentUrl);
+                var nextUrl = (nextPageNode.Attributes["href"] ?? nextPageNode.Attributes["data-href"])?.Value;
+                if (!string.IsNullOrEmpty(nextUrl))
+                    await ProcessNextPageUrl(nextUrl);
             }
         }
     }

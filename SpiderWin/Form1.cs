@@ -141,10 +141,9 @@ namespace SpiderWin
                 {
                     LoadTaskList();
                 };
-                worker.OnNewTask += (obj, unit) =>
+                worker.OnNewTask += (obj, taskId) =>
                 {
-                    var newTask = unit.SpiderWorker!;
-                    OnNewWorkTask(newTask, unit.Url!);
+                    ResultTxtBox.AppendText($"[{DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")}] >>创建了子任务{taskId}");
                 };
 
                 BeginInvoke(new MethodInvoker(async () =>
