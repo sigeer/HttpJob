@@ -111,16 +111,17 @@ namespace SpiderWin
             }
             mainModalStatusLabel.Text = "运行中...";
             var spiderId = (int)ComboxSpider.SelectedValue;
-           
-            OnNewWorkTask(spiderId, ComboxUrl.Text);
+
+            var worker = new SpiderWorker(spiderId, _coreService);
+            OnNewWorkTask(worker, ComboxUrl.Text);
         }
 
-        private void OnNewWorkTask(int spiderId, string url)
+        private void OnNewWorkTask(SpiderWorker worker, string url)
         {
             Task.Run(() =>
             {
                 Stopwatch childSW = new Stopwatch();
-                var worker = new SpiderWorker(spiderId, _coreService);
+               
                 worker.OnTaskStart += (obj, taskId) =>
                 {
                     childSW.Start();
@@ -142,7 +143,8 @@ namespace SpiderWin
                 };
                 worker.OnNewTask += (obj, unit) =>
                 {
-                    OnNewWorkTask(unit.SpiderId, unit.Url!);
+                    var newTask = unit.SpiderWorker!;
+                    OnNewWorkTask(newTask, unit.Url!);
                 };
 
                 BeginInvoke(new MethodInvoker(async () =>

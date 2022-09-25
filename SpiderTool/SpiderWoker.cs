@@ -84,9 +84,9 @@ namespace SpiderTool
             OnLog?.Invoke(this, log);
         }
 
-        public void CallNewWorker(SpiderWorkTaskUnit unit)
+        public void CallNewWorker(SpiderWorkTaskUnit newTask)
         {
-            OnNewTask?.Invoke(this, unit);
+            OnNewTask?.Invoke(this, newTask);
         }
 
         public async Task Start(string url)
