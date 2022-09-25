@@ -6,15 +6,9 @@ using System.Threading.Tasks;
 
 namespace SpiderTool.Dto.Spider
 {
-    public class SpiderWorkUnit
-    {
-        public SpiderWorker? SpiderWorker { get; set; }
-        public string? Url { get; set; }
-    }
-
     public class SpiderWorkTaskUnit
     {
-        public int SpiderId { get; set; }
+        public SpiderWorker? SpiderWorker { get; set; }
         public string? Url { get; set; }
     }
 }
