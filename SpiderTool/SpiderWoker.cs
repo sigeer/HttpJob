@@ -47,6 +47,7 @@ namespace SpiderTool
         /// </summary>
         private string _rootUrl = string.Empty;
         private int _taskId;
+        public int TaskId => _taskId;
         public string HostUrl => _rootUrl.GetHostUrl();
 
         readonly ISpiderService _service;
@@ -56,7 +57,10 @@ namespace SpiderTool
         public event EventHandler<int>? OnTaskStatusChanged;
         public event EventHandler<int>? OnTaskComplete;
         public event EventHandler<string>? OnLog;
-        public event EventHandler<int>? OnNewTask;
+        public event EventHandler<SpiderWorker>? OnNewTask;
+        public event EventHandler<string>? OnTaskCanceled;
+
+        private bool _isTaskExisted = false;
 
 
         public SpiderWorker(int spiderId, ISpiderService service)
@@ -119,6 +123,12 @@ namespace SpiderTool
             await CompleteTask();
         }
 
+        public void Cancel()
+        {
+            _isTaskExisted = true;
+            OnTaskCanceled?.Invoke(this, "");
+        }
+
         public async Task CompleteTask()
         {
             _service.SetTaskStatus(_taskId, (int)TaskType.Completed);
@@ -172,7 +182,7 @@ namespace SpiderTool
 
         private async Task MoveToNextPage()
         {
-            if (Spider.NextPageTemplate == null || string.IsNullOrEmpty(Spider.NextPageTemplate.TemplateStr))
+            if (_isTaskExisted || Spider.NextPageTemplate == null || string.IsNullOrEmpty(Spider.NextPageTemplate.TemplateStr))
                 return;
             var nextPageNode = _currentDoc.DocumentNode.SelectSingleNode(Spider.NextPageTemplate.TemplateStr);
             if (nextPageNode != null)
@@ -313,7 +323,7 @@ namespace SpiderTool
             if (files.Count == 0)
                 return;
 
-            var filePath = Path.Combine(dir, dirInfo.Name);
+            var filePath = Path.Combine(dir, $"{dirInfo.Name}.txt");
 
             foreach (var file in files)
             {

@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             this.btnShowConfig = new System.Windows.Forms.Button();
             this.label1 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
@@ -44,9 +45,13 @@
             this.ResultTxtBox = new System.Windows.Forms.RichTextBox();
             this.ComboxUrl = new System.Windows.Forms.ComboBox();
             this.DataGridTasks = new System.Windows.Forms.DataGridView();
+            this.LinkExportLog = new System.Windows.Forms.LinkLabel();
+            this.DataGridMenu = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.TaskStop = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1.SuspendLayout();
             this.statusStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.DataGridTasks)).BeginInit();
+            this.DataGridMenu.SuspendLayout();
             this.SuspendLayout();
             // 
             // btnShowConfig
@@ -130,7 +135,7 @@
             this.UseLocalMenu.CheckOnClick = true;
             this.UseLocalMenu.CheckState = System.Windows.Forms.CheckState.Checked;
             this.UseLocalMenu.Name = "UseLocalMenu";
-            this.UseLocalMenu.Size = new System.Drawing.Size(180, 22);
+            this.UseLocalMenu.Size = new System.Drawing.Size(112, 22);
             this.UseLocalMenu.Text = "本地";
             this.UseLocalMenu.Click += new System.EventHandler(this.UseLocalMenu_Click);
             // 
@@ -138,7 +143,7 @@
             // 
             this.UseServiceMenu.CheckOnClick = true;
             this.UseServiceMenu.Name = "UseServiceMenu";
-            this.UseServiceMenu.Size = new System.Drawing.Size(180, 22);
+            this.UseServiceMenu.Size = new System.Drawing.Size(112, 22);
             this.UseServiceMenu.Text = "服务器";
             this.UseServiceMenu.Click += new System.EventHandler(this.UseServiceMenu_Click);
             // 
@@ -185,18 +190,46 @@
             // DataGridTasks
             // 
             this.DataGridTasks.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.DataGridTasks.ContextMenuStrip = this.DataGridMenu;
             this.DataGridTasks.Location = new System.Drawing.Point(78, 153);
             this.DataGridTasks.Name = "DataGridTasks";
             this.DataGridTasks.RowTemplate.Height = 25;
             this.DataGridTasks.Size = new System.Drawing.Size(548, 137);
             this.DataGridTasks.TabIndex = 13;
             this.DataGridTasks.CellDoubleClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.DataGridTasks_CellDoubleClick);
+            this.DataGridTasks.CellMouseUp += new System.Windows.Forms.DataGridViewCellMouseEventHandler(this.DataGridTasks_CellMouseUp);
+            // 
+            // LinkExportLog
+            // 
+            this.LinkExportLog.AutoSize = true;
+            this.LinkExportLog.Location = new System.Drawing.Point(571, 127);
+            this.LinkExportLog.Name = "LinkExportLog";
+            this.LinkExportLog.Size = new System.Drawing.Size(56, 17);
+            this.LinkExportLog.TabIndex = 16;
+            this.LinkExportLog.TabStop = true;
+            this.LinkExportLog.Text = "导出日志";
+            this.LinkExportLog.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.LinkExportLog_LinkClicked);
+            // 
+            // DataGridMenu
+            // 
+            this.DataGridMenu.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.TaskStop});
+            this.DataGridMenu.Name = "DataGridMenu";
+            this.DataGridMenu.Size = new System.Drawing.Size(181, 48);
+            // 
+            // TaskStop
+            // 
+            this.TaskStop.Name = "TaskStop";
+            this.TaskStop.Size = new System.Drawing.Size(180, 22);
+            this.TaskStop.Text = "中断";
+            this.TaskStop.Click += new System.EventHandler(this.TaskStop_Click);
             // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 17F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(674, 417);
+            this.Controls.Add(this.LinkExportLog);
             this.Controls.Add(this.DataGridTasks);
             this.Controls.Add(this.ComboxUrl);
             this.Controls.Add(this.ResultTxtBox);
@@ -216,6 +249,7 @@
             this.statusStrip1.ResumeLayout(false);
             this.statusStrip1.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.DataGridTasks)).EndInit();
+            this.DataGridMenu.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -239,5 +273,8 @@
         private RichTextBox ResultTxtBox;
         private ComboBox ComboxUrl;
         private DataGridView DataGridTasks;
+        private LinkLabel LinkExportLog;
+        private ContextMenuStrip DataGridMenu;
+        private ToolStripMenuItem TaskStop;
     }
 }

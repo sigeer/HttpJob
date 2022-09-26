@@ -5,6 +5,7 @@ using SpiderTool.IService;
 using SpiderTool.Tasks;
 using SpiderWin.Modals;
 using System.Diagnostics;
+using System.Text;
 using Utility.Extensions;
 
 namespace SpiderWin
@@ -126,6 +127,7 @@ namespace SpiderWin
                 {
                     childSW.Start();
                     ResultTxtBox.AppendText($"[{DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")}] >>任务{taskId}开始==========\r\n");
+                    ResultTxtBox.Focus();
                 };
                 worker.OnTaskComplete += (obj, taskId) =>
                 {
@@ -134,16 +136,16 @@ namespace SpiderWin
                     var cost = $"共耗时：{childSW.Elapsed.TotalSeconds.ToFixed(2)}秒";
                     mainModalStatusLabel.Text = cost;
                     ResultTxtBox.AppendText($"[{DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")}] >>任务{taskId}结束=========={cost} file:///{worker.CurrentDir} \r\n");
-
-                    MessageBox.Show($"任务完成，{cost}。");
+                    ResultTxtBox.Focus();
                 };
                 worker.OnTaskStatusChanged += (obj, taskId) =>
                 {
                     LoadTaskList();
                 };
-                worker.OnNewTask += (obj, taskId) =>
+                worker.OnNewTask += (obj, spider) =>
                 {
-                    ResultTxtBox.AppendText($"[{DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")}] >>创建了子任务{taskId}");
+                    ResultTxtBox.AppendText($"[{DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")}] >>创建了子任务 {spider.TaskId}");
+                    ResultTxtBox.Focus();
                 };
 
                 BeginInvoke(new MethodInvoker(async () =>
@@ -190,6 +192,38 @@ namespace SpiderWin
                     ComboxSpider.SelectedValue = selectedRow.Cells[3].Value;
                 }
             }
+        }
+
+        private void LinkExportLog_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        {
+            var saveLogDialog = new SaveFileDialog()
+            {
+                Title = "导出日志",
+                Filter = "*.txt|*.log",
+                FileName = DateTime.Now.Ticks.ToString(),
+            };
+            saveLogDialog.ShowDialog();
+            using var fs = saveLogDialog.OpenFile();
+            var txtBytes = Encoding.UTF8.GetBytes(LinkExportLog.Text);
+            fs.Write(txtBytes, 0 , txtBytes.Length);
+        }
+
+        private void DataGridTasks_CellMouseUp(object sender, DataGridViewCellMouseEventArgs e)
+        {
+            if (e.Button == MouseButtons.Right)
+            {
+                if (e.RowIndex >= 0)
+                {
+                    DataGridTasks.ClearSelection();
+                    DataGridTasks.Rows[e.RowIndex].Selected = true;
+                    DataGridTasks.CurrentCell = DataGridTasks.Rows[e.RowIndex].Cells[e.ColumnIndex];
+                    DataGridMenu.Show(MousePosition.X, MousePosition.Y);
+                }
+            }
+        }
+
+        private void TaskStop_Click(object sender, EventArgs e)
+        {
         }
     }
 }
