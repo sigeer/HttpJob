@@ -85,6 +85,7 @@
             this.Controls.Add(this.BtnOK);
             this.Controls.Add(this.dataGridView1);
             this.Name = "TemplateManageForm";
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "模板管理";
             this.Load += new System.EventHandler(this.TemplateManageForm_Load);
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).EndInit();

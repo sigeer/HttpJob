@@ -145,6 +145,7 @@
             this.Controls.Add(this.comboType);
             this.Controls.Add(this.label1);
             this.Name = "ContentConfigForm";
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "模板设置";
             this.Load += new System.EventHandler(this.ContentConfigForm_Load);
             this.ResumeLayout(false);

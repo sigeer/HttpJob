@@ -17,6 +17,9 @@ namespace SpiderWin
         List<SpiderDtoSetter> _spiderList = new List<SpiderDtoSetter>();
         List<TaskDto> _taskList = new List<TaskDto>();
 
+        List<SpiderWorker> _taskRunningList = new List<SpiderWorker>();
+
+
         public Form1(ISpiderService coreService)
         {
             _coreService = coreService;
@@ -113,14 +116,16 @@ namespace SpiderWin
             mainModalStatusLabel.Text = "运行中...";
             var spiderId = (int)ComboxSpider.SelectedValue;
 
-            var worker = new SpiderWorker(spiderId, _coreService);
-            OnNewWorkTask(worker, ComboxUrl.Text);
+            var currentTask = NewWorkTask(spiderId, ComboxUrl.Text);
+            currentTask.Start();
         }
 
-        private void OnNewWorkTask(SpiderWorker worker, string url)
+        private Task NewWorkTask(int spiderId, string url)
         {
-            Task.Run(() =>
+            return new Task(() =>
             {
+                var worker = new SpiderWorker(spiderId, _coreService);
+                _taskRunningList.Add(worker);
                 Stopwatch childSW = new Stopwatch();
                
                 worker.OnTaskStart += (obj, taskId) =>
@@ -144,7 +149,7 @@ namespace SpiderWin
                 };
                 worker.OnNewTask += (obj, spider) =>
                 {
-                    ResultTxtBox.AppendText($"[{DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")}] >>创建了子任务 {spider.TaskId}");
+                    ResultTxtBox.AppendText($"[{DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")}] >>创建了子任务 {spider.TaskId} \r\n");
                     ResultTxtBox.Focus();
                 };
 
@@ -208,22 +213,26 @@ namespace SpiderWin
             fs.Write(txtBytes, 0 , txtBytes.Length);
         }
 
-        private void DataGridTasks_CellMouseUp(object sender, DataGridViewCellMouseEventArgs e)
-        {
-            if (e.Button == MouseButtons.Right)
-            {
-                if (e.RowIndex >= 0)
-                {
-                    DataGridTasks.ClearSelection();
-                    DataGridTasks.Rows[e.RowIndex].Selected = true;
-                    DataGridTasks.CurrentCell = DataGridTasks.Rows[e.RowIndex].Cells[e.ColumnIndex];
-                    DataGridMenu.Show(MousePosition.X, MousePosition.Y);
-                }
-            }
-        }
+        //private void DataGridTasks_CellMouseUp(object sender, DataGridViewCellMouseEventArgs e)
+        //{
+        //    if (e.Button == MouseButtons.Right)
+        //    {
+        //        if (e.RowIndex >= 0)
+        //        {
+        //            DataGridTasks.ClearSelection();
+        //            DataGridTasks.Rows[e.RowIndex].Selected = true;
+        //            DataGridTasks.CurrentCell = DataGridTasks.Rows[e.RowIndex].Cells[e.ColumnIndex];
+        //            DataGridMenu.Show(MousePosition.X, MousePosition.Y);
+        //        }
+        //    }
+        //}
 
-        private void TaskStop_Click(object sender, EventArgs e)
+        private void BtnCacel_Click(object sender, EventArgs e)
         {
+            _taskRunningList.ForEach(x =>
+            {
+                x.Cancel();
+            });
         }
     }
 }

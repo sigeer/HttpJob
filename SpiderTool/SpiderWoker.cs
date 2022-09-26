@@ -86,6 +86,7 @@ namespace SpiderTool
 
         public void MountChildTaskEvent(SpiderWorker childTask)
         {
+            OnNewTask?.Invoke(this, childTask);
             childTask.OnLog += (obj, evt) =>
             {
                 OnLog?.Invoke(obj, evt);
