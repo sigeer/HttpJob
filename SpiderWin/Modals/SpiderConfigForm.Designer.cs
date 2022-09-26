@@ -235,6 +235,7 @@
             this.Controls.Add(this.menuStrip1);
             this.MainMenuStrip = this.menuStrip1;
             this.Name = "SpiderConfigForm";
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "爬虫设置";
             this.Load += new System.EventHandler(this.SpiderConfigForm_Load);
             this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.SpiderConfigForm_KeyDown);

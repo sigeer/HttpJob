@@ -28,7 +28,6 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.components = new System.ComponentModel.Container();
             this.btnShowConfig = new System.Windows.Forms.Button();
             this.label1 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
@@ -46,12 +45,10 @@
             this.ComboxUrl = new System.Windows.Forms.ComboBox();
             this.DataGridTasks = new System.Windows.Forms.DataGridView();
             this.LinkExportLog = new System.Windows.Forms.LinkLabel();
-            this.DataGridMenu = new System.Windows.Forms.ContextMenuStrip(this.components);
-            this.TaskStop = new System.Windows.Forms.ToolStripMenuItem();
+            this.BtnCacel = new System.Windows.Forms.Button();
             this.menuStrip1.SuspendLayout();
             this.statusStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.DataGridTasks)).BeginInit();
-            this.DataGridMenu.SuspendLayout();
             this.SuspendLayout();
             // 
             // btnShowConfig
@@ -190,14 +187,12 @@
             // DataGridTasks
             // 
             this.DataGridTasks.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.DataGridTasks.ContextMenuStrip = this.DataGridMenu;
             this.DataGridTasks.Location = new System.Drawing.Point(78, 153);
             this.DataGridTasks.Name = "DataGridTasks";
             this.DataGridTasks.RowTemplate.Height = 25;
             this.DataGridTasks.Size = new System.Drawing.Size(548, 137);
             this.DataGridTasks.TabIndex = 13;
             this.DataGridTasks.CellDoubleClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.DataGridTasks_CellDoubleClick);
-            this.DataGridTasks.CellMouseUp += new System.Windows.Forms.DataGridViewCellMouseEventHandler(this.DataGridTasks_CellMouseUp);
             // 
             // LinkExportLog
             // 
@@ -210,25 +205,22 @@
             this.LinkExportLog.Text = "导出日志";
             this.LinkExportLog.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.LinkExportLog_LinkClicked);
             // 
-            // DataGridMenu
+            // BtnCacel
             // 
-            this.DataGridMenu.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.TaskStop});
-            this.DataGridMenu.Name = "DataGridMenu";
-            this.DataGridMenu.Size = new System.Drawing.Size(181, 48);
-            // 
-            // TaskStop
-            // 
-            this.TaskStop.Name = "TaskStop";
-            this.TaskStop.Size = new System.Drawing.Size(180, 22);
-            this.TaskStop.Text = "中断";
-            this.TaskStop.Click += new System.EventHandler(this.TaskStop_Click);
+            this.BtnCacel.Location = new System.Drawing.Point(160, 124);
+            this.BtnCacel.Name = "BtnCacel";
+            this.BtnCacel.Size = new System.Drawing.Size(75, 23);
+            this.BtnCacel.TabIndex = 17;
+            this.BtnCacel.Text = "停止";
+            this.BtnCacel.UseVisualStyleBackColor = true;
+            this.BtnCacel.Click += new System.EventHandler(this.BtnCacel_Click);
             // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 17F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(674, 417);
+            this.Controls.Add(this.BtnCacel);
             this.Controls.Add(this.LinkExportLog);
             this.Controls.Add(this.DataGridTasks);
             this.Controls.Add(this.ComboxUrl);
@@ -242,6 +234,7 @@
             this.Controls.Add(this.btnShowConfig);
             this.MainMenuStrip = this.menuStrip1;
             this.Name = "Form1";
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "爬虫";
             this.Load += new System.EventHandler(this.Form1_Load);
             this.menuStrip1.ResumeLayout(false);
@@ -249,7 +242,6 @@
             this.statusStrip1.ResumeLayout(false);
             this.statusStrip1.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.DataGridTasks)).EndInit();
-            this.DataGridMenu.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -274,7 +266,6 @@
         private ComboBox ComboxUrl;
         private DataGridView DataGridTasks;
         private LinkLabel LinkExportLog;
-        private ContextMenuStrip DataGridMenu;
-        private ToolStripMenuItem TaskStop;
+        private Button BtnCacel;
     }
 }
