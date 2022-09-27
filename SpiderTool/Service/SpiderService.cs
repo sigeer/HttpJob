@@ -95,5 +95,50 @@ namespace SpiderTool.Service
         {
             return _templateDomain.Submit(model);
         }
+
+        public async Task<List<TaskDto>> GetTaskListAsync()
+        {
+            return await _taskDomain.GetTaskListAsync();
+        }
+
+        public async Task<int> AddTaskAsync(TaskSetter model)
+        {
+            return await _taskDomain.AddTaskAsync(model);
+        }
+
+        public async Task UpdateTaskAsync(TaskSetter model)
+        {
+            await _taskDomain.UpdateTaskAsync(model);
+        }
+
+        public async Task SetTaskStatusAsync(int taskId, int taskStatus)
+        {
+            await _taskDomain.SetTaskStatusAsync(taskId, taskStatus);
+        }
+
+        public async Task<List<SpiderDtoSetter>> GetSpiderDtoListAsync()
+        {
+            return await _spiderDomain.GetSpiderDtoListAsync();
+        }
+
+        public async Task<string> SubmitSpiderAsync(SpiderDtoSetter model)
+        {
+            return await _spiderDomain.SubmitAsync(model);
+        }
+
+        public async Task<string> DeleteSpiderAsync(SpiderDtoSetter model)
+        {
+            return await _spiderDomain.DeleteAsync(model);
+        }
+
+        public async Task<string> SubmitTemplateAsync(TemplateDto model)
+        {
+            return await _templateDomain.SubmitAsync(model);
+        }
+
+        public async Task<string> DeleteTemplateAsync(TemplateDto model)
+        {
+            return await _templateDomain.DeleteAsync(model);
+        }
     }
 }

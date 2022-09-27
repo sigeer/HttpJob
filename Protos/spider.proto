@@ -9,9 +9,21 @@ service SpiderWorkerProtoService {
   // Sends a greeting
   rpc Crawl (RequestModel) returns (ResultModel);
   rpc Ping (google.protobuf.Empty) returns (ResultModel);
+
+  rpc AddTask(TaskEditDto) returns (ResultIntModel);
+  rpc UpdateTask(TaskEditDto) returns (google.protobuf.Empty);
+  rpc GetTaskList(google.protobuf.Empty) returns (TaskListResult);
+
+  rpc SubmitSpider(SpiderEditDto) returns(ResultModel);
+  rpc DeleteSpider(SpiderEditDto) returns(ResultStringModel);
+  rpc GetSpider(IntModel) returns(SpiderProtoDto);
+  rpc GetSpiderList(google.protobuf.Empty) returns(SpiderListResult);
+
+  rpc SubmitTemplateConfig(TemplateProtoDto) returns(ResultStringModel);
+  rpc DeleteTemplateConfig(TemplateProtoDto) returns(ResultStringModel);
+  rpc GetTemplateConfigList(google.protobuf.Empty) returns (TemplateListResult);
 }
 
-// The request message containing the user's name.
 message RequestModel {
   string url = 1;
   int32 spiderId = 2;
@@ -21,4 +33,68 @@ message ResultModel {
 	string data = 1;
 	int32 type = 2;
 	string status = 3;
+}
+
+message IntModel {
+	int32 data = 1;
+}
+
+message ResultIntModel {
+	int32 data = 1;
+}
+
+message ResultStringModel {
+	string data = 1;
+}
+
+message TaskEditDto{
+	string rootUrl = 1;
+	int32 spiderId = 2;
+	int32 status = 3;
+	string description = 4;
+	int32 id = 5;
+}
+
+message TaskListResult {
+	repeated TaskEditDto list = 1;
+}
+
+message SpiderEditDto {
+	int32 id = 1;
+	string name = 2;
+	string description = 3;
+	string method = 4;
+	string postObjStr = 5;
+	string headers = 6;
+	int32 nextPageId = 7;
+	repeated int32 templates = 8;
+}
+
+message SpiderProtoDto {
+	int32 id = 1;
+	string name = 2;
+	string description = 3;
+	string method = 4;
+	string postObjStr = 5;
+	string headers = 6;
+	int32 nextPageId = 7;
+	repeated int32 templates = 8;
+	TemplateProtoDto nextPage = 9;
+	repeated TemplateProtoDto templateList = 10;
+}
+
+message SpiderListResult {
+	repeated SpiderEditDto list = 1;
+}
+
+message TemplateProtoDto {
+	int32 id = 1;
+	string name = 2;
+	int32 type = 3;
+	string xPath = 4;
+	int32 linkedSpiderId = 5;
+}
+
+message TemplateListResult {
+	repeated TemplateProtoDto list = 1;
 }

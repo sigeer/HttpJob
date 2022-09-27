@@ -8,10 +8,10 @@ namespace SpiderRemoteServiceClient.Services
 {
     public interface ISpiderRemoteService
     {
-        List<ResourceHistoryDto> GetResourceHistoryDtoList();
+        //List<ResourceHistoryDto> GetResourceHistoryDtoList();
 
-        string SubmitResouceHistory(ResourceHistorySetter model);
-        string DeleteResource(ResourceHistorySetter model);
+        //string SubmitResouceHistory(ResourceHistorySetter model);
+        //string DeleteResource(ResourceHistorySetter model);
 
         List<SpiderDtoSetter> GetSpiderDtoList();
         string SubmitSpider(SpiderDtoSetter model);

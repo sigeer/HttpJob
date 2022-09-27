@@ -18,7 +18,6 @@ namespace SpiderWin
 
         List<SpiderWorker> _taskRunningList = new List<SpiderWorker>();
 
-
         public Form1(ISpiderService coreService)
         {
             _coreService = coreService;
@@ -149,6 +148,11 @@ namespace SpiderWin
                 worker.OnNewTask += (obj, spider) =>
                 {
                     ResultTxtBox.AppendText($"[{DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")}] >>创建了子任务 {spider.TaskId} \r\n");
+                    ResultTxtBox.Focus();
+                };
+                worker.OnLog += (obj, logStr) =>
+                {
+                    ResultTxtBox.AppendText($"[{DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")}] >>日志：{logStr} \r\n");
                     ResultTxtBox.Focus();
                 };
 

@@ -10,10 +10,12 @@ namespace SpiderTool.IDomain
     public interface ISpiderDomain
     {
         List<SpiderDtoSetter> GetSpiderDtoList();
-
-        List<SpiderTemplateDto> GetSpiderTemplatesDto(int spiderId);
-        string Delete(SpiderDtoSetter model);
-        string Submit(SpiderDtoSetter model);
+        Task<List<SpiderDtoSetter>> GetSpiderDtoListAsync();
         SpiderDto? GetSpiderDto(int id);
+        Task<SpiderDto?> GetSpiderDtoAsync(int id);
+        string Delete(SpiderDtoSetter model);
+        Task<string> DeleteAsync(SpiderDtoSetter model);
+        string Submit(SpiderDtoSetter model);
+        Task<string> SubmitAsync(SpiderDtoSetter model);
     }
 }

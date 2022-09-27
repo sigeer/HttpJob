@@ -28,6 +28,14 @@ namespace SpiderTool.Dapper.Domain
             return StatusMessage.Success;
         }
 
+        public async Task<string> DeleteAsync(TemplateDto model)
+        {
+            var dbModel = new DB_Template() { Id = model.Id };
+            await _dbConn.ExecuteScalarAsync($"delete from {templateTable} where id = @id;" +
+                $" delete from {replacementRule} where templateId = @id", dbModel);
+            return StatusMessage.Success;
+        }
+
         public List<TemplateDto> GetTemplateDtoList()
         {
             var sql = $"select a.TemplateId as Id, c.Name, c.TemplateStr, c.LinkedSpiderId, c.Type, a.ReplacementOldStr, a.ReplacementNewlyStr " +
@@ -97,6 +105,39 @@ namespace SpiderTool.Dapper.Domain
 
             _dbConn.ExecuteScalar($"delete from {replacementRule} where templateId = @id", dbModel, dbTrans);
             _dbConn.Insert(model.ReplacementRules.Select(x => new DB_ReplacementRule
+            {
+                TemplateId = dbModel.Id,
+                ReplacementOldStr = x.ReplacementOldStr,
+                ReplacementNewlyStr = x.ReplacementNewlyStr
+            }), dbTrans);
+            dbTrans.Commit();
+
+            return StatusMessage.Success;
+        }
+
+        public async Task<string> SubmitAsync(TemplateDto model)
+        {
+            if (!model.FormValid())
+                return StatusMessage.FormInvalid;
+
+            using var dbTrans = _dbConn.BeginTransaction();
+
+            var dbModel = await _dbConn.QueryFirstAsync<DB_Template>($"select id, createtime, lastUpdatedTime from {templateTable}", transaction: dbTrans);
+            if (dbModel == null)
+            {
+                dbModel = new DB_Template();
+                dbModel.Id = await _dbConn.QueryFirstOrDefaultAsync<int>($"insert into {templateTable} (`createtime`, `lastUpdatedTime`) values(now(6), now(6)); select last_insert_id()");
+            }
+
+            dbModel.Name = model.Name;
+            dbModel.TemplateStr = model.TemplateStr;
+            dbModel.Type = model.Type;
+            dbModel.LastUpdatedTime = DateTime.Now;
+            dbModel.LinkedSpiderId = model.LinkedSpiderId;
+            await _dbConn.UpdateAsync(dbModel, dbTrans);
+
+            await _dbConn.ExecuteScalarAsync($"delete from {replacementRule} where templateId = @id", dbModel, dbTrans);
+            await _dbConn.InsertAsync(model.ReplacementRules.Select(x => new DB_ReplacementRule
             {
                 TemplateId = dbModel.Id,
                 ReplacementOldStr = x.ReplacementOldStr,
