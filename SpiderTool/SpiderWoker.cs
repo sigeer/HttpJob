@@ -80,6 +80,10 @@ namespace SpiderTool
                 throw new Exception($"spider {spiderId} not existed");
         }
 
+        public void CallLog(string logStr)
+        {
+            OnLog?.Invoke(this, logStr);
+        }
 
         public void MountChildTaskEvent(SpiderWorker childTask)
         {
@@ -226,7 +230,7 @@ namespace SpiderTool
             return dir;
         }
 
-        public static void BulkDownload(string dir, List<string> urls)
+        public static void BulkDownload(string dir, List<string> urls, Action<string>? log = null)
         {
             var snowFlake = Utility.GuidHelper.Snowflake.GetInstance(1);
             var data = urls.Distinct().ToDictionary(x => x, x => snowFlake.NextId().ToString());
@@ -248,7 +252,11 @@ namespace SpiderTool
                      fileName = url.Value + extension;
                  }
                  var path = Path.Combine(dirRoot, fileName);
-                 await File.WriteAllBytesAsync(path, await result.Content.ReadAsByteArrayAsync());
+                 var fileBytes = await result.Content.ReadAsByteArrayAsync();
+                 if (fileBytes.Length > 0)
+                     await File.WriteAllBytesAsync(path, fileBytes);
+                 else
+                     log?.Invoke($"for {url}, file bytes = 0");
                  httpRequestPool.Return(client);
              });
         }
@@ -322,11 +330,16 @@ namespace SpiderTool
                 return;
 
             var filePath = Path.Combine(dir, $"{dirInfo.Name}.txt");
-
             foreach (var file in files)
             {
                 await File.AppendAllTextAsync(filePath, File.ReadAllText(file));
                 File.Delete(file);
+            }
+
+            var dirs = dirInfo.GetDirectories();
+            foreach (var childDir in dirs)
+            {
+                await MergeTextFileAsync(childDir.FullName);
             }
         }
 

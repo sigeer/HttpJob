@@ -24,6 +24,16 @@ namespace SpiderTool.SqlSugar.Domain
             return StatusMessage.Success;
         }
 
+        public async Task<string> DeleteAsync(TemplateDto model)
+        {
+            await _dbContext.Ado.UseTranAsync(async () =>
+            {
+                await _dbContext.Deleteable<DB_ReplacementRule>(x => x.TemplateId == model.Id).ExecuteCommandAsync();
+                await _dbContext.Deleteable<DB_Template>(x => x.Id == model.Id).ExecuteCommandAsync();
+            });
+            return StatusMessage.Success;
+        }
+
         public List<TemplateDto> GetTemplateDtoList()
         {
             var allTemplates = _dbContext.Queryable<DB_Template>().ToList();
@@ -108,6 +118,53 @@ namespace SpiderTool.SqlSugar.Domain
                     ReplacementOldStr = x.ReplacementOldStr
                 }).ToList();
                 _dbContext.Insertable<DB_ReplacementRule>(data).ExecuteCommand();
+
+                _dbContext.Ado.CommitTran();
+
+                return StatusMessage.Success;
+            }
+            catch (Exception ex)
+            {
+                _dbContext.Ado.RollbackTran();
+                return ex.Message;
+            }
+        }
+
+        public async Task<string> SubmitAsync(TemplateDto model)
+        {
+            if (!model.FormValid())
+                return StatusMessage.FormInvalid;
+
+            try
+            {
+                _dbContext.Ado.BeginTran();
+
+                var dbModel = await _dbContext.Queryable<DB_Template>().FirstAsync(x => x.Id == model.Id);
+                if (dbModel == null)
+                {
+                    dbModel = new DB_Template
+                    {
+                        CreateTime = DateTime.Now,
+                        LastUpdatedTime = DateTime.Now
+                    };
+                    dbModel.Id = await _dbContext.Insertable<DB_Template>(dbModel).ExecuteReturnIdentityAsync();
+                }
+
+                dbModel.Name = model.Name;
+                dbModel.TemplateStr = model.TemplateStr;
+                dbModel.Type = model.Type;
+                dbModel.LastUpdatedTime = DateTime.Now;
+                dbModel.LinkedSpiderId = model.LinkedSpiderId;
+                await _dbContext.Updateable<DB_Template>(dbModel).Where(x => x.Id == dbModel.Id).ExecuteCommandAsync();
+
+                await _dbContext.Deleteable<DB_ReplacementRule>(x => x.TemplateId == dbModel.Id).ExecuteCommandAsync();
+                var data = model.ReplacementRules.Select(x => new DB_ReplacementRule
+                {
+                    TemplateId = dbModel.Id,
+                    ReplacementNewlyStr = x.ReplacementNewlyStr,
+                    ReplacementOldStr = x.ReplacementOldStr
+                }).ToList();
+                await _dbContext.Insertable<DB_ReplacementRule>(data).ExecuteCommandAsync();
 
                 _dbContext.Ado.CommitTran();
 

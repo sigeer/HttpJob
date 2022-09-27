@@ -24,6 +24,14 @@ namespace SpiderTool.EntityFrameworkCore.Domain
             return StatusMessage.Success;
         }
 
+        public async Task<string> DeleteAsync(TemplateDto model)
+        {
+            var dbModel = new DB_Template() { Id = model.Id };
+            _dbContext.Templates.Attach(dbModel).State = EntityState.Deleted;
+            await _dbContext.SaveChangesAsync();
+            return StatusMessage.Success;
+        }
+
         public List<TemplateDto> GetTemplateDtoList()
         {
             return (from a in _dbContext.Templates
@@ -97,6 +105,43 @@ namespace SpiderTool.EntityFrameworkCore.Domain
             }));
             _dbContext.SaveChanges();
             dbTrans.Commit();
+
+            return StatusMessage.Success;
+        }
+
+        public async Task<string> SubmitAsync(TemplateDto model)
+        {
+            if (!model.FormValid())
+                return StatusMessage.FormInvalid;
+
+            using var dbTrans = await _dbContext.Database.BeginTransactionAsync();
+
+            var dbModel = await _dbContext.Templates.FirstOrDefaultAsync(x => x.Id == model.Id);
+            if (dbModel == null)
+            {
+                dbModel = new DB_Template
+                {
+                    CreateTime = DateTime.Now
+                };
+                _dbContext.Templates.Add(dbModel);
+            }
+
+            dbModel.Name = model.Name;
+            dbModel.TemplateStr = model.TemplateStr;
+            dbModel.Type = model.Type;
+            dbModel.LastUpdatedTime = DateTime.Now;
+            dbModel.LinkedSpiderId = model.LinkedSpiderId;
+            await _dbContext.SaveChangesAsync();
+
+            _dbContext.ReplacementRules.RemoveRange(_dbContext.ReplacementRules.Where(x => x.TemplateId == dbModel.Id));
+            _dbContext.ReplacementRules.AddRange(model.ReplacementRules.Select(x => new DB_ReplacementRule
+            {
+                TemplateId = dbModel.Id,
+                ReplacementNewlyStr = x.ReplacementNewlyStr,
+                ReplacementOldStr = x.ReplacementOldStr
+            }));
+            await _dbContext.SaveChangesAsync();
+            dbTrans.CommitAsync();
 
             return StatusMessage.Success;
         }

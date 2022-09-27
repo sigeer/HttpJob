@@ -25,23 +25,27 @@ namespace SpiderTool
                 if (nodes == null)
                     continue;
 
+                var savePath = Path.Combine(rootSpider.CurrentDir, rule.Id.ToString());
                 if (rule.Type == (int)TemplateTypeEnum.Object)
                 {
                     var urlList = nodes.Select(item => (item.Attributes["src"] ?? item.Attributes["data-src"]).Value.GetTotalUrl(rootSpider.HostUrl)).ToList();
-                    SpiderUtility.BulkDownload(rootSpider.CurrentDir, urlList);
+                    SpiderUtility.BulkDownload(savePath, urlList, (log) =>
+                    {
+                        rootSpider.CallLog(log);
+                    });
                 }
                 if (rule.Type == (int)TemplateTypeEnum.Text)
                 {
                     foreach (var item in nodes)
                     {
-                        await SpiderUtility.SaveTextAsync(rootSpider.CurrentDir, SpiderUtility.ReadHtmlNodeInnerHtml(item, rule));
+                        await SpiderUtility.SaveTextAsync(savePath, SpiderUtility.ReadHtmlNodeInnerHtml(item, rule));
                     }
                 }
                 if (rule.Type == (int)TemplateTypeEnum.Html)
                 {
                     foreach (var item in nodes)
                     {
-                        await SpiderUtility.SaveTextAsync(rootSpider.CurrentDir, item.InnerHtml);
+                        await SpiderUtility.SaveTextAsync(savePath, item.InnerHtml);
                     }
                 }
                 if (rule.Type == (int)TemplateTypeEnum.JumpLink)
