@@ -11,7 +11,7 @@ namespace SpiderWin.Modals
         SpiderDtoSetter _currentSpider;
         List<TemplateDto> _templateList = new List<TemplateDto>();
 
-        public event EventHandler? OnSubmit;
+        public event EventHandler<string>? OnSubmit;
         #endregion
 
         #region services
@@ -71,7 +71,7 @@ namespace SpiderWin.Modals
         {
             if (e.KeyCode == Keys.S && e.Modifiers == Keys.Control)
             {
-                MessageBox.Show("ctrl + s");
+                FormSubmit();
             }
         }
 
@@ -91,7 +91,7 @@ namespace SpiderWin.Modals
             BtnCancel.Enabled = true;
         }
 
-        private async void BtnSubmit_Click(object sender, EventArgs e)
+        private async void FormSubmit()
         {
             FormDisabled();
             _currentSpider.Name = TxtName.Text;
@@ -103,9 +103,15 @@ namespace SpiderWin.Modals
             if (submitResult != StatusMessage.Success)
                 MessageBox.Show(submitResult);
             else
-                OnSubmit?.Invoke(this, e);
+                OnSubmit?.Invoke(this, submitResult);
             FormEnabled();
-            Close();
+            if (submitResult == StatusMessage.Success)
+                Close();
+        }
+
+        private void BtnSubmit_Click(object sender, EventArgs e)
+        {
+            FormSubmit();
         }
 
         private void BtnCancel_Click(object sender, EventArgs e)

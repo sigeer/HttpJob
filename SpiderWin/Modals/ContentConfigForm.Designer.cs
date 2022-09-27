@@ -144,10 +144,12 @@
             this.Controls.Add(this.label2);
             this.Controls.Add(this.comboType);
             this.Controls.Add(this.label1);
+            this.KeyPreview = true;
             this.Name = "ContentConfigForm";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "模板设置";
             this.Load += new System.EventHandler(this.ContentConfigForm_Load);
+            this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.ContentConfigForm_KeyDown);
             this.ResumeLayout(false);
             this.PerformLayout();
 

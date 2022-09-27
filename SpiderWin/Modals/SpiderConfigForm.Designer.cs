@@ -245,6 +245,7 @@
             this.Controls.Add(this.TxtName);
             this.Controls.Add(this.labelName);
             this.Controls.Add(this.menuStrip1);
+            this.KeyPreview = true;
             this.MainMenuStrip = this.menuStrip1;
             this.Name = "SpiderConfigForm";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;

@@ -1,4 +1,5 @@
-﻿using SpiderTool.Dto.Spider;
+﻿using SpiderTool.Constants;
+using SpiderTool.Dto.Spider;
 using SpiderTool.IService;
 using Utility.Extensions;
 
@@ -13,7 +14,7 @@ namespace SpiderWin.Modals
         List<TemplateType> types = TemplateType.GetAll();
         List<SpiderDtoSetter> spiderList = new List<SpiderDtoSetter>();
 
-        public event EventHandler? OnSubmit;
+        public event EventHandler<string>? OnSubmit;
         public ContentConfigForm(ISpiderService service, TemplateDto? model = null)
         {
             _service = service;
@@ -83,14 +84,14 @@ namespace SpiderWin.Modals
             return true;
         }
 
-        private void BtnSave_Click(object sender, EventArgs e)
+        private void FormSubmit()
         {
             if (!Valid())
             {
                 MessageBox.Show("表单未完成");
                 return;
             }
-            _service.SubmitTemplate(new TemplateDto
+            var submitResult = _service.SubmitTemplate(new TemplateDto
             {
                 Id = edittingModel.Id,
                 Name = txtName.Text,
@@ -99,9 +100,20 @@ namespace SpiderWin.Modals
                 LinkedSpiderId = (int)(comboSpider.SelectedValue),
                 ReplacementRules = edittingModel.ReplacementRules
             });
-            OnSubmit?.Invoke(this, null);
-            DialogResult = DialogResult.OK;
-            Close();
+            if (submitResult == StatusMessage.Success)
+            {
+                OnSubmit?.Invoke(this, submitResult);
+                DialogResult = DialogResult.OK;
+                Close();
+            }
+            else
+                MessageBox.Show(submitResult);
+
+        }
+
+        private void BtnSave_Click(object sender, EventArgs e)
+        {
+            FormSubmit();
         }
 
         private void HideSelectSpider()
@@ -126,6 +138,14 @@ namespace SpiderWin.Modals
                     HideSelectSpider();
             }
 
+        }
+
+        private void ContentConfigForm_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.S && e.Modifiers == Keys.Control)
+            {
+                FormSubmit();
+            }
         }
     }
 }
