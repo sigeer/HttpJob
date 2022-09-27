@@ -17,6 +17,7 @@ namespace SpiderWin
         List<TaskDto> _taskList = new List<TaskDto>();
 
         List<SpiderWorker> _taskRunningList = new List<SpiderWorker>();
+        StringBuilder logSb = new StringBuilder();
 
         public Form1(ISpiderService coreService)
         {
@@ -129,17 +130,15 @@ namespace SpiderWin
                 worker.OnTaskStart += (obj, taskId) =>
                 {
                     childSW.Start();
-                    ResultTxtBox.AppendText($"[{DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")}] >>任务{taskId}开始==========\r\n");
-                    ResultTxtBox.Focus();
+                    PrintLog($"任务{taskId}开始==========", string.Empty);
                 };
-                worker.OnTaskComplete += (obj, taskId) =>
+                worker.OnTaskComplete += (obj, task) =>
                 {
                     childSW.Stop();
 
                     var cost = $"共耗时：{childSW.Elapsed.TotalSeconds.ToFixed(2)}秒";
                     mainModalStatusLabel.Text = cost;
-                    ResultTxtBox.AppendText($"[{DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")}] >>任务{taskId}结束=========={cost} file:///{worker.CurrentDir} \r\n");
-                    ResultTxtBox.Focus();
+                    PrintLog($"任务{task.TaskId}结束==========", $"{cost} file:///{task.CurrentDir}");
                 };
                 worker.OnTaskStatusChanged += (obj, taskId) =>
                 {
@@ -147,13 +146,11 @@ namespace SpiderWin
                 };
                 worker.OnNewTask += (obj, spider) =>
                 {
-                    ResultTxtBox.AppendText($"[{DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")}] >>创建了子任务 {spider.TaskId} \r\n");
-                    ResultTxtBox.Focus();
+                    PrintLog("创建了子任务", string.Empty);
                 };
                 worker.OnLog += (obj, logStr) =>
                 {
-                    ResultTxtBox.AppendText($"[{DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")}] >>日志：{logStr} \r\n");
-                    ResultTxtBox.Focus();
+                    PrintLog("日志", logStr);
                 };
 
                 BeginInvoke(new MethodInvoker(async () =>
@@ -208,12 +205,13 @@ namespace SpiderWin
             {
                 Title = "导出日志",
                 Filter = "*.txt|*.log",
-                FileName = DateTime.Now.Ticks.ToString(),
+                FileName = DateTime.Now.ToString("yyyy-MM-dd HH:mm"),
             };
             saveLogDialog.ShowDialog();
             using var fs = saveLogDialog.OpenFile();
-            var txtBytes = Encoding.UTF8.GetBytes(LinkExportLog.Text);
+            var txtBytes = Encoding.UTF8.GetBytes(logSb.ToString());
             fs.Write(txtBytes, 0, txtBytes.Length);
+            logSb.Clear();
         }
 
         //private void DataGridTasks_CellMouseUp(object sender, DataGridViewCellMouseEventArgs e)
@@ -236,6 +234,19 @@ namespace SpiderWin
             {
                 x.Cancel();
             });
+        }
+
+        private void PrintLog(string type, string str)
+        {
+            var msg = $"[{DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")}] >>{type}：{str} \r\n";
+            logSb.Append(msg);
+            ResultTxtBox.AppendText(msg);
+            ResultTxtBox.Focus();
+        }
+
+        private void LinkClearLog_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        {
+            ResultTxtBox.Clear();
         }
     }
 }
