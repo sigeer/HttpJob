@@ -46,6 +46,7 @@
             this.BtnSubmit = new System.Windows.Forms.Button();
             this.BtnCancel = new System.Windows.Forms.Button();
             this.labelTemplateInfo = new System.Windows.Forms.LinkLabel();
+            this.BtnRefreshTemplate = new System.Windows.Forms.Button();
             this.menuStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -133,7 +134,7 @@
             // 
             this.btnAddContentReader.Location = new System.Drawing.Point(89, 281);
             this.btnAddContentReader.Name = "btnAddContentReader";
-            this.btnAddContentReader.Size = new System.Drawing.Size(121, 25);
+            this.btnAddContentReader.Size = new System.Drawing.Size(127, 25);
             this.btnAddContentReader.TabIndex = 10;
             this.btnAddContentReader.Text = "选择模板";
             this.btnAddContentReader.UseVisualStyleBackColor = true;
@@ -154,7 +155,7 @@
             this.ComboBoxNextPage.FormattingEnabled = true;
             this.ComboBoxNextPage.Location = new System.Drawing.Point(89, 243);
             this.ComboBoxNextPage.Name = "ComboBoxNextPage";
-            this.ComboBoxNextPage.Size = new System.Drawing.Size(275, 25);
+            this.ComboBoxNextPage.Size = new System.Drawing.Size(127, 25);
             this.ComboBoxNextPage.TabIndex = 12;
             // 
             // menuStrip1
@@ -211,12 +212,23 @@
             this.labelTemplateInfo.TabIndex = 16;
             this.labelTemplateInfo.Click += new System.EventHandler(this.labelTemplateInfo_Click);
             // 
+            // BtnRefreshTemplate
+            // 
+            this.BtnRefreshTemplate.Location = new System.Drawing.Point(222, 243);
+            this.BtnRefreshTemplate.Name = "BtnRefreshTemplate";
+            this.BtnRefreshTemplate.Size = new System.Drawing.Size(45, 25);
+            this.BtnRefreshTemplate.TabIndex = 17;
+            this.BtnRefreshTemplate.Text = "刷新";
+            this.BtnRefreshTemplate.UseVisualStyleBackColor = true;
+            this.BtnRefreshTemplate.Click += new System.EventHandler(this.BtnRefreshTemplate_Click);
+            // 
             // SpiderConfigForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 17F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.AutoScroll = true;
             this.ClientSize = new System.Drawing.Size(648, 355);
+            this.Controls.Add(this.BtnRefreshTemplate);
             this.Controls.Add(this.labelTemplateInfo);
             this.Controls.Add(this.BtnCancel);
             this.Controls.Add(this.BtnSubmit);
@@ -233,6 +245,7 @@
             this.Controls.Add(this.TxtName);
             this.Controls.Add(this.labelName);
             this.Controls.Add(this.menuStrip1);
+            this.KeyPreview = true;
             this.MainMenuStrip = this.menuStrip1;
             this.Name = "SpiderConfigForm";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
@@ -266,5 +279,6 @@
         private Button BtnSubmit;
         private Button BtnCancel;
         private LinkLabel labelTemplateInfo;
+        private Button BtnRefreshTemplate;
     }
 }

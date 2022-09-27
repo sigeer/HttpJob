@@ -11,7 +11,7 @@ namespace SpiderWin.Modals
         SpiderDtoSetter _currentSpider;
         List<TemplateDto> _templateList = new List<TemplateDto>();
 
-        public event EventHandler? OnSubmit;
+        public event EventHandler<string>? OnSubmit;
         #endregion
 
         #region services
@@ -28,9 +28,13 @@ namespace SpiderWin.Modals
             Text = $"{Text} - {_currentSpider.Id}";
 
         }
-        private async void LoadData()
+        private async void LoadTemplateListData()
         {
-            _templateList = await _coreService.GetTemplateDtoListAsync();
+            await Task.Run(async () =>
+            {
+                _templateList = await _coreService.GetTemplateDtoListAsync();
+            });           
+            ComboBoxNextPage.DataSource = (new List<TemplateDto>() { new TemplateDto() { Id = 0, Name = "" } }.Concat(_templateList)).ToList();
         }
 
         private void PreLoadForm()
@@ -43,9 +47,6 @@ namespace SpiderWin.Modals
 
         private void LoadForm()
         {
-            ComboBoxNextPage.DataSource = (new List<TemplateDto>() { new TemplateDto() { Id = 0, Name = "" } }.Concat(_templateList)).ToList();
-
-
             if (_currentSpider != null)
             {
                 TxtName.Text = _currentSpider.Name;
@@ -58,10 +59,11 @@ namespace SpiderWin.Modals
             }
         }
 
-        private async void SpiderConfigForm_Load(object sender, EventArgs e)
+        private void SpiderConfigForm_Load(object sender, EventArgs e)
         {
             PreLoadForm();
-            await Task.Run(() => LoadData());
+
+            LoadTemplateListData();
             LoadForm();
         }
 
@@ -69,7 +71,7 @@ namespace SpiderWin.Modals
         {
             if (e.KeyCode == Keys.S && e.Modifiers == Keys.Control)
             {
-                MessageBox.Show("ctrl + s");
+                FormSubmit();
             }
         }
 
@@ -89,7 +91,7 @@ namespace SpiderWin.Modals
             BtnCancel.Enabled = true;
         }
 
-        private async void BtnSubmit_Click(object sender, EventArgs e)
+        private async void FormSubmit()
         {
             FormDisabled();
             _currentSpider.Name = TxtName.Text;
@@ -101,9 +103,15 @@ namespace SpiderWin.Modals
             if (submitResult != StatusMessage.Success)
                 MessageBox.Show(submitResult);
             else
-                OnSubmit?.Invoke(this, e);
+                OnSubmit?.Invoke(this, submitResult);
             FormEnabled();
-            Close();
+            if (submitResult == StatusMessage.Success)
+                Close();
+        }
+
+        private void BtnSubmit_Click(object sender, EventArgs e)
+        {
+            FormSubmit();
         }
 
         private void BtnCancel_Click(object sender, EventArgs e)
@@ -133,6 +141,11 @@ namespace SpiderWin.Modals
         private void labelTemplateInfo_Click(object sender, EventArgs e)
         {
             ShowTemplateManagerForm();
+        }
+
+        private void BtnRefreshTemplate_Click(object sender, EventArgs e)
+        {
+            Task.Run(() => LoadTemplateListData());
         }
     }
 }
