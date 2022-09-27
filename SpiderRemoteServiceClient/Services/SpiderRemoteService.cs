@@ -1,4 +1,4 @@
-﻿using Grpc.Net.Client;
+﻿using Google.Protobuf.Collections;
 using SpiderRemoteServiceClient.Services;
 using SpiderService;
 using SpiderTool.Dto.Resource;
@@ -16,27 +16,55 @@ namespace SpiderWin.Services
             _client = client;
         }
 
-        public int AddTask(TaskSetter model)
+        public List<TaskDto> GetTaskList()
         {
-            throw new NotImplementedException();
+            var data = _client.GetTaskList(null);
+            return data.List.Select(x => new TaskDto()
+            {
+                Id = x.Id
+            }).ToList();
         }
 
-        public string DeleteResource(ResourceHistorySetter model)
+        public int AddTask(TaskSetter model)
         {
-            throw new NotImplementedException();
+            return _client.AddTask(new TaskEditDto()
+            {
+                RootUrl = model.RootUrl,
+                Status = model.Status,
+                Description = model.Description,
+                SpiderId = model.SpiderId
+            }).Data;
+        }
+
+        public void UpdateTask(TaskSetter model)
+        {
+            _client.AddTask(new TaskEditDto()
+            {
+                Id = model.Id,
+                RootUrl = model.RootUrl,
+                Status = model.Status,
+                Description = model.Description,
+                SpiderId = model.SpiderId
+            });
+        }
+
+        public string SubmitSpider(SpiderDtoSetter model)
+        {
+            var editModel = new SpiderEditDto
+            {
+                Description = model.Description,
+                Headers = model.Headers,
+                Id = model.Id,
+                Method = model.Method,
+                Name = model.Name,
+                NextPageId = model.NextPageTemplateId ?? 0,
+                PostObjStr = model.PostObjStr,
+            };
+            editModel.Templates.AddRange(model.Templates);
+            return _client.SubmitSpider(editModel).Status;
         }
 
         public string DeleteSpider(SpiderDtoSetter model)
-        {
-            throw new NotImplementedException();
-        }
-
-        public string DeleteTemplate(TemplateDto model)
-        {
-            throw new NotImplementedException();
-        }
-
-        public List<ResourceHistoryDto> GetResourceHistoryDtoList()
         {
             throw new NotImplementedException();
         }
@@ -46,15 +74,19 @@ namespace SpiderWin.Services
             throw new NotImplementedException();
         }
 
+        public string DeleteTemplate(TemplateDto model)
+        {
+            throw new NotImplementedException();
+        }
+
+
+
         public List<SpiderDtoSetter> GetSpiderDtoList()
         {
             throw new NotImplementedException();
         }
 
-        public List<TaskDto> GetTaskList()
-        {
-            throw new NotImplementedException();
-        }
+
 
         public List<TemplateDto> GetTemplateDtoList()
         {
@@ -71,22 +103,8 @@ namespace SpiderWin.Services
             throw new NotImplementedException();
         }
 
-        public string SubmitResouceHistory(ResourceHistorySetter model)
-        {
-            throw new NotImplementedException();
-        }
-
-        public string SubmitSpider(SpiderDtoSetter model)
-        {
-            throw new NotImplementedException();
-        }
 
         public string SubmitTemplate(TemplateDto model)
-        {
-            throw new NotImplementedException();
-        }
-
-        public void UpdateTask(TaskSetter model)
         {
             throw new NotImplementedException();
         }
