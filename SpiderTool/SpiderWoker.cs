@@ -52,7 +52,7 @@ namespace SpiderTool
 
         public event EventHandler<int>? OnTaskStart;
         public event EventHandler<int>? OnTaskStatusChanged;
-        public event EventHandler<int>? OnTaskComplete;
+        public event EventHandler<SpiderWorker>? OnTaskComplete;
         public event EventHandler<string>? OnLog;
         public event EventHandler<SpiderWorker>? OnNewTask;
         public event EventHandler<string>? OnTaskCanceled;
@@ -134,7 +134,7 @@ namespace SpiderTool
         public async Task CompleteTask()
         {
             _service.SetTaskStatus(_taskId, (int)TaskType.Completed);
-            OnTaskComplete?.Invoke(this, _taskId);
+            OnTaskComplete?.Invoke(this, this);
             OnTaskStatusChanged?.Invoke(this, _taskId);
             await SpiderUtility.MergeTextFileAsync(CurrentDir);
         }

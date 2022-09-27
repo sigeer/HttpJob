@@ -1,5 +1,6 @@
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using SpiderRemoteServiceClient.Services;
 using SpiderTool.SqlSugar;
 using SqlSugar;
 using System.ComponentModel.DataAnnotations;
@@ -37,6 +38,7 @@ namespace SpiderWin
                 ConfigureExternalServices = ExternalServiceDefaultBuilder.Build()
             });
             services.AddSpiderService(sqlClient, ServiceLifetime.Singleton);
+            services.AddSingleton<ISpiderRemoteService, SpiderRemoteService>();
 
             var serviceProvider = services.BuildServiceProvider();
             System.Text.Encoding.RegisterProvider(System.Text.CodePagesEncodingProvider.Instance);

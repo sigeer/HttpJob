@@ -46,6 +46,7 @@
             this.DataGridTasks = new System.Windows.Forms.DataGridView();
             this.LinkExportLog = new System.Windows.Forms.LinkLabel();
             this.BtnCacel = new System.Windows.Forms.Button();
+            this.LinkClearLog = new System.Windows.Forms.LinkLabel();
             this.menuStrip1.SuspendLayout();
             this.statusStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.DataGridTasks)).BeginInit();
@@ -215,11 +216,23 @@
             this.BtnCacel.UseVisualStyleBackColor = true;
             this.BtnCacel.Click += new System.EventHandler(this.BtnCacel_Click);
             // 
+            // LinkClearLog
+            // 
+            this.LinkClearLog.AutoSize = true;
+            this.LinkClearLog.Location = new System.Drawing.Point(509, 127);
+            this.LinkClearLog.Name = "LinkClearLog";
+            this.LinkClearLog.Size = new System.Drawing.Size(56, 17);
+            this.LinkClearLog.TabIndex = 18;
+            this.LinkClearLog.TabStop = true;
+            this.LinkClearLog.Text = "清理输出";
+            this.LinkClearLog.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.LinkClearLog_LinkClicked);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 17F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(674, 417);
+            this.Controls.Add(this.LinkClearLog);
             this.Controls.Add(this.BtnCacel);
             this.Controls.Add(this.LinkExportLog);
             this.Controls.Add(this.DataGridTasks);
@@ -267,5 +280,6 @@
         private DataGridView DataGridTasks;
         private LinkLabel LinkExportLog;
         private Button BtnCacel;
+        private LinkLabel LinkClearLog;
     }
 }
