@@ -8,26 +8,22 @@ namespace SpiderRemoteServiceClient.Services
 {
     public interface ISpiderRemoteService
     {
-        //List<ResourceHistoryDto> GetResourceHistoryDtoList();
+        Task<bool> Ping();
 
-        //string SubmitResouceHistory(ResourceHistorySetter model);
-        //string DeleteResource(ResourceHistorySetter model);
+        Task<List<SpiderDtoSetter>> GetSpiderDtoListAsync();
+        Task<string> SubmitSpiderAsync(SpiderDtoSetter model);
+        Task<string> DeleteSpiderAsync(SpiderDtoSetter model);
 
-        List<SpiderDtoSetter> GetSpiderDtoList();
-        string SubmitSpider(SpiderDtoSetter model);
-        string DeleteSpider(SpiderDtoSetter model);
-
-        List<TemplateDto> GetTemplateDtoList();
         Task<List<TemplateDto>> GetTemplateDtoListAsync();
-        string SubmitTemplate(TemplateDto model);
-        string DeleteTemplate(TemplateDto model);
+        Task<string> SubmitTemplateAsync(TemplateDto model);
+        Task<string> DeleteTemplateAsync(TemplateDto model);
 
-        List<TaskDto> GetTaskList();
-        int AddTask(TaskSetter model);
-        void UpdateTask(TaskSetter model);
-        void SetTaskStatus(int taskId, int taskStatus);
+        Task<List<TaskDto>> GetTaskListAsync();
+        Task<int> AddTaskAsync(TaskSetter model);
+        Task UpdateTaskAsync(TaskSetter model);
+        Task SetTaskStatusAsync(int taskId, int taskStatus);
 
 
-        SpiderDto? GetSpider(int id);
+        Task<SpiderDto?> GetSpiderAsync(int id);
     }
 }

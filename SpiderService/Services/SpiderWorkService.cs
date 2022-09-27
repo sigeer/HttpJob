@@ -17,22 +17,22 @@ namespace SpiderService.Services
             _service = service;
         }
 
-        public override async Task<ResultModel> Crawl(RequestModel request, ServerCallContext context)
+        public override async Task<StringModel> Crawl(RequestModel request, ServerCallContext context)
         {
             var worker = new SpiderWorker(request.SpiderId, _service);
             await worker.Start(request.Url);
-            return new ResultModel { Status = "" };
+            return new StringModel { Data = "" };
         }
 
-        public override Task<ResultModel> Ping(Empty request, ServerCallContext context)
+        public override Task<StringModel> Ping(Empty request, ServerCallContext context)
         {
-            return Task.FromResult(new ResultModel
+            return Task.FromResult(new StringModel
             {
-                Status = "ok"
+                Data = "ok"
             });
         }
 
-        public override Task<ResultIntModel> AddTask(TaskEditDto request, ServerCallContext context)
+        public override Task<IntModel> AddTask(TaskProtoDto request, ServerCallContext context)
         {
             var result = _service.AddTask(new TaskSetter()
             {
@@ -41,13 +41,13 @@ namespace SpiderService.Services
                 Description = request.Description,
                 Status = request.Status
             });
-            return Task.FromResult(new ResultIntModel
+            return Task.FromResult(new IntModel
             {
                  Data = result
             });
         }
 
-        public override Task<Empty> UpdateTask(TaskEditDto request, ServerCallContext context)
+        public override Task<Empty> UpdateTask(TaskProtoDto request, ServerCallContext context)
         {
             _service.UpdateTask(new TaskSetter()
             {
@@ -66,7 +66,7 @@ namespace SpiderService.Services
             var resultModel = new TaskListResult();
             list.ForEach(x =>
             {
-                resultModel.List.Add(new TaskEditDto
+                resultModel.List.Add(new TaskProtoDto
                 {
                     Description = x.Description,
                     Id = x.Id,
@@ -78,7 +78,7 @@ namespace SpiderService.Services
             return Task.FromResult(resultModel);
         }
 
-        public override Task<ResultModel> SubmitSpider(SpiderEditDto request, ServerCallContext context)
+        public override Task<StringModel> SubmitSpider(SpiderEditProtoDto request, ServerCallContext context)
         {
             var submitResult = _service.SubmitSpider(new SpiderDtoSetter
             {
@@ -91,19 +91,19 @@ namespace SpiderService.Services
                 PostObjStr = request.PostObjStr,
                 Templates = request.Templates.ToList()
             });
-            return Task.FromResult(new ResultModel
+            return Task.FromResult(new StringModel
             {
-                Status = submitResult
+                Data = submitResult
             });
         }
 
-        public override async Task<ResultStringModel> DeleteSpider(SpiderEditDto request, ServerCallContext context)
+        public override async Task<StringModel> DeleteSpider(SpiderEditProtoDto request, ServerCallContext context)
         {
             var result = await _service.DeleteSpiderAsync(new SpiderDtoSetter
             {
                 Id = request.Id
             });
-            return new ResultStringModel
+            return new StringModel
             {
                 Data = result
             };
@@ -154,7 +154,7 @@ namespace SpiderService.Services
             var data = new SpiderListResult();
             result.ForEach(x =>
             {
-                data.List.Add(new SpiderEditDto
+                data.List.Add(new SpiderEditProtoDto
                 {
                     Id = x.Id,
                     Name = x.Name
@@ -181,7 +181,7 @@ namespace SpiderService.Services
             return data;
         }
 
-        public override async Task<ResultStringModel> SubmitTemplateConfig(TemplateProtoDto request, ServerCallContext context)
+        public override async Task<StringModel> SubmitTemplateConfig(TemplateProtoDto request, ServerCallContext context)
         {
             var editModel = new TemplateDto
             {
@@ -193,18 +193,27 @@ namespace SpiderService.Services
                 ReplacementRules = request.Rules.Select(x => new ReplacementRuleDto { ReplacementNewlyStr = x.NewStr, ReplacementOldStr = x.OldStr }).ToList()
             };
             var submitResult = await _service.SubmitTemplateAsync(editModel);
-            return new ResultStringModel { Data = submitResult };
+            return new StringModel { Data = submitResult };
         }
 
-        public override async Task<ResultStringModel> DeleteTemplateConfig(TemplateProtoDto request, ServerCallContext context)
+        public override async Task<StringModel> DeleteTemplateConfig(TemplateProtoDto request, ServerCallContext context)
         {
             var result = await _service.DeleteTemplateAsync(new TemplateDto
             {
                 Id = request.Id
             });
-            return new ResultStringModel
+            return new StringModel
             {
                 Data = result
+            };
+        }
+
+        public override async Task<StringModel> SetTaskStatus(TaskProtoDto request, ServerCallContext context)
+        {
+            await _service.SetTaskStatusAsync(request.Id, request.Status);
+            return new StringModel
+            {
+                Data = "ok"
             };
         }
     }
