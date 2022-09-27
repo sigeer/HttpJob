@@ -16,8 +16,8 @@ namespace SpiderService.Services
 
         public override async Task<ResultModel> Crawl(RequestModel request, ServerCallContext context)
         {
-            var worker = new SpiderWorker(_service);
-            await worker.Start(request.Url, request.SpiderId);
+            var worker = new SpiderWorker(request.SpiderId, _service);
+            await worker.Start(request.Url);
             return new ResultModel { Status = "" };
         }
 

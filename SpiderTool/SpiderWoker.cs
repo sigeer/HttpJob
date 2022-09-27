@@ -1,11 +1,8 @@
 ﻿using HtmlAgilityPack;
 using SpiderTool.Constants;
-using SpiderTool.Dto.Resource;
 using SpiderTool.Dto.Spider;
+using SpiderTool.Dto.Tasks;
 using SpiderTool.IService;
-using SpiderTool.Tasks;
-using System.Text;
-using System.Text.RegularExpressions;
 using System.Web;
 using Utility.Extensions;
 using Utility.Http;
@@ -112,7 +109,7 @@ namespace SpiderTool
         public async Task Start(string url)
         {
             _rootUrl = url;
-            _taskId = _service.AddTask(new Tasks.TaskSetter
+            _taskId = _service.AddTask(new TaskSetter
             {
                 RootUrl = _rootUrl,
                 SpiderId = Spider.Id,
@@ -169,7 +166,7 @@ namespace SpiderTool
             var documentContent = await LoadDocumentContent();
             _currentDoc.LoadHtml(documentContent);
 
-            _service.UpdateTask(new Tasks.TaskSetter
+            _service.UpdateTask(new TaskSetter
             {
                 Id = _taskId,
                 Description = DocumentTitle,
@@ -232,7 +229,7 @@ namespace SpiderTool
         public static void BulkDownload(string dir, List<string> urls)
         {
             var snowFlake = Utility.GuidHelper.Snowflake.GetInstance(1);
-            var data  = urls.Distinct().ToDictionary(x => x, x => snowFlake.NextId().ToString());
+            var data = urls.Distinct().ToDictionary(x => x, x => snowFlake.NextId().ToString());
             var dirRoot = dir.GetDirectory();
             using var httpRequestPool = new HttpClientPool();
             Parallel.ForEach(data, async url =>

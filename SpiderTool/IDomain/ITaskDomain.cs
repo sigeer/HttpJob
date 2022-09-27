@@ -1,10 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using SpiderTool.Dto.Tasks;
 
-namespace SpiderTool.Tasks
+namespace SpiderTool.IDomain
 {
     public interface ITaskDomain
     {

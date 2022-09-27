@@ -1,5 +1,6 @@
 ﻿using SpiderTool.DataBase;
-using SpiderTool.Tasks;
+using SpiderTool.Dto.Tasks;
+using SpiderTool.IDomain;
 using SqlSugar;
 
 namespace SpiderTool.SqlSugar.Domain
