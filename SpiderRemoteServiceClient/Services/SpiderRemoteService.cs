@@ -6,7 +6,7 @@ using SpiderTool.Dto.Resource;
 using SpiderTool.Dto.Spider;
 using SpiderTool.Dto.Tasks;
 
-namespace SpiderWin.Services
+namespace SpiderRemoteServiceClient.Services
 {
     public class SpiderRemoteService : ISpiderRemoteService
     {
@@ -101,7 +101,7 @@ namespace SpiderWin.Services
 
         public async Task<bool> Ping()
         {
-            var data = await _client.PingAsync(null);
+            var data = await _client.PingAsync(new Google.Protobuf.WellKnownTypes.Empty());
             return data.Data == "ok";
         }
     }

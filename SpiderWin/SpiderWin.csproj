@@ -29,6 +29,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\SpiderRemoteServiceClient\SpiderRemoteServiceClient.csproj" />
     <ProjectReference Include="..\SpiderTool.SqlSuger\SpiderTool.SqlSugar.csproj" />
     <ProjectReference Include="..\SpiderTool\SpiderTool.csproj" />
   </ItemGroup>

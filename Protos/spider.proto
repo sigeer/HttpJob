@@ -13,7 +13,7 @@ service SpiderWorkerProtoService {
   rpc AddTask(TaskProtoDto) returns (IntModel);
   rpc UpdateTask(TaskProtoDto) returns (google.protobuf.Empty);
   rpc GetTaskList(google.protobuf.Empty) returns (TaskListResult);
-  rpc SetTaskStatus(TaskProtoDto) returns(StringModel);
+  rpc SetTaskStatus(TaskProtoDto) returns (StringModel);
 
   rpc SubmitSpider(SpiderEditProtoDto) returns(StringModel);
   rpc DeleteSpider(SpiderEditProtoDto) returns(StringModel);

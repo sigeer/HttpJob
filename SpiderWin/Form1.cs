@@ -3,6 +3,7 @@ using SpiderTool.Dto.Spider;
 using SpiderTool.Dto.Tasks;
 using SpiderTool.IService;
 using SpiderWin.Modals;
+using SpiderWin.Server;
 using System.Diagnostics;
 using System.Text;
 using Utility.Extensions;
@@ -178,6 +179,7 @@ namespace SpiderWin
         private void UseServiceMenu_Click(object sender, EventArgs e)
         {
             //使用服务器服务
+            new ServerSetting().ShowDialog();
         }
 
         private void ResultTxtBox_LinkClicked(object sender, LinkClickedEventArgs e)
