@@ -50,7 +50,7 @@
             // 
             this.TxtServer.Location = new System.Drawing.Point(123, 12);
             this.TxtServer.Name = "TxtServer";
-            this.TxtServer.Size = new System.Drawing.Size(200, 23);
+            this.TxtServer.Size = new System.Drawing.Size(230, 23);
             this.TxtServer.TabIndex = 1;
             // 
             // label2
@@ -66,12 +66,12 @@
             // 
             this.TxtPort.Location = new System.Drawing.Point(123, 50);
             this.TxtPort.Name = "TxtPort";
-            this.TxtPort.Size = new System.Drawing.Size(200, 23);
+            this.TxtPort.Size = new System.Drawing.Size(230, 23);
             this.TxtPort.TabIndex = 3;
             // 
             // BtnTest
             // 
-            this.BtnTest.Location = new System.Drawing.Point(107, 79);
+            this.BtnTest.Location = new System.Drawing.Point(116, 79);
             this.BtnTest.Name = "BtnTest";
             this.BtnTest.Size = new System.Drawing.Size(75, 23);
             this.BtnTest.TabIndex = 4;
@@ -112,6 +112,7 @@
             this.Controls.Add(this.TxtServer);
             this.Controls.Add(this.label1);
             this.Name = "ServerSetting";
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "服务器设置";
             this.Load += new System.EventHandler(this.ServerSetting_Load);
             this.ResumeLayout(false);

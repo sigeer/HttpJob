@@ -8,7 +8,8 @@ namespace SpiderWin.Server
 {
     public partial class ServerSetting : Form
     {
-        GrpcChannel? _channel;
+        GrpcChannel? currentChannel;
+        ISpiderRemoteService? _service;
         public ServerSetting()
         {
             InitializeComponent();
@@ -21,20 +22,43 @@ namespace SpiderWin.Server
 
         private async void BtnTest_Click(object sender, EventArgs e)
         {
+            await Connect();
+        }
+
+        private void BtnCancel_Click(object sender, EventArgs e)
+        {
+            Close();
+        }
+
+        private async void BtnOk_Click(object sender, EventArgs e)
+        {
+            await Connect();
+            Close();
+        }
+
+        private async Task Connect()
+        {
             if (string.IsNullOrEmpty(TxtServer.Text) || string.IsNullOrEmpty(TxtPort.Text))
             {
                 MessageBox.Show("输入不正确");
                 return;
             }
-            _channel = GrpcChannel.ForAddress($"http://{TxtServer.Text}:{TxtPort.Text}");
-            var client = new SpiderWorkerProtoService.SpiderWorkerProtoServiceClient(_channel);
-            var service = new SpiderRemoteService(client, new Mapper(new MapperConfiguration(opt =>
+            if (currentChannel != null)
+            {
+                currentChannel.Dispose();
+                currentChannel = null;
+            }
+            currentChannel = GrpcChannel.ForAddress($"http://{TxtServer.Text}:{TxtPort.Text}");
+            var client = new SpiderWorkerProtoService.SpiderWorkerProtoServiceClient(currentChannel);
+            _service = new SpiderRemoteService(client, new Mapper(new MapperConfiguration(opt =>
             {
                 opt.AddProfile<SpiderProfile>();
             })));
             try
             {
-                var data = await service.Ping();
+                BtnOk.Enabled = false;
+                BtnTest.Enabled = false;
+                var data = await _service.Ping();
                 if (data)
                     MessageBox.Show("连接成功");
                 else
@@ -44,16 +68,11 @@ namespace SpiderWin.Server
             {
                 MessageBox.Show(ex.Message);
             }
-        }
-
-        private void BtnCancel_Click(object sender, EventArgs e)
-        {
-            Close();
-        }
-
-        private void BtnOk_Click(object sender, EventArgs e)
-        {
-            Close();
+            finally
+            {
+                BtnOk.Enabled = true;
+                BtnTest.Enabled = true;
+            }
         }
     }
 }
