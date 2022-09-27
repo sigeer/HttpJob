@@ -36,5 +36,6 @@ namespace SpiderTool.IService
 
 
         SpiderDto? GetSpider(int id);
+        Task<SpiderDto?> GetSpiderAsync(int id);
     }
 }

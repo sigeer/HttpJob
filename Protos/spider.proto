@@ -93,8 +93,15 @@ message TemplateProtoDto {
 	int32 type = 3;
 	string xPath = 4;
 	int32 linkedSpiderId = 5;
+	repeated TextReplacementRuleProtoDto rules = 6;
 }
 
 message TemplateListResult {
 	repeated TemplateProtoDto list = 1;
+}
+
+message TextReplacementRuleProtoDto {
+	int32 id = 1;
+	string oldStr = 2;
+	string newStr = 3;
 }

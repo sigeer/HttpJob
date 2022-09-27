@@ -97,34 +97,115 @@ namespace SpiderService.Services
             });
         }
 
-        public override Task<ResultStringModel> DeleteSpider(SpiderEditDto request, ServerCallContext context)
+        public override async Task<ResultStringModel> DeleteSpider(SpiderEditDto request, ServerCallContext context)
         {
-            return base.DeleteSpider(request, context);
+            var result = await _service.DeleteSpiderAsync(new SpiderDtoSetter
+            {
+                Id = request.Id
+            });
+            return new ResultStringModel
+            {
+                Data = result
+            };
         }
 
-        public override Task<SpiderProtoDto> GetSpider(IntModel request, ServerCallContext context)
+        public override async Task<SpiderProtoDto> GetSpider(IntModel request, ServerCallContext context)
         {
-            return base.GetSpider(request, context);
+            var model = await _service.GetSpiderAsync(request.Data);
+            if (model == null)
+                return new SpiderProtoDto();
+
+            var data = new SpiderProtoDto
+            {
+                Id = model.Id,
+                Name = model.Name,
+                Description = model.Description,
+                Headers = model.Headers,
+                Method = model.Method,
+                NextPageId = model.NextPageTemplateId ?? 0,
+                PostObjStr = model.PostObjStr,
+                NextPage = model.NextPageTemplate == null ? null : new TemplateProtoDto
+                {
+                    Id = model.NextPageTemplate.Id,
+                    Name = model.NextPageTemplate.Name,
+                    LinkedSpiderId = model.NextPageTemplate.LinkedSpiderId ?? 0,
+                    XPath = model.NextPageTemplate.TemplateStr,
+                    Type = model.NextPageTemplate.Type
+                }
+            };
+            model.TemplateList.ForEach(x =>
+            {
+                data.TemplateList.Add(new TemplateProtoDto
+                {
+                    Id = x.Id,
+                    LinkedSpiderId = x.LinkedSpiderId ?? 0,
+                    Name = x.Name,
+                    Type = x.Type,
+                    XPath = x.TemplateStr
+                });
+                data.Templates.Add(x.Id);
+            });
+            return data;
         }
 
-        public override Task<SpiderListResult> GetSpiderList(Empty request, ServerCallContext context)
+        public override async Task<SpiderListResult> GetSpiderList(Empty request, ServerCallContext context)
         {
-            return base.GetSpiderList(request, context);
+            var result = await _service.GetSpiderDtoListAsync();
+            var data = new SpiderListResult();
+            result.ForEach(x =>
+            {
+                data.List.Add(new SpiderEditDto
+                {
+                    Id = x.Id,
+                    Name = x.Name
+                });
+            });
+            return data;
         }
 
-        public override Task<TemplateListResult> GetTemplateConfigList(Empty request, ServerCallContext context)
+        public override async Task<TemplateListResult> GetTemplateConfigList(Empty request, ServerCallContext context)
         {
-            return base.GetTemplateConfigList(request, context);
+            var result = await _service.GetTemplateDtoListAsync();
+            var data = new TemplateListResult();
+            result.ForEach(x =>
+            {
+                data.List.Add(new TemplateProtoDto
+                {
+                    Id = x.Id,
+                    LinkedSpiderId = x.LinkedSpiderId ?? 0,
+                    Name = x.Name,
+                    Type = x.Type,
+                    XPath = x.TemplateStr
+                });
+            });
+            return data;
         }
 
-        public override Task<ResultStringModel> SubmitTemplateConfig(TemplateProtoDto request, ServerCallContext context)
+        public override async Task<ResultStringModel> SubmitTemplateConfig(TemplateProtoDto request, ServerCallContext context)
         {
-            return base.SubmitTemplateConfig(request, context);
+            var editModel = new TemplateDto
+            {
+                Id = request.Id,
+                TemplateStr = request.XPath,
+                LinkedSpiderId = request.LinkedSpiderId,
+                Name = request.Name,
+                Type = request.Type,
+                ReplacementRules = request.Rules.Select(x => new ReplacementRuleDto { ReplacementNewlyStr = x.NewStr, ReplacementOldStr = x.OldStr }).ToList()
+            };
+            var submitResult = await _service.SubmitTemplateAsync(editModel);
+            return new ResultStringModel { Data = submitResult };
         }
 
-        public override Task<ResultStringModel> DeleteTemplateConfig(TemplateProtoDto request, ServerCallContext context)
+        public override async Task<ResultStringModel> DeleteTemplateConfig(TemplateProtoDto request, ServerCallContext context)
         {
-            return base.DeleteTemplateConfig(request, context);
+            var result = await _service.DeleteTemplateAsync(new TemplateDto
+            {
+                Id = request.Id
+            });
+            return new ResultStringModel
+            {
+                Data = result
+            };
         }
     }
 }

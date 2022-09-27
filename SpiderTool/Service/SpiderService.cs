@@ -140,5 +140,10 @@ namespace SpiderTool.Service
         {
             return await _templateDomain.DeleteAsync(model);
         }
+
+        public Task<SpiderDto?> GetSpiderAsync(int id)
+        {
+            return _spiderDomain.GetSpiderDtoAsync(id);
+        }
     }
 }
