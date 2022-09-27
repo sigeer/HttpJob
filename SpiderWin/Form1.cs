@@ -1,8 +1,7 @@
 using SpiderTool;
-using SpiderTool.Dto.Resource;
 using SpiderTool.Dto.Spider;
+using SpiderTool.Dto.Tasks;
 using SpiderTool.IService;
-using SpiderTool.Tasks;
 using SpiderWin.Modals;
 using System.Diagnostics;
 using System.Text;
@@ -127,7 +126,7 @@ namespace SpiderWin
                 var worker = new SpiderWorker(spiderId, _coreService);
                 _taskRunningList.Add(worker);
                 Stopwatch childSW = new Stopwatch();
-               
+
                 worker.OnTaskStart += (obj, taskId) =>
                 {
                     childSW.Start();
@@ -210,7 +209,7 @@ namespace SpiderWin
             saveLogDialog.ShowDialog();
             using var fs = saveLogDialog.OpenFile();
             var txtBytes = Encoding.UTF8.GetBytes(LinkExportLog.Text);
-            fs.Write(txtBytes, 0 , txtBytes.Length);
+            fs.Write(txtBytes, 0, txtBytes.Length);
         }
 
         //private void DataGridTasks_CellMouseUp(object sender, DataGridViewCellMouseEventArgs e)

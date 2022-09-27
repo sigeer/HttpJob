@@ -1,8 +1,8 @@
 ﻿using SpiderTool.Dto.Resource;
 using SpiderTool.Dto.Spider;
+using SpiderTool.Dto.Tasks;
 using SpiderTool.IDomain;
 using SpiderTool.IService;
-using SpiderTool.Tasks;
 
 namespace SpiderTool.Service
 {

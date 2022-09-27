@@ -6,7 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Utility.Extensions;
 
-namespace SpiderTool.Tasks
+namespace SpiderTool.Dto.Tasks
 {
     public class TaskSetter
     {

@@ -3,7 +3,6 @@ using SpiderTool.IDomain;
 using SpiderTool.IService;
 using SpiderTool.Service;
 using SpiderTool.SqlSugar.Domain;
-using SpiderTool.Tasks;
 using SqlSugar;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;

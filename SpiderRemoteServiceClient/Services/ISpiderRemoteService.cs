@@ -1,10 +1,12 @@
-﻿using SpiderTool.Dto.Resource;
+﻿
+
+using SpiderTool.Dto.Resource;
 using SpiderTool.Dto.Spider;
 using SpiderTool.Dto.Tasks;
 
-namespace SpiderTool.IService
+namespace SpiderRemoteServiceClient.Services
 {
-    public interface ISpiderService
+    public interface ISpiderRemoteService
     {
         List<ResourceHistoryDto> GetResourceHistoryDtoList();
 
