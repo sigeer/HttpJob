@@ -12,7 +12,8 @@ namespace SpiderWin
 {
     public partial class Form1 : Form
     {
-        readonly ISpiderService _coreService;
+        ISpiderService _coreService;
+        ISpiderService localServiceBackup;
 
         List<SpiderDtoSetter> _spiderList = new List<SpiderDtoSetter>();
         List<TaskDto> _taskList = new List<TaskDto>();
@@ -174,12 +175,23 @@ namespace SpiderWin
         private void UseLocalMenu_Click(object sender, EventArgs e)
         {
             //使用本地服务
+            UseServiceMenu.Checked = false;
+            _coreService = localServiceBackup;
+            LoadData();
         }
 
         private void UseServiceMenu_Click(object sender, EventArgs e)
         {
             //使用服务器服务
-            new ServerSetting().ShowDialog();
+            var setting = new ServerSetting();
+            setting.OnChangeConnection += (obj, evt) =>
+            {
+                localServiceBackup = _coreService;
+                _coreService = evt;
+                LoadData();
+                UseLocalMenu.Checked = false;
+            };
+            setting.ShowDialog();
         }
 
         private void ResultTxtBox_LinkClicked(object sender, LinkClickedEventArgs e)

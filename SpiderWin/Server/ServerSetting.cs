@@ -3,6 +3,8 @@ using Grpc.Net.Client;
 using SpiderRemoteServiceClient.Mapper.Spiders;
 using SpiderRemoteServiceClient.Services;
 using SpiderService;
+using SpiderTool.IService;
+using SpiderWin.Services;
 
 namespace SpiderWin.Server
 {
@@ -10,6 +12,8 @@ namespace SpiderWin.Server
     {
         GrpcChannel? currentChannel;
         ISpiderRemoteService? _service;
+
+        public event EventHandler<ISpiderService>? OnChangeConnection;
         public ServerSetting()
         {
             InitializeComponent();
@@ -60,7 +64,11 @@ namespace SpiderWin.Server
                 BtnTest.Enabled = false;
                 var data = await _service.Ping();
                 if (data)
+                {
+                    SpiderServiceFactory.Service = _service;
+                    OnChangeConnection?.Invoke(this, _service);
                     MessageBox.Show("连接成功");
+                }
                 else
                     MessageBox.Show("连接失败");
             }
