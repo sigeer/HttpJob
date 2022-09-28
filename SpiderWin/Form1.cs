@@ -28,7 +28,6 @@ namespace SpiderWin
             localServiceBackup = _coreService;
 
             InitializeComponent();
-            mainModalStatusLabel.Text = $"file:\\\\{AppDomain.CurrentDomain.BaseDirectory}";
         }
 
         private void btnShowConfig_Click(object sender, EventArgs e)
@@ -52,7 +51,7 @@ namespace SpiderWin
 
             DataGridTasks.ReadOnly = true;
             DataGridTasks.Columns.Add(nameof(TaskDto.Id), nameof(TaskDto.Id));
-            DataGridTasks.Columns.Add("描述", nameof(TaskDto.Description));
+            DataGridTasks.Columns.Add(nameof(TaskDto.Description), "描述");
             DataGridTasks.Columns.Add(nameof(TaskDto.RootUrl), nameof(TaskDto.RootUrl));
             DataGridTasks.Columns.Add(nameof(TaskDto.SpiderId), nameof(TaskDto.SpiderId));
             DataGridTasks.Columns.Add(nameof(TaskDto.CreateTime), "创建时间");
@@ -179,7 +178,7 @@ namespace SpiderWin
             //使用本地服务
             UseServiceMenu.Checked = false;
             _coreService = localServiceBackup;
-            LoadData();
+            LoadForm();
         }
 
         private void UseServiceMenu_Click(object sender, EventArgs e)
@@ -190,7 +189,7 @@ namespace SpiderWin
             {
                 localServiceBackup = _coreService;
                 _coreService = evt;
-                LoadData();
+                LoadForm();
                 UseLocalMenu.Checked = false;
             };
             setting.ShowDialog();
@@ -198,7 +197,7 @@ namespace SpiderWin
 
         private void ResultTxtBox_LinkClicked(object sender, LinkClickedEventArgs e)
         {
-            if (!string.IsNullOrEmpty(e.LinkText))
+            if (!string.IsNullOrEmpty(e.LinkText) && e.LinkText.StartsWith("file"))
                 Process.Start("explorer.exe", e.LinkText);
         }
 
