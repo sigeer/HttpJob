@@ -9,6 +9,6 @@ namespace SpiderTool
 {
     public interface ISpiderProcessor
     {
-        Task ProcessContentAsync(SpiderWorker rootSpider, string documentContent, List<TemplateDto> templateRules, CancellationToken? cancellationToken = null);
+        Task ProcessContentAsync(SpiderWorker rootSpider, string documentContent, List<TemplateDto> templateRules, CancellationToken cancellationToken = default);
     }
 }

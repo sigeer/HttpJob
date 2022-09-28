@@ -13,9 +13,9 @@ namespace SpiderTool
             _service = service;
         }
 
-        private bool IsCanceled(SpiderWorker rootSpider, CancellationToken? cancellationToken = null)
+        private bool IsCanceled(SpiderWorker rootSpider, CancellationToken cancellationToken = default)
         {
-            if (cancellationToken.HasValue && cancellationToken.Value.IsCancellationRequested)
+            if (cancellationToken.IsCancellationRequested)
             {
                 rootSpider.CallLog($"task {rootSpider.TaskId} canceled | from method ProcessContentAsync ");
                 rootSpider.CallCancelTask("ProcessContentAsync");
@@ -24,7 +24,7 @@ namespace SpiderTool
             return false;
         }
 
-        public async Task ProcessContentAsync(SpiderWorker rootSpider, string documentContent, List<TemplateDto> templateRules, CancellationToken? cancellationToken = null)
+        public async Task ProcessContentAsync(SpiderWorker rootSpider, string documentContent, List<TemplateDto> templateRules, CancellationToken cancellationToken = default)
         {
             if (IsCanceled(rootSpider, cancellationToken))
                 return;
@@ -50,7 +50,7 @@ namespace SpiderTool
                     SpiderUtility.BulkDownload(savePath, urlList, (log) =>
                     {
                         rootSpider.CallLog(log);
-                    });
+                    }, cancellationToken);
                 }
                 if (rule.Type == (int)TemplateTypeEnum.Text)
                 {

@@ -113,7 +113,7 @@ namespace SpiderTool
             };
         }
 
-        public async Task Start(string url, CancellationToken? cancellationToken = null)
+        public async Task Start(string url, CancellationToken cancellationToken = default)
         {
             _rootUrl = url;
             _taskId = _service.AddTask(new TaskSetter
@@ -150,7 +150,7 @@ namespace SpiderTool
             return responseStream.DecodeData(res.Content.Headers.ContentType?.CharSet);
         }
 
-        public async Task ProcessUrl(string currentUrl, bool isRootUrl = true, CancellationToken? cancellationToken = null)
+        public async Task ProcessUrl(string currentUrl, bool isRootUrl = true, CancellationToken cancellationToken = default)
         {
             _currentUrl = currentUrl;
 
@@ -172,9 +172,9 @@ namespace SpiderTool
             await MoveToNextPageAsync(cancellationToken);
         }
 
-        private async Task MoveToNextPageAsync(CancellationToken? cancellationToken = null)
+        private async Task MoveToNextPageAsync(CancellationToken cancellationToken = default)
         {
-            if (cancellationToken.HasValue && cancellationToken.Value.IsCancellationRequested)
+            if (cancellationToken.IsCancellationRequested)
             {
                 OnTaskCanceled?.Invoke(this, "MoveToNextPage");
                 OnLog?.Invoke(this, $"task {TaskId} canceled | from method MoveToNextPage ");
@@ -226,7 +226,7 @@ namespace SpiderTool
             return dir;
         }
 
-        public static void BulkDownload(string dir, List<string> urls, Action<string>? log = null)
+        public static void BulkDownload(string dir, List<string> urls, Action<string>? log = null, CancellationToken cancellationToken = default)
         {
             var snowFlake = Utility.GuidHelper.Snowflake.GetInstance(1);
             var data = urls.Distinct().ToDictionary(x => x, x => snowFlake.NextId().ToString());
@@ -236,7 +236,7 @@ namespace SpiderTool
              {
                  var client = httpRequestPool.GetHttpClient();
                  var uri = new Uri(url.Key);
-                 var result = await client.HttpGetCore(uri.ToString());
+                 var result = await client.HttpGetCore(uri.ToString(), cancellationToken: cancellationToken);
                  var fileName = uri.Segments.Last();
                  if (!TryGetExtension(fileName, out var extension))
                  {
@@ -248,9 +248,9 @@ namespace SpiderTool
                      fileName = url.Value + extension;
                  }
                  var path = Path.Combine(dirRoot, fileName);
-                 var fileBytes = await result.Content.ReadAsByteArrayAsync();
+                 var fileBytes = await result.Content.ReadAsByteArrayAsync(cancellationToken: cancellationToken);
                  if (fileBytes.Length > 0)
-                     await File.WriteAllBytesAsync(path, fileBytes);
+                     await File.WriteAllBytesAsync(path, fileBytes, cancellationToken);
                  else
                      log?.Invoke($"for {url}, file bytes = 0");
                  httpRequestPool.Return(client);
