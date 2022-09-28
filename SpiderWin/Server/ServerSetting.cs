@@ -36,11 +36,13 @@ namespace SpiderWin.Server
 
         private async void BtnOk_Click(object sender, EventArgs e)
         {
-            await Connect();
-            Close();
+            await Connect(() =>
+            {
+                Close();
+            });
         }
 
-        private async Task Connect()
+        private async Task Connect(Action? okCallBack = null)
         {
             if (string.IsNullOrEmpty(TxtServer.Text) || string.IsNullOrEmpty(TxtPort.Text))
             {
@@ -68,6 +70,7 @@ namespace SpiderWin.Server
                     SpiderServiceFactory.Service = _service;
                     OnChangeConnection?.Invoke(this, _service);
                     MessageBox.Show("连接成功");
+                    okCallBack?.Invoke();
                 }
                 else
                     MessageBox.Show("连接失败");
