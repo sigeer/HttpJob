@@ -21,9 +21,11 @@ namespace SpiderWin
         List<SpiderWorker> _taskRunningList = new List<SpiderWorker>();
         StringBuilder logSb = new StringBuilder();
 
+        CancellationTokenSource tokenSource = new CancellationTokenSource();
         public Form1(ISpiderService coreService)
         {
             _coreService = coreService;
+            localServiceBackup = _coreService;
 
             InitializeComponent();
             mainModalStatusLabel.Text = $"file:\\\\{AppDomain.CurrentDomain.BaseDirectory}";
@@ -157,7 +159,7 @@ namespace SpiderWin
 
                 BeginInvoke(new MethodInvoker(async () =>
                 {
-                    await worker.Start(url);
+                    await worker.Start(url, tokenSource.Token);
                 }));
             });
         }
@@ -244,10 +246,7 @@ namespace SpiderWin
 
         private void BtnCacel_Click(object sender, EventArgs e)
         {
-            _taskRunningList.ForEach(x =>
-            {
-                x.Cancel();
-            });
+            tokenSource.Cancel();
         }
 
         private void PrintLog(string type, string str)

@@ -4,7 +4,7 @@ using SpiderTool.IService;
 
 namespace SpiderTool
 {
-    public class DefaultSpiderProcessor: ISpiderProcessor
+    public class DefaultSpiderProcessor : ISpiderProcessor
     {
         readonly ISpiderService _service;
 
@@ -13,12 +13,30 @@ namespace SpiderTool
             _service = service;
         }
 
-        public async Task ProcessContentAsync(SpiderWorker rootSpider, string documentContent, List<TemplateDto> templateRules)
+        private bool IsCanceled(SpiderWorker rootSpider, CancellationToken? cancellationToken = null)
         {
+            if (cancellationToken.HasValue && cancellationToken.Value.IsCancellationRequested)
+            {
+                rootSpider.CallLog($"task {rootSpider.TaskId} canceled | from method ProcessContentAsync ");
+                rootSpider.CallCancelTask("ProcessContentAsync");
+                return true;
+            }
+            return false;
+        }
+
+        public async Task ProcessContentAsync(SpiderWorker rootSpider, string documentContent, List<TemplateDto> templateRules, CancellationToken? cancellationToken = null)
+        {
+            if (IsCanceled(rootSpider, cancellationToken))
+                return;
+
             var currentDoc = new HtmlDocument();
             currentDoc.LoadHtml(documentContent);
-            foreach (var rule in templateRules)
+            for (int i = 0; i < templateRules.Count; i++)
             {
+                var rule = templateRules[i];
+
+                if (IsCanceled(rootSpider, cancellationToken))
+                    return;
                 var nodes = string.IsNullOrEmpty(rule.TemplateStr)
                     ? new HtmlNodeCollection(currentDoc.DocumentNode)
                     : currentDoc.DocumentNode.SelectNodes(rule.TemplateStr ?? "");
@@ -38,6 +56,9 @@ namespace SpiderTool
                 {
                     foreach (var item in nodes)
                     {
+                        if (IsCanceled(rootSpider, cancellationToken))
+                            return;
+
                         await SpiderUtility.SaveTextAsync(savePath, SpiderUtility.ReadHtmlNodeInnerHtml(item, rule));
                     }
                 }
@@ -45,6 +66,9 @@ namespace SpiderTool
                 {
                     foreach (var item in nodes)
                     {
+                        if (IsCanceled(rootSpider, cancellationToken))
+                            return;
+
                         await SpiderUtility.SaveTextAsync(savePath, item.InnerHtml);
                     }
                 }
@@ -53,6 +77,9 @@ namespace SpiderTool
                     //新增
                     foreach (var item in nodes)
                     {
+                        if (IsCanceled(rootSpider, cancellationToken))
+                            return;
+
                         var resource = (item.Attributes["href"] ?? item.Attributes["data-href"])?.Value;
                         if (resource == null)
                             continue;

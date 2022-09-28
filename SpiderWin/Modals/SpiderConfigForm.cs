@@ -35,6 +35,8 @@ namespace SpiderWin.Modals
                 _templateList = await _coreService.GetTemplateDtoListAsync();
             });           
             ComboBoxNextPage.DataSource = (new List<TemplateDto>() { new TemplateDto() { Id = 0, Name = "" } }.Concat(_templateList)).ToList();
+            if (_currentSpider.NextPageTemplateId != null)
+                ComboBoxNextPage.SelectedValue = _currentSpider.NextPageTemplateId;
         }
 
         private void PreLoadForm()
@@ -42,21 +44,12 @@ namespace SpiderWin.Modals
             ComboBoxNextPage.ValueMember = nameof(TemplateDto.Id);
             ComboBoxNextPage.DisplayMember = nameof(TemplateDto.Name);
 
+            TxtName.Text = _currentSpider.Name;
+            TxtDescription.Text = _currentSpider.Description;
+            TxtPostObj.Text = _currentSpider.PostObjStr;
+            ComboMethod.SelectedItem = _currentSpider.Method;
+
             labelTemplateInfo.Text = $"已选择{_currentSpider.Templates.Count}项";
-        }
-
-        private void LoadForm()
-        {
-            if (_currentSpider != null)
-            {
-                TxtName.Text = _currentSpider.Name;
-                TxtDescription.Text = _currentSpider.Description;
-                TxtPostObj.Text = _currentSpider.PostObjStr;
-                ComboMethod.SelectedItem = _currentSpider.Method;
-
-                if (_currentSpider.NextPageTemplateId != null)
-                    ComboBoxNextPage.SelectedValue = _currentSpider.NextPageTemplateId;
-            }
         }
 
         private void SpiderConfigForm_Load(object sender, EventArgs e)
@@ -64,7 +57,6 @@ namespace SpiderWin.Modals
             PreLoadForm();
 
             LoadTemplateListData();
-            LoadForm();
         }
 
         private void SpiderConfigForm_KeyDown(object sender, KeyEventArgs e)
