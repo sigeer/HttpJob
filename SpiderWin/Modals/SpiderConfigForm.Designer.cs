@@ -47,6 +47,8 @@
             this.BtnCancel = new System.Windows.Forms.Button();
             this.labelTemplateInfo = new System.Windows.Forms.LinkLabel();
             this.BtnRefreshTemplate = new System.Windows.Forms.Button();
+            this.labelHeader = new System.Windows.Forms.Label();
+            this.TextRequestHeaders = new System.Windows.Forms.RichTextBox();
             this.menuStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -107,7 +109,7 @@
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(2, 177);
+            this.label1.Location = new System.Drawing.Point(2, 240);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(77, 17);
             this.label1.TabIndex = 6;
@@ -115,7 +117,7 @@
             // 
             // TxtPostObj
             // 
-            this.TxtPostObj.Location = new System.Drawing.Point(89, 177);
+            this.TxtPostObj.Location = new System.Drawing.Point(89, 240);
             this.TxtPostObj.Name = "TxtPostObj";
             this.TxtPostObj.Size = new System.Drawing.Size(547, 52);
             this.TxtPostObj.TabIndex = 7;
@@ -124,7 +126,7 @@
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(12, 285);
+            this.label2.Location = new System.Drawing.Point(12, 348);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(56, 17);
             this.label2.TabIndex = 8;
@@ -132,7 +134,7 @@
             // 
             // btnAddContentReader
             // 
-            this.btnAddContentReader.Location = new System.Drawing.Point(89, 281);
+            this.btnAddContentReader.Location = new System.Drawing.Point(89, 344);
             this.btnAddContentReader.Name = "btnAddContentReader";
             this.btnAddContentReader.Size = new System.Drawing.Size(127, 25);
             this.btnAddContentReader.TabIndex = 10;
@@ -143,7 +145,7 @@
             // label3
             // 
             this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(11, 246);
+            this.label3.Location = new System.Drawing.Point(11, 309);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(68, 17);
             this.label3.TabIndex = 11;
@@ -153,7 +155,7 @@
             // 
             this.ComboBoxNextPage.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.ComboBoxNextPage.FormattingEnabled = true;
-            this.ComboBoxNextPage.Location = new System.Drawing.Point(89, 243);
+            this.ComboBoxNextPage.Location = new System.Drawing.Point(89, 306);
             this.ComboBoxNextPage.Name = "ComboBoxNextPage";
             this.ComboBoxNextPage.Size = new System.Drawing.Size(127, 25);
             this.ComboBoxNextPage.TabIndex = 12;
@@ -185,7 +187,7 @@
             // 
             // BtnSubmit
             // 
-            this.BtnSubmit.Location = new System.Drawing.Point(561, 320);
+            this.BtnSubmit.Location = new System.Drawing.Point(561, 391);
             this.BtnSubmit.Name = "BtnSubmit";
             this.BtnSubmit.Size = new System.Drawing.Size(75, 23);
             this.BtnSubmit.TabIndex = 14;
@@ -195,7 +197,7 @@
             // 
             // BtnCancel
             // 
-            this.BtnCancel.Location = new System.Drawing.Point(467, 320);
+            this.BtnCancel.Location = new System.Drawing.Point(480, 391);
             this.BtnCancel.Name = "BtnCancel";
             this.BtnCancel.Size = new System.Drawing.Size(75, 23);
             this.BtnCancel.TabIndex = 15;
@@ -206,7 +208,7 @@
             // labelTemplateInfo
             // 
             this.labelTemplateInfo.AutoSize = true;
-            this.labelTemplateInfo.Location = new System.Drawing.Point(216, 285);
+            this.labelTemplateInfo.Location = new System.Drawing.Point(216, 348);
             this.labelTemplateInfo.Name = "labelTemplateInfo";
             this.labelTemplateInfo.Size = new System.Drawing.Size(0, 17);
             this.labelTemplateInfo.TabIndex = 16;
@@ -214,7 +216,7 @@
             // 
             // BtnRefreshTemplate
             // 
-            this.BtnRefreshTemplate.Location = new System.Drawing.Point(222, 243);
+            this.BtnRefreshTemplate.Location = new System.Drawing.Point(222, 306);
             this.BtnRefreshTemplate.Name = "BtnRefreshTemplate";
             this.BtnRefreshTemplate.Size = new System.Drawing.Size(45, 25);
             this.BtnRefreshTemplate.TabIndex = 17;
@@ -222,12 +224,31 @@
             this.BtnRefreshTemplate.UseVisualStyleBackColor = true;
             this.BtnRefreshTemplate.Click += new System.EventHandler(this.BtnRefreshTemplate_Click);
             // 
+            // labelHeader
+            // 
+            this.labelHeader.AutoSize = true;
+            this.labelHeader.Location = new System.Drawing.Point(22, 171);
+            this.labelHeader.Name = "labelHeader";
+            this.labelHeader.Size = new System.Drawing.Size(44, 17);
+            this.labelHeader.TabIndex = 18;
+            this.labelHeader.Text = "请求头";
+            // 
+            // TextRequestHeaders
+            // 
+            this.TextRequestHeaders.Location = new System.Drawing.Point(89, 168);
+            this.TextRequestHeaders.Name = "TextRequestHeaders";
+            this.TextRequestHeaders.Size = new System.Drawing.Size(547, 66);
+            this.TextRequestHeaders.TabIndex = 19;
+            this.TextRequestHeaders.Text = "";
+            // 
             // SpiderConfigForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 17F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.AutoScroll = true;
-            this.ClientSize = new System.Drawing.Size(648, 355);
+            this.ClientSize = new System.Drawing.Size(648, 426);
+            this.Controls.Add(this.TextRequestHeaders);
+            this.Controls.Add(this.labelHeader);
             this.Controls.Add(this.BtnRefreshTemplate);
             this.Controls.Add(this.labelTemplateInfo);
             this.Controls.Add(this.BtnCancel);
@@ -280,5 +301,7 @@
         private Button BtnCancel;
         private LinkLabel labelTemplateInfo;
         private Button BtnRefreshTemplate;
+        private Label labelHeader;
+        private RichTextBox TextRequestHeaders;
     }
 }

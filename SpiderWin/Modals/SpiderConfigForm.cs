@@ -47,6 +47,7 @@ namespace SpiderWin.Modals
             TxtName.Text = _currentSpider.Name;
             TxtDescription.Text = _currentSpider.Description;
             TxtPostObj.Text = _currentSpider.PostObjStr;
+            TextRequestHeaders.Text = _currentSpider.Headers;
             ComboMethod.SelectedItem = _currentSpider.Method;
 
             labelTemplateInfo.Text = $"已选择{_currentSpider.Templates.Count}项";
