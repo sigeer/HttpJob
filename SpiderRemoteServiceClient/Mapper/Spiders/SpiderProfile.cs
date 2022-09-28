@@ -11,11 +11,12 @@ namespace SpiderRemoteServiceClient.Mapper.Spiders
         {
             CreateMap<TaskSetter, TaskProtoDto>();
             CreateMap<TaskProtoDto, TaskDto>();
-            CreateMap<SpiderDtoSetter, SpiderEditProtoDto>()
-                .ForMember(x => x.Templates, opt =>
-                {
-                    opt.MapFrom(y => y.Templates);
-                });
+
+            CreateMap<SpiderDtoSetter, SpiderEditProtoDto>();
+            CreateMap<SpiderEditProtoDto, SpiderDtoSetter>();
+
+            CreateMap<SpiderProtoDto, SpiderDto>();
+            CreateMap<SpiderDto, SpiderProtoDto>();
 
             CreateMap<TemplateDto, TemplateProtoDto>();
             CreateMap<TemplateProtoDto, TemplateDto>();

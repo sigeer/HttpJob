@@ -57,8 +57,6 @@ namespace SpiderTool
         public event EventHandler<SpiderWorker>? OnNewTask;
         public event EventHandler<string>? OnTaskCanceled;
 
-        private bool _isTaskExisted = false;
-
 
         public SpiderWorker(int spiderId, ISpiderService service)
         {
@@ -83,6 +81,11 @@ namespace SpiderTool
         public void CallLog(string logStr)
         {
             OnLog?.Invoke(this, logStr);
+        }
+
+        public void CallCancelTask(string logStr)
+        {
+            OnTaskCanceled?.Invoke(this, logStr);
         }
 
         public void MountChildTaskEvent(SpiderWorker childTask)
@@ -110,7 +113,7 @@ namespace SpiderTool
             };
         }
 
-        public async Task Start(string url)
+        public async Task Start(string url, CancellationToken cancellationToken = default)
         {
             _rootUrl = url;
             _taskId = _service.AddTask(new TaskSetter
@@ -121,14 +124,9 @@ namespace SpiderTool
             });
             OnTaskStart?.Invoke(this, _taskId);
             OnTaskStatusChanged?.Invoke(this, _taskId);
-            await ProcessUrl(url);
-            await CompleteTask();
-        }
 
-        public void Cancel()
-        {
-            _isTaskExisted = true;
-            OnTaskCanceled?.Invoke(this, "");
+            await ProcessUrl(url, true, cancellationToken);
+            await CompleteTask();
         }
 
         public async Task CompleteTask()
@@ -152,46 +150,44 @@ namespace SpiderTool
             return responseStream.DecodeData(res.Content.Headers.ContentType?.CharSet);
         }
 
-        private async Task ProcessNextPageUrl(string url)
-        {
-            _currentUrl = url;
-
-            var documentContent = await LoadDocumentContent();
-            _currentDoc.LoadHtml(documentContent);
-
-            await _processor.ProcessContentAsync(this, documentContent, Spider.TemplateList);
-            await MoveToNextPage();
-        }
-
-        public async Task ProcessUrl(string currentUrl)
+        public async Task ProcessUrl(string currentUrl, bool isRootUrl = true, CancellationToken cancellationToken = default)
         {
             _currentUrl = currentUrl;
 
             var documentContent = await LoadDocumentContent();
             _currentDoc.LoadHtml(documentContent);
 
-            _service.UpdateTask(new TaskSetter
+            if (isRootUrl)
             {
-                Id = _taskId,
-                Description = DocumentTitle,
-                Status = (int)TaskType.InProgress
-            });
-            OnTaskStatusChanged?.Invoke(this, _taskId);
+                _service.UpdateTask(new TaskSetter
+                {
+                    Id = _taskId,
+                    Description = DocumentTitle,
+                    Status = (int)TaskType.InProgress
+                });
+                OnTaskStatusChanged?.Invoke(this, _taskId);
+            }
 
-            await _processor.ProcessContentAsync(this, documentContent, Spider.TemplateList);
-            await MoveToNextPage();
+            await _processor.ProcessContentAsync(this, documentContent, Spider.TemplateList, cancellationToken);
+            await MoveToNextPageAsync(cancellationToken);
         }
 
-        private async Task MoveToNextPage()
+        private async Task MoveToNextPageAsync(CancellationToken cancellationToken = default)
         {
-            if (_isTaskExisted || Spider.NextPageTemplate == null || string.IsNullOrEmpty(Spider.NextPageTemplate.TemplateStr))
+            if (cancellationToken.IsCancellationRequested)
+            {
+                OnTaskCanceled?.Invoke(this, "MoveToNextPage");
+                OnLog?.Invoke(this, $"task {TaskId} canceled | from method MoveToNextPage ");
+                return;
+            }
+            if (Spider.NextPageTemplate == null || string.IsNullOrEmpty(Spider.NextPageTemplate.TemplateStr))
                 return;
             var nextPageNode = _currentDoc.DocumentNode.SelectSingleNode(Spider.NextPageTemplate.TemplateStr);
             if (nextPageNode != null)
             {
                 var nextUrl = (nextPageNode.Attributes["href"] ?? nextPageNode.Attributes["data-href"])?.Value;
                 if (!string.IsNullOrEmpty(nextUrl))
-                    await ProcessNextPageUrl(nextUrl);
+                    await ProcessUrl(nextUrl, false, cancellationToken);
             }
         }
     }
@@ -230,7 +226,7 @@ namespace SpiderTool
             return dir;
         }
 
-        public static void BulkDownload(string dir, List<string> urls, Action<string>? log = null)
+        public static void BulkDownload(string dir, List<string> urls, Action<string>? log = null, CancellationToken cancellationToken = default)
         {
             var snowFlake = Utility.GuidHelper.Snowflake.GetInstance(1);
             var data = urls.Distinct().ToDictionary(x => x, x => snowFlake.NextId().ToString());
@@ -240,7 +236,7 @@ namespace SpiderTool
              {
                  var client = httpRequestPool.GetHttpClient();
                  var uri = new Uri(url.Key);
-                 var result = await client.HttpGetCore(uri.ToString());
+                 var result = await client.HttpGetCore(uri.ToString(), cancellationToken: cancellationToken);
                  var fileName = uri.Segments.Last();
                  if (!TryGetExtension(fileName, out var extension))
                  {
@@ -252,9 +248,9 @@ namespace SpiderTool
                      fileName = url.Value + extension;
                  }
                  var path = Path.Combine(dirRoot, fileName);
-                 var fileBytes = await result.Content.ReadAsByteArrayAsync();
+                 var fileBytes = await result.Content.ReadAsByteArrayAsync(cancellationToken: cancellationToken);
                  if (fileBytes.Length > 0)
-                     await File.WriteAllBytesAsync(path, fileBytes);
+                     await File.WriteAllBytesAsync(path, fileBytes, cancellationToken);
                  else
                      log?.Invoke($"for {url}, file bytes = 0");
                  httpRequestPool.Return(client);
