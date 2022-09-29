@@ -187,7 +187,6 @@ namespace SpiderWin
             var setting = new ServerSetting();
             setting.OnChangeConnection += (obj, evt) =>
             {
-                localServiceBackup = _coreService;
                 _coreService = evt;
                 LoadForm();
                 UseLocalMenu.Checked = false;

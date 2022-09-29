@@ -22,7 +22,6 @@ namespace SpiderRemoteServiceClient.Mapper.Spiders
                 .ForMember(y => y.NextPageTemplate == null ? 0 : y.NextPageTemplate.Id, opt => opt.MapFrom(x => x.NextPageId))
                 .ForMember(y => y.HeaderStr, opt => opt.MapFrom(x => x.Headers));
 
-
             CreateMap<TemplateEditDto, TemplateProtoDto>()
                 .ForMember(x => x.XPath, opt => opt.MapFrom(y => y.TemplateStr));
         }
