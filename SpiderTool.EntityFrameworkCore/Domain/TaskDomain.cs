@@ -118,5 +118,25 @@ namespace SpiderTool.EntityFrameworkCore.Domain
                 SpiderId = x.SpiderId,
             }).ToListAsync();
         }
+
+        public List<TaskSimpleViewModel> GetTaskHistoryList()
+        {
+            return _dbContext.Tasks.OrderByDescending(x => x.CreateTime).Select(x => new TaskSimpleViewModel()
+            {
+                Id = x.Id,
+                RootUrl = x.RootUrl,
+                SpiderId = x.SpiderId,
+            }).ToList();
+        }
+
+        public async Task<List<TaskSimpleViewModel>> GetTaskHistoryListAsync()
+        {
+            return await _dbContext.Tasks.OrderByDescending(x => x.CreateTime).Select(x => new TaskSimpleViewModel()
+            {
+                Id = x.Id,
+                RootUrl = x.RootUrl,
+                SpiderId = x.SpiderId,
+            }).ToListAsync();
+        }
     }
 }

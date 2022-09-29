@@ -1,15 +1,12 @@
-﻿using SpiderTool.Dto.Resource;
-using SpiderTool.Dto.Spider;
+﻿using SpiderTool.Dto.Spider;
 using SpiderTool.Dto.Tasks;
 
 namespace SpiderTool.IService
 {
     public interface ISpiderService
     {
-        List<ResourceHistoryDto> GetResourceHistoryDtoList();
-
-        string SubmitResouceHistory(ResourceHistorySetter model);
-        string DeleteResource(ResourceHistorySetter model);
+        List<TaskSimpleViewModel> GetTaskHistoryList();
+        Task<List<TaskSimpleViewModel>> GetTaskHistoryListAsync();
 
         List<SpiderListItemViewModel> GetSpiderDtoList();
         Task<List<SpiderListItemViewModel>> GetSpiderDtoListAsync();

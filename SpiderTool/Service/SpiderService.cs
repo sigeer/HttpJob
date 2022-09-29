@@ -1,5 +1,4 @@
-﻿using SpiderTool.Dto.Resource;
-using SpiderTool.Dto.Spider;
+﻿using SpiderTool.Dto.Spider;
 using SpiderTool.Dto.Tasks;
 using SpiderTool.IDomain;
 using SpiderTool.IService;
@@ -8,14 +7,12 @@ namespace SpiderTool.Service
 {
     public class SpiderService : ISpiderService
     {
-        readonly IResourceDomain _resourceDomain;
         readonly ISpiderDomain _spiderDomain;
         readonly ITemplateDomain _templateDomain;
         readonly ITaskDomain _taskDomain;
 
-        public SpiderService(IResourceDomain resourceDomain, ISpiderDomain spiderDomain, ITemplateDomain templateDomain, ITaskDomain taskDomain)
+        public SpiderService(ISpiderDomain spiderDomain, ITemplateDomain templateDomain, ITaskDomain taskDomain)
         {
-            _resourceDomain = resourceDomain;
             _spiderDomain = spiderDomain;
             _templateDomain = templateDomain;
             _taskDomain = taskDomain;
@@ -26,11 +23,6 @@ namespace SpiderTool.Service
             return _taskDomain.AddTask(model);
         }
 
-        public string DeleteResource(ResourceHistorySetter model)
-        {
-            return _resourceDomain.Delete(model);
-        }
-
         public string DeleteSpider(SpiderEditDto model)
         {
             return _spiderDomain.Delete(model);
@@ -39,11 +31,6 @@ namespace SpiderTool.Service
         public string DeleteTemplate(TemplateEditDto model)
         {
             return _templateDomain.Delete(model);
-        }
-
-        public List<ResourceHistoryDto> GetResourceHistoryDtoList()
-        {
-            return _resourceDomain.GetResourceDtoList();
         }
 
         public SpiderDetailViewModel? GetSpider(int id)
@@ -79,11 +66,6 @@ namespace SpiderTool.Service
         public void SetTaskStatus(int taskId, int taskStatus)
         {
             _taskDomain.SetTaskStatus(taskId, taskStatus);
-        }
-
-        public string SubmitResouceHistory(ResourceHistorySetter model)
-        {
-            return _resourceDomain.Submit(model);
         }
 
         public string SubmitSpider(SpiderEditDto model)
@@ -144,6 +126,16 @@ namespace SpiderTool.Service
         public Task<SpiderDetailViewModel?> GetSpiderAsync(int id)
         {
             return _spiderDomain.GetSpiderDtoAsync(id);
+        }
+
+        public List<TaskSimpleViewModel> GetTaskHistoryList()
+        {
+            return _taskDomain.GetTaskHistoryList();
+        }
+
+        public async Task<List<TaskSimpleViewModel>> GetTaskHistoryListAsync()
+        {
+            return await _taskDomain.GetTaskHistoryListAsync();
         }
     }
 }
