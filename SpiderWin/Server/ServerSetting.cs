@@ -4,12 +4,12 @@ using SpiderRemoteServiceClient.Mapper.Spiders;
 using SpiderRemoteServiceClient.Services;
 using SpiderService;
 using SpiderTool.IService;
+using SpiderWin.Services;
 
 namespace SpiderWin.Server
 {
     public partial class ServerSetting : Form
     {
-        GrpcChannel? currentChannel;
         ISpiderRemoteService? _service;
 
         public event EventHandler<ISpiderService>? OnChangeConnection;
@@ -48,13 +48,9 @@ namespace SpiderWin.Server
                 MessageBox.Show("输入不正确");
                 return;
             }
-            if (currentChannel != null)
-            {
-                currentChannel.Dispose();
-                currentChannel = null;
-            }
-            currentChannel = GrpcChannel.ForAddress($"http://{TxtServer.Text}:{TxtPort.Text}");
-            var client = new SpiderWorkerProtoService.SpiderWorkerProtoServiceClient(currentChannel);
+            ServiceFactory.GrpcDisconnect();
+            ServiceFactory.GrpcChannel = GrpcChannel.ForAddress($"http://{TxtServer.Text}:{TxtPort.Text}");
+            var client = new SpiderWorkerProtoService.SpiderWorkerProtoServiceClient(ServiceFactory.GrpcChannel);
             _service = new SpiderRemoteService(client, new Mapper(new MapperConfiguration(opt =>
             {
                 opt.AddProfile<SpiderProfile>();

@@ -4,6 +4,7 @@ using SpiderTool.Dto.Tasks;
 using SpiderTool.IService;
 using SpiderWin.Modals;
 using SpiderWin.Server;
+using SpiderWin.Services;
 using System.Diagnostics;
 using System.Text;
 using Utility.Extensions;
@@ -177,6 +178,7 @@ namespace SpiderWin
         {
             //使用本地服务
             UseServiceMenu.Checked = false;
+            ServiceFactory.GrpcDisconnect();
             _coreService = localServiceBackup;
             LoadForm();
         }
