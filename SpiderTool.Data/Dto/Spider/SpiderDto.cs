@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace SpiderTool.Dto.Spider
 {
-    public class SpiderDtoSetter
+    public class SpiderEditDto
     {
         public int Id { get; set; }
         public string? Name { get; set; }
@@ -33,21 +33,54 @@ namespace SpiderTool.Dto.Spider
             return !string.IsNullOrEmpty(Name) && !string.IsNullOrEmpty(Method) && Templates.Count > 0;
         }
     }
-    public class SpiderDto: SpiderDtoSetter
+    public class SpiderListItemViewModel
     {
-        public List<TemplateDto> TemplateList { get; set; } = new List<TemplateDto>();
-        public TemplateDto? NextPageTemplate { get; set; }
-        public List<SpiderHeaderDto> HeaderObject => JsonConvert.DeserializeObject<List<SpiderHeaderDto>>(Headers ?? "") ?? new List<SpiderHeaderDto>();
-        public object? PostObj => string.IsNullOrEmpty(PostObjStr) ? null : JsonConvert.DeserializeObject(PostObjStr);
+        public int Id { get; set; }
+        public string? Name { get; set; }
+    }
 
+    public class SpiderDetailViewModel: SpiderListItemViewModel
+    {
+        public string? Description { get; set; }
+        /// <summary>
+        /// "POST" or "GET"
+        /// </summary>
+        public string? Method { get; set; }
+        /// <summary>
+        /// object => json
+        /// </summary>
+        public string? PostObjStr { get; set; }
+        /// <summary>
+        /// <see cref="List{SpiderHeaderDto}"/> => json
+        /// </summary>
+        public string? HeaderStr { get; set; }
+        public List<TemplateEditDto> TemplateList { get; set; } = new List<TemplateEditDto>();
+        public TemplateEditDto? NextPageTemplate { get; set; }
+        public object? PostObj => string.IsNullOrEmpty(PostObjStr) ? null : JsonConvert.DeserializeObject(PostObjStr);
         public Dictionary<string, string> GetHeaders()
         {
             Dictionary<string, string> dic = new Dictionary<string, string>();
-            HeaderObject.ForEach(x =>
+            var headerObj = JsonConvert.DeserializeObject<List<SpiderHeaderDto>>(HeaderStr ?? "") ?? new List<SpiderHeaderDto>();
+            headerObj.ForEach(x =>
             {
                 dic.Add(x.Key, x.Value);
             });
             return dic;
+        }
+
+        public SpiderEditDto ToEditModel()
+        {
+            return new SpiderEditDto
+            {
+                Id = Id,
+                Name = Name,
+                Description = Description,
+                Headers = HeaderStr,
+                Method = Method,
+                NextPageTemplateId = NextPageTemplate?.Id,
+                PostObjStr = PostObjStr,
+                Templates = TemplateList.Select(x => x.Id).ToList()
+            };
         }
     }
 

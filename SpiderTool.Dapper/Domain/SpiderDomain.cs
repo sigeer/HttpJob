@@ -20,7 +20,7 @@ namespace SpiderTool.Dapper.Domain
         readonly string spiderTable = typeof(DB_Spider).GetTableName();
         readonly string spiderTemplateTable = typeof(DB_SpiderTemplate).GetTableName();
         readonly string templateTable = typeof(DB_Template).GetTableName();
-        public string Delete(SpiderDtoSetter model)
+        public string Delete(SpiderEditDto model)
         {
             using var dbTrans = _dbConn.BeginTransaction();
             _dbConn.ExecuteScalar($"delete from {spiderTemplateTable} where SpiderId=@id; delete from {spiderTable} where id = @id;", model, dbTrans);
@@ -28,7 +28,7 @@ namespace SpiderTool.Dapper.Domain
             return StatusMessage.Success;
         }
 
-        public async Task<string> DeleteAsync(SpiderDtoSetter model)
+        public async Task<string> DeleteAsync(SpiderEditDto model)
         {
             using var dbTrans = _dbConn.BeginTransaction();
             await _dbConn.ExecuteScalarAsync($"delete from {spiderTemplateTable} where SpiderId=@id; delete from {spiderTable} where id = @id;", model, dbTrans);
@@ -37,7 +37,7 @@ namespace SpiderTool.Dapper.Domain
         }
 
 
-        public SpiderDto? GetSpiderDto(int id)
+        public SpiderDetailViewModel? GetSpiderDto(int id)
         {
             var sql = $"select a.Id, a.Description, a.Name, a.Headers, a.Method, a.NextPageTemplateId, a.PostObjStr, " +
                 $"b.Id, b.Name, b.TemplateStr, b.Type," +
@@ -47,10 +47,10 @@ namespace SpiderTool.Dapper.Domain
                 $"join {templateTable} d on b.templateId = d.id" +
                 $"where a.id = @id";
 
-            var ids = new Dictionary<int, SpiderDto>();
-            return _dbConn.Query<SpiderDto, TemplateDto, TemplateDto, SpiderDto>(sql, (a, b, c) =>
+            var ids = new Dictionary<int, SpiderDetailViewModel>();
+            return _dbConn.Query<SpiderDetailViewModel, TemplateEditDto, TemplateEditDto, SpiderDetailViewModel>(sql, (a, b, c) =>
             {
-                SpiderDto? temp;
+                SpiderDetailViewModel? temp;
                 if (!ids.TryGetValue(a.Id, out temp))
                 {
                     temp = a;
@@ -60,12 +60,10 @@ namespace SpiderTool.Dapper.Domain
                     temp.NextPageTemplate = b;
                 if (temp.TemplateList == null)
                 {
-                    temp.TemplateList = new List<TemplateDto>();
-                    temp.Templates = new List<int>();
+                    temp.TemplateList = new List<TemplateEditDto>();
                 }
                 else
                 {
-                    temp.Templates.Add(c.Id);
                     temp.TemplateList.Add(c);
                 }
 
@@ -73,7 +71,7 @@ namespace SpiderTool.Dapper.Domain
             }, param: new { id }).FirstOrDefault();
         }
 
-        public async Task<SpiderDto?> GetSpiderDtoAsync(int id)
+        public async Task<SpiderDetailViewModel?> GetSpiderDtoAsync(int id)
         {
             var sql = $"select a.Id, a.Description, a.Name, a.Headers, a.Method, a.NextPageTemplateId, a.PostObjStr, " +
                 $"b.Id, b.Name, b.TemplateStr, b.Type," +
@@ -83,10 +81,10 @@ namespace SpiderTool.Dapper.Domain
                 $"join {templateTable} d on b.templateId = d.id" +
                 $"where a.id = @id";
 
-            var ids = new Dictionary<int, SpiderDto>();
-            return (await _dbConn.QueryAsync<SpiderDto, TemplateDto, TemplateDto, SpiderDto>(sql, (a, b, c) =>
+            var ids = new Dictionary<int, SpiderDetailViewModel>();
+            return (await _dbConn.QueryAsync<SpiderDetailViewModel, TemplateEditDto, TemplateEditDto, SpiderDetailViewModel>(sql, (a, b, c) =>
             {
-                SpiderDto? temp;
+                SpiderDetailViewModel? temp;
                 if (!ids.TryGetValue(a.Id, out temp))
                 {
                     temp = a;
@@ -96,12 +94,10 @@ namespace SpiderTool.Dapper.Domain
                     temp.NextPageTemplate = b;
                 if (temp.TemplateList == null)
                 {
-                    temp.TemplateList = new List<TemplateDto>();
-                    temp.Templates = new List<int>();
+                    temp.TemplateList = new List<TemplateEditDto>();
                 }
                 else
                 {
-                    temp.Templates.Add(c.Id);
                     temp.TemplateList.Add(c);
                 }
 
@@ -109,54 +105,19 @@ namespace SpiderTool.Dapper.Domain
             }, param: new { id })).FirstOrDefault();
         }
 
-        public List<SpiderDtoSetter> GetSpiderDtoList()
+        public List<SpiderListItemViewModel> GetSpiderDtoList()
         {
-            var sql = $"select a.Id, a.Name, a.Method, a.Headers, a.Description, a.NextPageTemplateId, a.PostObjStr, b.TemplateId " +
-                $"from {spiderTable} a join {spiderTemplateTable} b on a.Id = b.SpiderId";
-
-            var ids = new Dictionary<int, SpiderDtoSetter>();
-            var data = _dbConn.Query<SpiderDtoSetter, int, SpiderDtoSetter>(sql, (x, y) =>
-            {
-                SpiderDtoSetter? temp;
-                if (!ids.TryGetValue(x.Id, out temp))
-                {
-                    temp = x;
-                    ids.Add(x.Id, temp);
-                }
-                if (temp.Templates == null)
-                    temp.Templates = new List<int>();
-                temp.Templates.Add(y);
-                return x;
-            }, splitOn: "TemplateId").ToList();
-
-            return ids.Values.ToList();
+            var sql = $"select a.Id, a.Name from {spiderTable}";
+            return _dbConn.Query<SpiderListItemViewModel>(sql).ToList();
         }
 
-        public async Task<List<SpiderDtoSetter>> GetSpiderDtoListAsync()
+        public async Task<List<SpiderListItemViewModel>> GetSpiderDtoListAsync()
         {
-            var sql = $"select a.Id, a.Name, a.Method, a.Headers, a.Description, a.NextPageTemplateId, a.PostObjStr, b.TemplateId " +
-                $"from {spiderTable} a join {spiderTemplateTable} b on a.Id = b.SpiderId";
-
-            var ids = new Dictionary<int, SpiderDtoSetter>();
-            var data = (await _dbConn.QueryAsync<SpiderDtoSetter, int, SpiderDtoSetter>(sql, (x, y) =>
-            {
-                SpiderDtoSetter? temp;
-                if (!ids.TryGetValue(x.Id, out temp))
-                {
-                    temp = x;
-                    ids.Add(x.Id, temp);
-                }
-                if (temp.Templates == null)
-                    temp.Templates = new List<int>();
-                temp.Templates.Add(y);
-                return x;
-            }, splitOn: "TemplateId")).ToList();
-
-            return ids.Values.ToList();
+            var sql = $"select a.Id, a.Name from {spiderTable}";
+            return (await _dbConn.QueryAsync<SpiderListItemViewModel>(sql)).ToList();
         }
 
-
-        public string Submit(SpiderDtoSetter model)
+        public string Submit(SpiderEditDto model)
         {
             if (!model.FormValid())
                 return StatusMessage.FormInvalid;
@@ -185,7 +146,7 @@ namespace SpiderTool.Dapper.Domain
             return StatusMessage.Success;
         }
 
-        public async Task<string> SubmitAsync(SpiderDtoSetter model)
+        public async Task<string> SubmitAsync(SpiderEditDto model)
         {
             if (!model.FormValid())
                 return StatusMessage.FormInvalid;

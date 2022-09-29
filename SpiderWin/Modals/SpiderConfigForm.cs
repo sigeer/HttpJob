@@ -8,8 +8,9 @@ namespace SpiderWin.Modals
     public partial class SpiderConfigForm : Form
     {
         #region form variables
-        SpiderDtoSetter _currentSpider;
-        List<TemplateDto> _templateList = new List<TemplateDto>();
+        SpiderEditDto _currentSpider = new SpiderEditDto();
+        int _spiderId;
+        List<TemplateDetailViewModel> _templateList = new List<TemplateDetailViewModel>();
 
         public event EventHandler<string>? OnSubmit;
         #endregion
@@ -18,39 +19,41 @@ namespace SpiderWin.Modals
         readonly ISpiderService _coreService;
         #endregion
 
-        public SpiderConfigForm(ISpiderService coreService, SpiderDtoSetter? spider = null)
+        public SpiderConfigForm(ISpiderService coreService, SpiderListItemViewModel? spider = null)
         {
-            _currentSpider = spider?.Clone() ?? new SpiderDtoSetter();
+            _spiderId = spider?.Id ?? 0;
             _coreService = coreService;
 
             InitializeComponent();
 
-            Text = $"{Text} - {_currentSpider.Id}";
+            Text = $"{Text} - {_spiderId}";
 
         }
         private async void LoadTemplateListData()
         {
             await Task.Run(async () =>
             {
+                _currentSpider = (await _coreService.GetSpiderAsync(_spiderId))?.ToEditModel() ?? new SpiderEditDto();
                 _templateList = await _coreService.GetTemplateDtoListAsync();
-            });           
-            ComboBoxNextPage.DataSource = (new List<TemplateDto>() { new TemplateDto() { Id = 0, Name = "" } }.Concat(_templateList)).ToList();
-            if (_currentSpider.NextPageTemplateId != null)
-                ComboBoxNextPage.SelectedValue = _currentSpider.NextPageTemplateId;
-        }
-
-        private void PreLoadForm()
-        {
-            ComboBoxNextPage.ValueMember = nameof(TemplateDto.Id);
-            ComboBoxNextPage.DisplayMember = nameof(TemplateDto.Name);
+            });
 
             TxtName.Text = _currentSpider.Name;
             TxtDescription.Text = _currentSpider.Description;
             TxtPostObj.Text = _currentSpider.PostObjStr;
             TextRequestHeaders.Text = _currentSpider.Headers;
             ComboMethod.SelectedItem = _currentSpider.Method;
-
             labelTemplateInfo.Text = $"已选择{_currentSpider.Templates.Count}项";
+
+            ComboBoxNextPage.DataSource = (new List<TemplateDetailViewModel>() { new TemplateDetailViewModel() { Id = 0, Name = "" } }.Concat(_templateList)).ToList();
+            if (_currentSpider.NextPageTemplateId != null)
+                ComboBoxNextPage.SelectedValue = _currentSpider.NextPageTemplateId;
+        }
+
+        private void PreLoadForm()
+        {
+            ComboBoxNextPage.ValueMember = nameof(TemplateDetailViewModel.Id);
+            ComboBoxNextPage.DisplayMember = nameof(TemplateDetailViewModel.Name);
+
         }
 
         private void SpiderConfigForm_Load(object sender, EventArgs e)

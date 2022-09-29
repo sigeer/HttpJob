@@ -1,0 +1,11 @@
+1. ViewModel：用于数据展示 【由后台传给前台，直接绑定到视图的数据
+1.1 XXListItemViewModel：表示这是个列表项，有的列表需要详细的数据 有的列表不需要详细的数据  ListItemViewModel << DetailViewModel （被ViewModel包含）
+2. Dto：用于数据提交传输 【由前台传给后台，精简要传输的字段
+2.1 Dto可能与ViewModel有多相同字段（甚至完全一样），但不要使用继承，另外使用mapping来处理 --Dto和ViewModel之间不可以用继承
+==
+场景1
+每一项的数据较多，查看列表和查看详细由2次请求处理
+列表查询获得List<ListItemViewModel>() 
+查看详细时，通过Id获取DetailViewModel
+编辑保存时，从DetailViewModel提取需要提交的值组成 EditDto
+

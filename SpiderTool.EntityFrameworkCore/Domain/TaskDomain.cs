@@ -15,7 +15,7 @@ namespace SpiderTool.EntityFrameworkCore.Domain
             _dbContext = dbContext;
         }
 
-        public int AddTask(TaskSetter model)
+        public int AddTask(TaskEditDto model)
         {
             var dbModel = new DB_Task()
             {
@@ -29,7 +29,7 @@ namespace SpiderTool.EntityFrameworkCore.Domain
             return dbModel.Id;
         }
 
-        public async Task<int> AddTaskAsync(TaskSetter model)
+        public async Task<int> AddTaskAsync(TaskEditDto model)
         {
             var dbModel = new DB_Task()
             {
@@ -43,9 +43,9 @@ namespace SpiderTool.EntityFrameworkCore.Domain
             return dbModel.Id;
         }
 
-        public List<TaskDto> GetTaskList()
+        public List<TaskListItemViewModel> GetTaskList()
         {
-            return _dbContext.Tasks.Where(x => x.Status != (int)TaskType.Canceled).OrderByDescending(x => x.CreateTime).Take(10).Select(x => new TaskDto()
+            return _dbContext.Tasks.Where(x => x.Status != (int)TaskType.Canceled).OrderByDescending(x => x.CreateTime).Take(10).Select(x => new TaskListItemViewModel()
             {
                 Id = x.Id,
                 Status = x.Status,
@@ -58,7 +58,7 @@ namespace SpiderTool.EntityFrameworkCore.Domain
             }).ToList();
         }
 
-        public void UpdateTask(TaskSetter model)
+        public void UpdateTask(TaskEditDto model)
         {
             var taskDbModel = _dbContext.Tasks.FirstOrDefault(x => x.Id == model.Id);
             if (taskDbModel != null)
@@ -69,7 +69,7 @@ namespace SpiderTool.EntityFrameworkCore.Domain
             }
         }
 
-        public async Task UpdateTaskAsync(TaskSetter model)
+        public async Task UpdateTaskAsync(TaskEditDto model)
         {
             var taskDbModel = await _dbContext.Tasks.FirstOrDefaultAsync(x => x.Id == model.Id);
             if (taskDbModel != null)
@@ -104,9 +104,9 @@ namespace SpiderTool.EntityFrameworkCore.Domain
             }
         }
 
-        public async Task<List<TaskDto>> GetTaskListAsync()
+        public async Task<List<TaskListItemViewModel>> GetTaskListAsync()
         {
-            return await _dbContext.Tasks.Where(x => x.Status != (int)TaskType.Canceled).OrderByDescending(x => x.CreateTime).Take(10).Select(x => new TaskDto()
+            return await _dbContext.Tasks.Where(x => x.Status != (int)TaskType.Canceled).OrderByDescending(x => x.CreateTime).Take(10).Select(x => new TaskListItemViewModel()
             {
                 Id = x.Id,
                 Status = x.Status,

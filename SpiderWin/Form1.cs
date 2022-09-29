@@ -15,8 +15,8 @@ namespace SpiderWin
         ISpiderService _coreService;
         ISpiderService localServiceBackup;
 
-        List<SpiderDtoSetter> _spiderList = new List<SpiderDtoSetter>();
-        List<TaskDto> _taskList = new List<TaskDto>();
+        List<SpiderListItemViewModel> _spiderList = new List<SpiderListItemViewModel>();
+        List<TaskListItemViewModel> _taskList = new List<TaskListItemViewModel>();
 
         List<SpiderWorker> _taskRunningList = new List<SpiderWorker>();
         StringBuilder logSb = new StringBuilder();
@@ -32,7 +32,7 @@ namespace SpiderWin
 
         private void btnShowConfig_Click(object sender, EventArgs e)
         {
-            var form = new SpiderConfigForm(_coreService, ComboxSpider.SelectedItem as SpiderDtoSetter);
+            var form = new SpiderConfigForm(_coreService, ComboxSpider.SelectedItem as SpiderListItemViewModel);
             form.OnSubmit += (obj, evt) =>
             {
                 LoadSpiderList();
@@ -42,21 +42,21 @@ namespace SpiderWin
 
         private void PreLoadForm()
         {
-            ComboxSpider.DisplayMember = nameof(SpiderDtoSetter.Name);
-            ComboxSpider.ValueMember = nameof(SpiderDtoSetter.Id);
+            ComboxSpider.DisplayMember = nameof(SpiderListItemViewModel.Name);
+            ComboxSpider.ValueMember = nameof(SpiderListItemViewModel.Id);
 
 
-            ComboxUrl.DisplayMember = nameof(TaskDto.RootUrl);
-            ComboxUrl.ValueMember = nameof(TaskDto.RootUrl);
+            ComboxUrl.DisplayMember = nameof(TaskListItemViewModel.RootUrl);
+            ComboxUrl.ValueMember = nameof(TaskListItemViewModel.RootUrl);
 
             DataGridTasks.ReadOnly = true;
-            DataGridTasks.Columns.Add(nameof(TaskDto.Id), nameof(TaskDto.Id));
-            DataGridTasks.Columns.Add(nameof(TaskDto.Description), "描述");
-            DataGridTasks.Columns.Add(nameof(TaskDto.RootUrl), nameof(TaskDto.RootUrl));
-            DataGridTasks.Columns.Add(nameof(TaskDto.SpiderId), nameof(TaskDto.SpiderId));
-            DataGridTasks.Columns.Add(nameof(TaskDto.CreateTime), "创建时间");
-            DataGridTasks.Columns.Add(nameof(TaskDto.Status), "状态");
-            DataGridTasks.Columns.Add(nameof(TaskDto.CompleteTime), "完成时间");
+            DataGridTasks.Columns.Add(nameof(TaskListItemViewModel.Id), nameof(TaskListItemViewModel.Id));
+            DataGridTasks.Columns.Add(nameof(TaskListItemViewModel.Description), "描述");
+            DataGridTasks.Columns.Add(nameof(TaskListItemViewModel.RootUrl), nameof(TaskListItemViewModel.RootUrl));
+            DataGridTasks.Columns.Add(nameof(TaskListItemViewModel.SpiderId), nameof(TaskListItemViewModel.SpiderId));
+            DataGridTasks.Columns.Add(nameof(TaskListItemViewModel.CreateTime), "创建时间");
+            DataGridTasks.Columns.Add(nameof(TaskListItemViewModel.Status), "状态");
+            DataGridTasks.Columns.Add(nameof(TaskListItemViewModel.CompleteTime), "完成时间");
         }
 
         private void LoadForm()
@@ -78,7 +78,7 @@ namespace SpiderWin
             {
                 _spiderList = _coreService.GetSpiderDtoList();
             });
-            ComboxSpider.DataSource = (new List<SpiderDtoSetter>() { new SpiderDtoSetter() { Id = 0, Name = "--请选择--" } }.Concat(_spiderList)).ToList();
+            ComboxSpider.DataSource = (new List<SpiderListItemViewModel>() { new SpiderListItemViewModel() { Id = 0, Name = "--请选择--" } }.Concat(_spiderList)).ToList();
         }
 
         private async void LoadTaskList()

@@ -15,7 +15,7 @@ namespace SpiderTool.SqlSugar.Domain
             _dbContext = dbContext;
         }
 
-        public string Delete(TemplateDto model)
+        public string Delete(TemplateEditDto model)
         {
             _dbContext.Ado.BeginTran();
             _dbContext.Deleteable<DB_ReplacementRule>(x => x.TemplateId == model.Id).ExecuteCommand();
@@ -24,7 +24,7 @@ namespace SpiderTool.SqlSugar.Domain
             return StatusMessage.Success;
         }
 
-        public async Task<string> DeleteAsync(TemplateDto model)
+        public async Task<string> DeleteAsync(TemplateEditDto model)
         {
             await _dbContext.Ado.UseTranAsync(async () =>
             {
@@ -34,7 +34,7 @@ namespace SpiderTool.SqlSugar.Domain
             return StatusMessage.Success;
         }
 
-        public List<TemplateDto> GetTemplateDtoList()
+        public List<TemplateDetailViewModel> GetTemplateDtoList()
         {
             var allTemplates = _dbContext.Queryable<DB_Template>().ToList();
 
@@ -43,7 +43,7 @@ namespace SpiderTool.SqlSugar.Domain
 
             return (from a in allTemplates
                     let b = templateRules.Where(x => x.TemplateId == a.Id).ToList()
-                    select new TemplateDto
+                    select new TemplateDetailViewModel
                     {
                         Id = a.Id,
                         Name = a.Name,
@@ -59,7 +59,7 @@ namespace SpiderTool.SqlSugar.Domain
                     }).ToList();
         }
 
-        public async Task<List<TemplateDto>> GetTemplateDtoListAsync()
+        public async Task<List<TemplateDetailViewModel>> GetTemplateDtoListAsync()
         {
             var allTemplates = await _dbContext.Queryable<DB_Template>().ToListAsync();
 
@@ -67,7 +67,7 @@ namespace SpiderTool.SqlSugar.Domain
 
             return (from a in allTemplates
                     let b = templateRules.Where(x => x.TemplateId == a.Id).ToList()
-                    select new TemplateDto
+                    select new TemplateDetailViewModel
                     {
                         Id = a.Id,
                         Name = a.Name,
@@ -83,7 +83,7 @@ namespace SpiderTool.SqlSugar.Domain
                     }).ToList();
         }
 
-        public string Submit(TemplateDto model)
+        public string Submit(TemplateEditDto model)
         {
             if (!model.FormValid())
                 return StatusMessage.FormInvalid;
@@ -130,7 +130,7 @@ namespace SpiderTool.SqlSugar.Domain
             }
         }
 
-        public async Task<string> SubmitAsync(TemplateDto model)
+        public async Task<string> SubmitAsync(TemplateEditDto model)
         {
             if (!model.FormValid())
                 return StatusMessage.FormInvalid;

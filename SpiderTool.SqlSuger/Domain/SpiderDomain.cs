@@ -15,7 +15,7 @@ namespace SpiderTool.SqlSugar.Domain
             _dbContext = dbContext;
         }
 
-        public string Delete(SpiderDtoSetter model)
+        public string Delete(SpiderEditDto model)
         {
             try
             {
@@ -32,7 +32,7 @@ namespace SpiderTool.SqlSugar.Domain
             }
         }
 
-        public async Task<string> DeleteAsync(SpiderDtoSetter model)
+        public async Task<string> DeleteAsync(SpiderEditDto model)
         {
             try
             {
@@ -49,23 +49,22 @@ namespace SpiderTool.SqlSugar.Domain
             }
         }
 
-        public SpiderDto? GetSpiderDto(int id)
+        public SpiderDetailViewModel? GetSpiderDto(int id)
         {
             var dbModel = _dbContext.Queryable<DB_Spider>().First(x => x.Id == id);
             if (dbModel == null)
                 return null;
             var nextPage = _dbContext.Queryable<DB_Template>().First(x => x.Id == dbModel.NextPageTemplateId);
 
-            var data = new SpiderDto()
+            var data = new SpiderDetailViewModel()
             {
                 Id = dbModel.Id,
                 Description = dbModel.Description,
                 Name = dbModel.Name,
                 Method = dbModel.Method,
                 PostObjStr = dbModel.PostObjStr,
-                Headers = dbModel.Headers,
-                NextPageTemplateId = dbModel.NextPageTemplateId,
-                NextPageTemplate = nextPage == null ? new TemplateDto() : new TemplateDto
+                HeaderStr = dbModel.Headers,
+                NextPageTemplate = nextPage == null ? new TemplateEditDto() : new TemplateEditDto
                 {
                     Id = nextPage.Id,
                     LinkedSpiderId = nextPage.LinkedSpiderId,
@@ -77,7 +76,7 @@ namespace SpiderTool.SqlSugar.Domain
 
             var templateIdList = _dbContext.Queryable<DB_SpiderTemplate>().Where(x => x.SpiderId == id).Select(x => x.TemplateId).ToList();
             var templateReplaceList = _dbContext.Queryable<DB_ReplacementRule>().Where(x => templateIdList.Contains(x.TemplateId)).ToList();
-            var templateList = _dbContext.Queryable<DB_Template>().Where(x => templateIdList.Contains(x.Id)).ToList().Select(b => new TemplateDto()
+            var templateList = _dbContext.Queryable<DB_Template>().Where(x => templateIdList.Contains(x.Id)).ToList().Select(b => new TemplateEditDto()
             {
                 Id = b.Id,
                 LinkedSpiderId = b.LinkedSpiderId,
@@ -96,7 +95,7 @@ namespace SpiderTool.SqlSugar.Domain
             return data;
         }
 
-        public async Task<SpiderDto?> GetSpiderDtoAsync(int id)
+        public async Task<SpiderDetailViewModel?> GetSpiderDtoAsync(int id)
         {
             var dbModel = await _dbContext.Queryable<DB_Spider>().FirstAsync(x => x.Id == id);
             if (dbModel == null)
@@ -104,16 +103,15 @@ namespace SpiderTool.SqlSugar.Domain
 
             var nextPage = await _dbContext.Queryable<DB_Template>().FirstAsync(x => x.Id == dbModel.NextPageTemplateId);
 
-            var data = new SpiderDto()
+            var data = new SpiderDetailViewModel()
             {
                 Id = dbModel.Id,
                 Description = dbModel.Description,
                 Name = dbModel.Name,
                 Method = dbModel.Method,
                 PostObjStr = dbModel.PostObjStr,
-                Headers = dbModel.Headers,
-                NextPageTemplateId = dbModel.NextPageTemplateId,
-                NextPageTemplate = nextPage == null ? new TemplateDto() : new TemplateDto
+                HeaderStr = dbModel.Headers,
+                NextPageTemplate = nextPage == null ? new TemplateEditDto() : new TemplateEditDto
                 {
                     Id = nextPage.Id,
                     LinkedSpiderId = nextPage.LinkedSpiderId,
@@ -125,7 +123,7 @@ namespace SpiderTool.SqlSugar.Domain
 
             var templateIdList = await _dbContext.Queryable<DB_SpiderTemplate>().Where(x => x.SpiderId == id).Select(x => x.TemplateId).ToListAsync();
             var templateReplaceList = await _dbContext.Queryable<DB_ReplacementRule>().Where(x => templateIdList.Contains(x.TemplateId)).ToListAsync();
-            var templateList = (await _dbContext.Queryable<DB_Template>().Where(x => templateIdList.Contains(x.Id)).ToListAsync()).Select(b => new TemplateDto()
+            var templateList = (await _dbContext.Queryable<DB_Template>().Where(x => templateIdList.Contains(x.Id)).ToListAsync()).Select(b => new TemplateEditDto()
             {
                 Id = b.Id,
                 LinkedSpiderId = b.LinkedSpiderId,
@@ -144,47 +142,25 @@ namespace SpiderTool.SqlSugar.Domain
             return data;
         }
 
-        public List<SpiderDtoSetter> GetSpiderDtoList()
+        public List<SpiderListItemViewModel> GetSpiderDtoList()
         {
-            var spiderList = _dbContext.Queryable<DB_Spider>().ToList();
-            var spiderTemplate = _dbContext.Queryable<DB_SpiderTemplate>().ToList();
-            var data = (from x in spiderList
-                        let b = spiderTemplate
-                        select new SpiderDtoSetter
-                        {
-                            Description = x.Description,
-                            Headers = x.Headers,
-                            Method = x.Method,
-                            Name = x.Name,
-                            Id = x.Id,
-                            NextPageTemplateId = x.NextPageTemplateId,
-                            PostObjStr = x.PostObjStr,
-                            Templates = b.Where(m => m.SpiderId == x.Id).Select(y => y.TemplateId).ToList()
-                        });
-            return data.ToList();
+            return _dbContext.Queryable<DB_Spider>().Select(x => new SpiderListItemViewModel
+            {
+                Id = x.Id,
+                Name = x.Name
+            }).ToList();
         }
 
-        public async Task<List<SpiderDtoSetter>> GetSpiderDtoListAsync()
+        public async Task<List<SpiderListItemViewModel>> GetSpiderDtoListAsync()
         {
-            var spiderList = await _dbContext.Queryable<DB_Spider>().ToListAsync();
-            var spiderTemplate = await _dbContext.Queryable<DB_SpiderTemplate>().ToListAsync();
-            var data = (from x in spiderList
-                        let b = spiderTemplate
-                        select new SpiderDtoSetter
-                        {
-                            Description = x.Description,
-                            Headers = x.Headers,
-                            Method = x.Method,
-                            Name = x.Name,
-                            Id = x.Id,
-                            NextPageTemplateId = x.NextPageTemplateId,
-                            PostObjStr = x.PostObjStr,
-                            Templates = b.Where(m => m.SpiderId == x.Id).Select(y => y.TemplateId).ToList()
-                        });
-            return data.ToList();
+            return await _dbContext.Queryable<DB_Spider>().Select(x => new SpiderListItemViewModel
+            {
+                Id = x.Id,
+                Name = x.Name
+            }).ToListAsync();
         }
 
-        public string Submit(SpiderDtoSetter model)
+        public string Submit(SpiderEditDto model)
         {
             if (!model.FormValid())
                 return StatusMessage.FormInvalid;
@@ -218,7 +194,7 @@ namespace SpiderTool.SqlSugar.Domain
             return StatusMessage.Success;
         }
 
-        public async Task<string> SubmitAsync(SpiderDtoSetter model)
+        public async Task<string> SubmitAsync(SpiderEditDto model)
         {
             if (!model.FormValid())
                 return StatusMessage.FormInvalid;

@@ -9,6 +9,8 @@
   <ItemGroup>
     <PackageReference Include="Grpc.AspNetCore" Version="2.40.0" />
 	  <PackageReference Include="Microsoft.Data.Sqlite" Version="6.0.9" />
+
+	  <PackageReference Include="AutoMapper" Version="11.0.1" />
   </ItemGroup>
 
 	<ItemGroup>

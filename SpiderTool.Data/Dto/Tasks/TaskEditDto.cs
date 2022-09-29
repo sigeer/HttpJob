@@ -1,14 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.ComponentModel;
 using Utility.Extensions;
 
 namespace SpiderTool.Dto.Tasks
 {
-    public class TaskSetter
+    public class TaskEditDto
     {
         public int Id { get; set; }
         public string? Description { get; set; }
@@ -21,11 +16,25 @@ namespace SpiderTool.Dto.Tasks
         public string? CronExpression { get; set; }
     }
 
-    public class TaskDto: TaskSetter
+    public class TaskListItemViewModel
     {
+        public int Id { get; set; }
+        public string? Description { get; set; }
+        public string? RootUrl { get; set; } = String.Empty;
+        public int SpiderId { get; set; }
+        /// <summary>
+        /// 0未开始 1正在执行 2完成 3取消
+        /// </summary>
+        public int Status { get; set; }
+        public string? CronExpression { get; set; }
         public DateTime CreateTime { get; set; }
         public DateTime? CompleteTime { get; set; }
         public string StatusName => ((TaskType)Status).GetDescription();
+    }
+
+    public class TaskDetailViewModel : TaskListItemViewModel
+    {
+
     }
 
     public enum TaskType

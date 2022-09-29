@@ -11,8 +11,8 @@ namespace SpiderTool
 {
     public class SpiderWorker
     {
-        private SpiderDto? _spider;
-        protected SpiderDto Spider
+        private SpiderDetailViewModel? _spider;
+        protected SpiderDetailViewModel Spider
         {
             get
             {
@@ -116,7 +116,7 @@ namespace SpiderTool
         public async Task Start(string url, CancellationToken cancellationToken = default)
         {
             _rootUrl = url;
-            _taskId = _service.AddTask(new TaskSetter
+            _taskId = _service.AddTask(new TaskEditDto
             {
                 RootUrl = _rootUrl,
                 SpiderId = Spider.Id,
@@ -159,7 +159,7 @@ namespace SpiderTool
 
             if (isRootUrl)
             {
-                _service.UpdateTask(new TaskSetter
+                _service.UpdateTask(new TaskEditDto
                 {
                     Id = _taskId,
                     Description = DocumentTitle,
@@ -303,7 +303,7 @@ namespace SpiderTool
             }
         }
 
-        public static string ReadHtmlNodeInnerHtml(HtmlNode item, TemplateDto rule)
+        public static string ReadHtmlNodeInnerHtml(HtmlNode item, TemplateEditDto rule)
         {
             var finalText = HttpUtility.HtmlDecode(item.InnerHtml);
             foreach (var handle in rule.ReplacementRules)

@@ -9,16 +9,16 @@ namespace SpiderWin.Modals
     {
         readonly ISpiderService _service;
 
-        TemplateDto edittingModel;
+        TemplateEditDto edittingModel;
 
         List<TemplateType> types = TemplateType.GetAll();
-        List<SpiderDtoSetter> spiderList = new List<SpiderDtoSetter>();
+        List<SpiderListItemViewModel> spiderList = new List<SpiderListItemViewModel>();
 
         public event EventHandler<string>? OnSubmit;
-        public ContentConfigForm(ISpiderService service, TemplateDto? model = null)
+        public ContentConfigForm(ISpiderService service, TemplateDetailViewModel? model = null)
         {
             _service = service;
-            edittingModel = model?.Clone() ?? new TemplateDto();
+            edittingModel = model?.ToEditModel() ?? new TemplateEditDto();
 
             InitializeComponent();
 
@@ -32,11 +32,11 @@ namespace SpiderWin.Modals
 
         private async void LoadData()
         {
-            await Task.Run(() =>
+            await Task.Run(async () =>
             {
-                spiderList = _service.GetSpiderDtoList();
+                spiderList = await _service.GetSpiderDtoListAsync();
             });
-            comboSpider.DataSource = (new List<SpiderDtoSetter>() { new SpiderDtoSetter { Id = 0, Name = "" } }.Concat(spiderList)).ToList();
+            comboSpider.DataSource = (new List<SpiderListItemViewModel>() { new SpiderListItemViewModel { Id = 0, Name = "" } }.Concat(spiderList)).ToList();
         }
 
         private void PreLoadForm()
@@ -45,8 +45,8 @@ namespace SpiderWin.Modals
             comboType.DisplayMember = nameof(TemplateType.Name);
             comboType.DataSource = types;
 
-            comboSpider.DisplayMember = nameof(SpiderDtoSetter.Name);
-            comboSpider.ValueMember = nameof(SpiderDtoSetter.Id);
+            comboSpider.DisplayMember = nameof(SpiderListItemViewModel.Name);
+            comboSpider.ValueMember = nameof(SpiderListItemViewModel.Id);
         }
 
         private void LoadForm()
@@ -91,7 +91,7 @@ namespace SpiderWin.Modals
                 MessageBox.Show("表单未完成");
                 return;
             }
-            var submitResult = _service.SubmitTemplate(new TemplateDto
+            var submitResult = _service.SubmitTemplate(new TemplateEditDto
             {
                 Id = edittingModel.Id,
                 Name = txtName.Text,

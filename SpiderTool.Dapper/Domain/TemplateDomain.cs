@@ -20,7 +20,7 @@ namespace SpiderTool.Dapper.Domain
         private string templateTable = typeof(DB_Template).GetTableName();
         private string replacementRule = typeof(DB_ReplacementRule).GetTableName();
 
-        public string Delete(TemplateDto model)
+        public string Delete(TemplateEditDto model)
         {
             var dbModel = new DB_Template() { Id = model.Id };
             _dbConn.ExecuteScalar($"delete from {templateTable} where id = @id;" +
@@ -28,7 +28,7 @@ namespace SpiderTool.Dapper.Domain
             return StatusMessage.Success;
         }
 
-        public async Task<string> DeleteAsync(TemplateDto model)
+        public async Task<string> DeleteAsync(TemplateEditDto model)
         {
             var dbModel = new DB_Template() { Id = model.Id };
             await _dbConn.ExecuteScalarAsync($"delete from {templateTable} where id = @id;" +
@@ -36,16 +36,16 @@ namespace SpiderTool.Dapper.Domain
             return StatusMessage.Success;
         }
 
-        public List<TemplateDto> GetTemplateDtoList()
+        public List<TemplateDetailViewModel> GetTemplateDtoList()
         {
             var sql = $"select a.TemplateId as Id, c.Name, c.TemplateStr, c.LinkedSpiderId, c.Type, a.ReplacementOldStr, a.ReplacementNewlyStr " +
                 $"from {replacementRule} a" +
                 $"join {templateTable} c on c.id = a.templateId";
 
-            var ids = new Dictionary<int, TemplateDto>();
-            _dbConn.Query<TemplateDto, ReplacementRuleDto, TemplateDto>(sql, (a, b) =>
+            var ids = new Dictionary<int, TemplateDetailViewModel>();
+            _dbConn.Query<TemplateDetailViewModel, ReplacementRuleDto, TemplateDetailViewModel>(sql, (a, b) =>
             {
-                TemplateDto? tmp;
+                TemplateDetailViewModel? tmp;
                 if (!ids.TryGetValue(a.Id, out tmp))
                 {
                     tmp = a;
@@ -59,16 +59,16 @@ namespace SpiderTool.Dapper.Domain
             return ids.Values.ToList();
         }
 
-        public async Task<List<TemplateDto>> GetTemplateDtoListAsync()
+        public async Task<List<TemplateDetailViewModel>> GetTemplateDtoListAsync()
         {
             var sql = $"select a.TemplateId as Id, c.Name, c.TemplateStr, c.LinkedSpiderId, c.Type, a.ReplacementOldStr, a.ReplacementNewlyStr " +
                 $"from {replacementRule} a" +
                 $"join {templateTable} c on c.id = a.templateId";
 
-            var ids = new Dictionary<int, TemplateDto>();
-            await _dbConn.QueryAsync<TemplateDto, ReplacementRuleDto, TemplateDto>(sql, (a, b) =>
+            var ids = new Dictionary<int, TemplateDetailViewModel>();
+            await _dbConn.QueryAsync<TemplateDetailViewModel, ReplacementRuleDto, TemplateDetailViewModel>(sql, (a, b) =>
             {
-                TemplateDto? tmp;
+                TemplateDetailViewModel? tmp;
                 if (!ids.TryGetValue(a.Id, out tmp))
                 {
                     tmp = a;
@@ -82,7 +82,7 @@ namespace SpiderTool.Dapper.Domain
             return ids.Values.ToList();
         }
 
-        public string Submit(TemplateDto model)
+        public string Submit(TemplateEditDto model)
         {
             if (!model.FormValid())
                 return StatusMessage.FormInvalid;
@@ -115,7 +115,7 @@ namespace SpiderTool.Dapper.Domain
             return StatusMessage.Success;
         }
 
-        public async Task<string> SubmitAsync(TemplateDto model)
+        public async Task<string> SubmitAsync(TemplateEditDto model)
         {
             if (!model.FormValid())
                 return StatusMessage.FormInvalid;

@@ -16,7 +16,7 @@ namespace SpiderTool.EntityFrameworkCore.Domain
             _dbContext = dbContext;
         }
 
-        public string Delete(TemplateDto model)
+        public string Delete(TemplateEditDto model)
         {
             var dbModel = new DB_Template() { Id = model.Id };
             _dbContext.Templates.Attach(dbModel).State = EntityState.Deleted;
@@ -24,7 +24,7 @@ namespace SpiderTool.EntityFrameworkCore.Domain
             return StatusMessage.Success;
         }
 
-        public async Task<string> DeleteAsync(TemplateDto model)
+        public async Task<string> DeleteAsync(TemplateEditDto model)
         {
             var dbModel = new DB_Template() { Id = model.Id };
             _dbContext.Templates.Attach(dbModel).State = EntityState.Deleted;
@@ -32,11 +32,11 @@ namespace SpiderTool.EntityFrameworkCore.Domain
             return StatusMessage.Success;
         }
 
-        public List<TemplateDto> GetTemplateDtoList()
+        public List<TemplateDetailViewModel> GetTemplateDtoList()
         {
             return (from a in _dbContext.Templates
                     let b = _dbContext.ReplacementRules.Where(x => x.TemplateId == a.Id).ToList()
-                    select new TemplateDto
+                    select new TemplateDetailViewModel
                     {
                         Id = a.Id,
                         Name = a.Name,
@@ -52,11 +52,11 @@ namespace SpiderTool.EntityFrameworkCore.Domain
                     }).AsSplitQuery().ToList();
         }
 
-        public async Task<List<TemplateDto>> GetTemplateDtoListAsync()
+        public async Task<List<TemplateDetailViewModel>> GetTemplateDtoListAsync()
         {
             return await (from a in _dbContext.Templates
                           let b = _dbContext.ReplacementRules.Where(x => x.TemplateId == a.Id).ToList()
-                          select new TemplateDto
+                          select new TemplateDetailViewModel
                           {
                               Id = a.Id,
                               Name = a.Name,
@@ -72,7 +72,7 @@ namespace SpiderTool.EntityFrameworkCore.Domain
                           }).AsSplitQuery().ToListAsync();
         }
 
-        public string Submit(TemplateDto model)
+        public string Submit(TemplateEditDto model)
         {
             if (!model.FormValid())
                 return StatusMessage.FormInvalid;
@@ -109,7 +109,7 @@ namespace SpiderTool.EntityFrameworkCore.Domain
             return StatusMessage.Success;
         }
 
-        public async Task<string> SubmitAsync(TemplateDto model)
+        public async Task<string> SubmitAsync(TemplateEditDto model)
         {
             if (!model.FormValid())
                 return StatusMessage.FormInvalid;
