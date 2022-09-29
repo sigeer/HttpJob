@@ -1,3 +1,4 @@
+using SpiderService.Mapper.Spiders;
 using SpiderService.Services;
 using SpiderTool.SqlSugar;
 using SqlSugar;
@@ -15,6 +16,10 @@ var sqlClient = new SqlSugarClient(new ConnectionConfig
 builder.Services.AddSpiderService(sqlClient, ServiceLifetime.Scoped);
 // Add services to the container.
 builder.Services.AddGrpc();
+builder.Services.AddAutoMapper(x =>
+{
+    x.AddProfile<SpiderProfile>();
+});
 
 var app = builder.Build();
 sqlClient.CreateDatabase(DbType.Sqlite);

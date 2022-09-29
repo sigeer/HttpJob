@@ -37,9 +37,9 @@ namespace MineServer.Controllers
 
         #region
         [HttpGet]
-        public ResponseModel<List<SpiderDtoSetter>> GetSpiderList()
+        public ResponseModel<List<SpiderEditDto>> GetSpiderList()
         {
-            return new ResponseModel<List<SpiderDtoSetter>>(_spiderService.GetSpiderDtoList());
+            return new ResponseModel<List<SpiderEditDto>>(_spiderService.GetSpiderDtoList());
         }
 
         [HttpPost]
@@ -57,19 +57,19 @@ namespace MineServer.Controllers
 
         #region
         [HttpGet]
-        public ResponseModel<List<TemplateDto>> GetTemplateList()
+        public ResponseModel<List<TemplateEditDto>> GetTemplateList()
         {
-            return new ResponseModel<List<TemplateDto>>(_spiderService.GetTemplateDtoList());
+            return new ResponseModel<List<TemplateEditDto>>(_spiderService.GetTemplateDtoList());
         }
 
         [HttpPost]
-        public ResponseModel<string> SubmitTemplate([FromBody] TemplateDto model)
+        public ResponseModel<string> SubmitTemplate([FromBody] TemplateEditDto model)
         {
             return new ResponseModel<string>(_spiderService.SubmitTemplate(model));
         }
 
         [HttpPost]
-        public ResponseModel<string> DeleteTemplate([FromBody] TemplateDto model)
+        public ResponseModel<string> DeleteTemplate([FromBody] TemplateEditDto model)
         {
             return new ResponseModel<string>(_spiderService.DeleteTemplate(model));
         }

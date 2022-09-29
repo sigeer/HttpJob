@@ -18,6 +18,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution", "Solution", "{57
 		Solution\mysql.sql = Solution\mysql.sql
 		Solution\NuGet.Config = Solution\NuGet.Config
 		Solution\sqlite.sql = Solution\sqlite.sql
+		规范笔记.txt = 规范笔记.txt
 	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SpiderTool.SqlSugar", "SpiderTool.SqlSuger\SpiderTool.SqlSugar.csproj", "{D5DB4A5F-26BB-4437-803D-190AD824779F}"
@@ -31,9 +32,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Protos", "Protos", "{4D9AEC
 		Protos\spider.proto = Protos\spider.proto
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SpiderRemoteServiceClient", "SpiderRemoteServiceClient\SpiderRemoteServiceClient.csproj", "{2F66A09A-320E-41B1-A6FE-3AEAA5C2BEC5}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SpiderRemoteServiceClient", "SpiderRemoteServiceClient\SpiderRemoteServiceClient.csproj", "{2F66A09A-320E-41B1-A6FE-3AEAA5C2BEC5}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SpiderTool.Data", "SpiderTool.Data\SpiderTool.Data.csproj", "{FB62FD43-8313-49B6-808C-15D5D2748F5F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SpiderTool.Data", "SpiderTool.Data\SpiderTool.Data.csproj", "{FB62FD43-8313-49B6-808C-15D5D2748F5F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

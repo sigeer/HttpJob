@@ -8,7 +8,7 @@ namespace SpiderWin.Modals
         public event EventHandler<List<int>>? OnSelect;
         readonly ISpiderService _service;
         readonly List<int> _selected;
-        List<TemplateDto> _templates = new List<TemplateDto>();
+        List<TemplateDetailViewModel> _templates = new List<TemplateDetailViewModel>();
         public TemplateManageForm(ISpiderService service, List<int>? selected = null)
         {
             _service = service;
@@ -25,11 +25,11 @@ namespace SpiderWin.Modals
         {
             dataGridView1.Columns.Add("Checked", "勾选");
             dataGridView1.Columns.Add("Operation", "操作");
-            dataGridView1.Columns.Add(nameof(TemplateDto.Id), nameof(TemplateDto.Id));
-            dataGridView1.Columns.Add(nameof(TemplateDto.Name), nameof(TemplateDto.Name));
-            dataGridView1.Columns.Add("类型", nameof(TemplateDto.Type));
-            dataGridView1.Columns.Add("XPath", nameof(TemplateDto.TemplateStr));
-            dataGridView1.Columns.Add(nameof(TemplateDto.LinkedSpiderId), nameof(TemplateDto.LinkedSpiderId));
+            dataGridView1.Columns.Add(nameof(TemplateDetailViewModel.Id), nameof(TemplateDetailViewModel.Id));
+            dataGridView1.Columns.Add(nameof(TemplateDetailViewModel.Name), nameof(TemplateDetailViewModel.Name));
+            dataGridView1.Columns.Add(nameof(TemplateDetailViewModel.Type), "类型");
+            dataGridView1.Columns.Add(nameof(TemplateDetailViewModel.TemplateStr), "XPath");
+            dataGridView1.Columns.Add(nameof(TemplateDetailViewModel.LinkedSpiderId), nameof(TemplateDetailViewModel.LinkedSpiderId));
         }
 
         private void LoadForm()
@@ -82,7 +82,7 @@ namespace SpiderWin.Modals
             {
                 var row = dataGridView1.Rows[e.RowIndex];
                 var btn = row.Cells[e.ColumnIndex];
-                var form = new ContentConfigForm(_service, btn.Tag as TemplateDto);
+                var form = new ContentConfigForm(_service, btn.Tag as TemplateDetailViewModel);
                 form.OnSubmit += async (obj, evt) =>
                 {
                     await Task.Run(async () =>

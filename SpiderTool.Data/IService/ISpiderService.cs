@@ -11,31 +11,31 @@ namespace SpiderTool.IService
         string SubmitResouceHistory(ResourceHistorySetter model);
         string DeleteResource(ResourceHistorySetter model);
 
-        List<SpiderDtoSetter> GetSpiderDtoList();
-        Task<List<SpiderDtoSetter>> GetSpiderDtoListAsync();
-        string SubmitSpider(SpiderDtoSetter model);
-        Task<string> SubmitSpiderAsync(SpiderDtoSetter model);
-        string DeleteSpider(SpiderDtoSetter model);
-        Task<string> DeleteSpiderAsync(SpiderDtoSetter model);
+        List<SpiderListItemViewModel> GetSpiderDtoList();
+        Task<List<SpiderListItemViewModel>> GetSpiderDtoListAsync();
+        string SubmitSpider(SpiderEditDto model);
+        Task<string> SubmitSpiderAsync(SpiderEditDto model);
+        string DeleteSpider(SpiderEditDto model);
+        Task<string> DeleteSpiderAsync(SpiderEditDto model);
 
-        List<TemplateDto> GetTemplateDtoList();
-        Task<List<TemplateDto>> GetTemplateDtoListAsync();
-        string SubmitTemplate(TemplateDto model);
-        Task<string> SubmitTemplateAsync(TemplateDto model);
-        string DeleteTemplate(TemplateDto model);
-        Task<string> DeleteTemplateAsync(TemplateDto model);
+        List<TemplateDetailViewModel> GetTemplateDtoList();
+        Task<List<TemplateDetailViewModel>> GetTemplateDtoListAsync();
+        string SubmitTemplate(TemplateEditDto model);
+        Task<string> SubmitTemplateAsync(TemplateEditDto model);
+        string DeleteTemplate(TemplateEditDto model);
+        Task<string> DeleteTemplateAsync(TemplateEditDto model);
 
-        List<TaskDto> GetTaskList();
-        Task<List<TaskDto>> GetTaskListAsync();
-        int AddTask(TaskSetter model);
-        Task<int> AddTaskAsync(TaskSetter model);
-        void UpdateTask(TaskSetter model);
-        Task UpdateTaskAsync(TaskSetter model);
+        List<TaskListItemViewModel> GetTaskList();
+        Task<List<TaskListItemViewModel>> GetTaskListAsync();
+        int AddTask(TaskEditDto model);
+        Task<int> AddTaskAsync(TaskEditDto model);
+        void UpdateTask(TaskEditDto model);
+        Task UpdateTaskAsync(TaskEditDto model);
         void SetTaskStatus(int taskId, int taskStatus);
         Task SetTaskStatusAsync(int taskId, int taskStatus);
 
 
-        SpiderDto? GetSpider(int id);
-        Task<SpiderDto?> GetSpiderAsync(int id);
+        SpiderDetailViewModel? GetSpider(int id);
+        Task<SpiderDetailViewModel?> GetSpiderAsync(int id);
     }
 }

@@ -16,7 +16,7 @@ namespace SpiderTool.EntityFrameworkCore.Domain
             _dbContext = dbContext;
         }
 
-        public string Delete(SpiderDtoSetter model)
+        public string Delete(SpiderEditDto model)
         {
             var dbModel = _dbContext.Spiders.FirstOrDefault(x => x.Id == model.Id);
             if (dbModel == null)
@@ -28,7 +28,7 @@ namespace SpiderTool.EntityFrameworkCore.Domain
             return StatusMessage.Success;
         }
 
-        public async Task<string> DeleteAsync(SpiderDtoSetter model)
+        public async Task<string> DeleteAsync(SpiderEditDto model)
         {
             var dbModel = await _dbContext.Spiders.FirstOrDefaultAsync(x => x.Id == model.Id);
             if (dbModel == null)
@@ -40,7 +40,7 @@ namespace SpiderTool.EntityFrameworkCore.Domain
             return StatusMessage.Success;
         }
 
-        public SpiderDto? GetSpiderDto(int id)
+        public SpiderDetailViewModel? GetSpiderDto(int id)
         {
             var spiderTemplateInfo = from a in _dbContext.SpiderTemplates
                                      join b in _dbContext.Templates on a.TemplateId equals b.Id
@@ -61,24 +61,22 @@ namespace SpiderTool.EntityFrameworkCore.Domain
                             templates = c
                         }).AsSplitQuery().ToList();
 
-            return data.Select(x => new SpiderDto
+            return data.Select(x => new SpiderDetailViewModel
             {
                 Id = x.spider.Id,
                 Description = x.spider.Description,
                 Name = x.spider.Name,
-                Headers = x.spider.Headers,
+                HeaderStr = x.spider.Headers,
                 Method = x.spider.Method,
-                NextPageTemplateId = x.spider.NextPageTemplateId,
                 PostObjStr = x.spider.PostObjStr,
-                Templates = x.templates.Select(y => y.TemplateInfo.Id).ToList(),
-                TemplateList = x.templates.Select(y => new TemplateDto
+                TemplateList = x.templates.Select(y => new TemplateEditDto
                 {
                     Id = y.TemplateInfo.Id,
                     Name = y.TemplateInfo.Name,
                     TemplateStr = y.TemplateInfo.TemplateStr,
                     Type = y.TemplateInfo.Type,
                 }).ToList(),
-                NextPageTemplate = x.nextPage == null ? null : new TemplateDto
+                NextPageTemplate = x.nextPage == null ? null : new TemplateEditDto
                 {
                     Id = x.nextPage.Id,
                     Name = x.nextPage.Name,
@@ -88,7 +86,7 @@ namespace SpiderTool.EntityFrameworkCore.Domain
             }).FirstOrDefault();
         }
 
-        public async Task<SpiderDto?> GetSpiderDtoAsync(int id)
+        public async Task<SpiderDetailViewModel?> GetSpiderDtoAsync(int id)
         {
             var spiderTemplateInfo = from a in _dbContext.SpiderTemplates
                                      join b in _dbContext.Templates on a.TemplateId equals b.Id
@@ -109,24 +107,22 @@ namespace SpiderTool.EntityFrameworkCore.Domain
                             templates = c
                         }).AsSplitQuery().ToListAsync();
 
-            return data.Select(x => new SpiderDto
+            return data.Select(x => new SpiderDetailViewModel
             {
                 Id = x.spider.Id,
                 Description = x.spider.Description,
                 Name = x.spider.Name,
-                Headers = x.spider.Headers,
+                HeaderStr = x.spider.Headers,
                 Method = x.spider.Method,
-                NextPageTemplateId = x.spider.NextPageTemplateId,
                 PostObjStr = x.spider.PostObjStr,
-                Templates = x.templates.Select(y => y.TemplateInfo.Id).ToList(),
-                TemplateList = x.templates.Select(y => new TemplateDto
+                TemplateList = x.templates.Select(y => new TemplateEditDto
                 {
                     Id = y.TemplateInfo.Id,
                     Name = y.TemplateInfo.Name,
                     TemplateStr = y.TemplateInfo.TemplateStr,
                     Type = y.TemplateInfo.Type,
                 }).ToList(),
-                NextPageTemplate = x.nextPage == null ? null : new TemplateDto
+                NextPageTemplate = x.nextPage == null ? null : new TemplateEditDto
                 {
                     Id = x.nextPage.Id,
                     Name = x.nextPage.Name,
@@ -136,41 +132,25 @@ namespace SpiderTool.EntityFrameworkCore.Domain
             }).FirstOrDefault();
         }
 
-        public List<SpiderDtoSetter> GetSpiderDtoList()
+        public List<SpiderListItemViewModel> GetSpiderDtoList()
         {
-            return (from x in _dbContext.Spiders
-                    let b = _dbContext.SpiderTemplates.Where(a => a.SpiderId == x.Id).ToList()
-                    select new SpiderDtoSetter
-                    {
-                        Description = x.Description,
-                        Headers = x.Headers,
-                        Method = x.Method,
-                        Name = x.Name,
-                        Id = x.Id,
-                        NextPageTemplateId = x.NextPageTemplateId,
-                        PostObjStr = x.PostObjStr,
-                        Templates = b.Select(y => y.TemplateId).ToList()
-                    }).AsSplitQuery().ToList();
+            return _dbContext.Spiders.Select(x => new SpiderListItemViewModel
+            {
+                Id = x.Id,
+                Name = x.Name
+            }).ToList();
         }
 
-        public async Task<List<SpiderDtoSetter>> GetSpiderDtoListAsync()
+        public async Task<List<SpiderListItemViewModel>> GetSpiderDtoListAsync()
         {
-            return await (from x in _dbContext.Spiders
-                    let b = _dbContext.SpiderTemplates.Where(a => a.SpiderId == x.Id).ToList()
-                    select new SpiderDtoSetter
-                    {
-                        Description = x.Description,
-                        Headers = x.Headers,
-                        Method = x.Method,
-                        Name = x.Name,
-                        Id = x.Id,
-                        NextPageTemplateId = x.NextPageTemplateId,
-                        PostObjStr = x.PostObjStr,
-                        Templates = b.Select(y => y.TemplateId).ToList()
-                    }).AsSplitQuery().ToListAsync();
+            return await _dbContext.Spiders.Select(x => new SpiderListItemViewModel
+            {
+                Id = x.Id,
+                Name = x.Name
+            }).ToListAsync();
         }
 
-        public string Submit(SpiderDtoSetter model)
+        public string Submit(SpiderEditDto model)
         {
             if (!model.FormValid())
                 return StatusMessage.FormInvalid;
@@ -203,7 +183,7 @@ namespace SpiderTool.EntityFrameworkCore.Domain
             return StatusMessage.Success;
         }
 
-        public async Task<string> SubmitAsync(SpiderDtoSetter model)
+        public async Task<string> SubmitAsync(SpiderEditDto model)
         {
             if (!model.FormValid())
                 return StatusMessage.FormInvalid;

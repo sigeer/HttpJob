@@ -10,14 +10,14 @@ service SpiderWorkerProtoService {
   rpc Crawl (RequestModel) returns (StringModel);
   rpc Ping (google.protobuf.Empty) returns (StringModel);
 
-  rpc AddTask(TaskProtoDto) returns (IntModel);
-  rpc UpdateTask(TaskProtoDto) returns (google.protobuf.Empty);
+  rpc AddTask(TaskProtoEditDto) returns (IntModel);
+  rpc UpdateTask(TaskProtoEditDto) returns (google.protobuf.Empty);
   rpc GetTaskList(google.protobuf.Empty) returns (TaskListResult);
-  rpc SetTaskStatus(TaskProtoDto) returns (StringModel);
+  rpc SetTaskStatus(TaskProtoEditDto) returns (StringModel);
 
-  rpc SubmitSpider(SpiderEditProtoDto) returns(StringModel);
-  rpc DeleteSpider(SpiderEditProtoDto) returns(StringModel);
-  rpc GetSpider(IntModel) returns(SpiderProtoDto);
+  rpc SubmitSpider(SpiderProtoEditDto) returns(StringModel);
+  rpc DeleteSpider(SpiderProtoEditDto) returns(StringModel);
+  rpc GetSpider(IntModel) returns(SpiderProtoDetailViewModel);
   rpc GetSpiderList(google.protobuf.Empty) returns(SpiderListResult);
 
   rpc SubmitTemplateConfig(TemplateProtoDto) returns(StringModel);
@@ -37,8 +37,16 @@ message IntModel {
 message StringModel {
 	string data = 1;
 }
+// *********** Task ***********
+message TaskProtoViewModel{
+	string rootUrl = 1;
+	int32 spiderId = 2;
+	int32 status = 3;
+	string description = 4;
+	int32 id = 5;
+}
 
-message TaskProtoDto{
+message TaskProtoEditDto{
 	string rootUrl = 1;
 	int32 spiderId = 2;
 	int32 status = 3;
@@ -47,10 +55,13 @@ message TaskProtoDto{
 }
 
 message TaskListResult {
-	repeated TaskProtoDto list = 1;
+	repeated TaskProtoViewModel list = 1;
 }
+// *********** Task ***********
 
-message SpiderEditProtoDto {
+// *********** Spider ***********
+
+message SpiderProtoEditDto {
 	int32 id = 1;
 	string name = 2;
 	string description = 3;
@@ -61,7 +72,7 @@ message SpiderEditProtoDto {
 	repeated int32 templates = 8;
 }
 
-message SpiderProtoDto {
+message SpiderProtoDetailViewModel {
 	int32 id = 1;
 	string name = 2;
 	string description = 3;
@@ -74,9 +85,18 @@ message SpiderProtoDto {
 	repeated TemplateProtoDto templateList = 10;
 }
 
-message SpiderListResult {
-	repeated SpiderEditProtoDto list = 1;
+message SpiderProtoListItemViewModel {
+	int32 id = 1;
+	string name = 2;
 }
+
+message SpiderListResult {
+	repeated SpiderProtoListItemViewModel list = 1;
+}
+
+// *********** Spider ***********
+
+// *********** Template ***********
 
 message TemplateProtoDto {
 	int32 id = 1;
@@ -96,3 +116,5 @@ message TextReplacementRuleProtoDto {
 	string oldStr = 2;
 	string newStr = 3;
 }
+
+// *********** Template ***********

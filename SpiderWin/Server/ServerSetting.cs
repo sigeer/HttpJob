@@ -4,7 +4,6 @@ using SpiderRemoteServiceClient.Mapper.Spiders;
 using SpiderRemoteServiceClient.Services;
 using SpiderService;
 using SpiderTool.IService;
-using SpiderWin.Services;
 
 namespace SpiderWin.Server
 {
@@ -67,7 +66,6 @@ namespace SpiderWin.Server
                 var data = await _service.Ping();
                 if (data)
                 {
-                    SpiderServiceFactory.Service = _service;
                     OnChangeConnection?.Invoke(this, _service);
                     MessageBox.Show("连接成功");
                     okCallBack?.Invoke();

@@ -17,20 +17,20 @@ namespace SpiderTool.Dapper.Domain
             _dbConn = dbConn;
         }
 
-        public int AddTask(TaskSetter model)
+        public int AddTask(TaskEditDto model)
         {
             return _dbConn.QueryFirstOrDefault<int>($"insert into {taskTable} (`Description`, `RootUrl`, `SpiderId`, `CreateTime`) values(@Description, @RootUrl, @SpiderId, now(6)); select last_insert_id()", model);
         }
 
-        public async Task<int> AddTaskAsync(TaskSetter model)
+        public async Task<int> AddTaskAsync(TaskEditDto model)
         {
             return await _dbConn.QueryFirstOrDefaultAsync<int>($"insert into {taskTable} (`Description`, `RootUrl`, `SpiderId`, `CreateTime`) values(@Description, @RootUrl, @SpiderId, now(6)); select last_insert_id()", model);
         }
 
-        public List<TaskDto> GetTaskList()
+        public List<TaskListItemViewModel> GetTaskList()
         {
             var sql = $"select * from {taskTable} where status != ${(int)TaskType.Canceled} order by createTime desc";
-            return _dbConn.Query<DB_Task>(sql).ToList().Select(x => new TaskDto()
+            return _dbConn.Query<DB_Task>(sql).ToList().Select(x => new TaskListItemViewModel()
             {
                 Id = x.Id,
                 Status = x.Status,
@@ -43,10 +43,10 @@ namespace SpiderTool.Dapper.Domain
             }).ToList();
         }
 
-        public async Task<List<TaskDto>> GetTaskListAsync()
+        public async Task<List<TaskListItemViewModel>> GetTaskListAsync()
         {
             var sql = $"select * from {taskTable} where status != ${(int)TaskType.Canceled} order by createTime desc";
-            return (await _dbConn.QueryAsync<DB_Task>(sql)).ToList().Select(x => new TaskDto()
+            return (await _dbConn.QueryAsync<DB_Task>(sql)).ToList().Select(x => new TaskListItemViewModel()
             {
                 Id = x.Id,
                 Status = x.Status,
@@ -59,12 +59,12 @@ namespace SpiderTool.Dapper.Domain
             }).ToList();
         }
 
-        public void UpdateTask(TaskSetter model)
+        public void UpdateTask(TaskEditDto model)
         {
             _dbConn.ExecuteScalar($"update {taskTable} set Description = @Description, Status = @Status where id = @Id", model);
         }
 
-        public async Task UpdateTaskAsync(TaskSetter model)
+        public async Task UpdateTaskAsync(TaskEditDto model)
         {
             await _dbConn.ExecuteScalarAsync($"update {taskTable} set Description = @Description, Status = @Status where id = @Id", model);
         }

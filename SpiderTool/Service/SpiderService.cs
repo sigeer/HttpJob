@@ -21,7 +21,7 @@ namespace SpiderTool.Service
             _taskDomain = taskDomain;
         }
 
-        public int AddTask(TaskSetter model)
+        public int AddTask(TaskEditDto model)
         {
             return _taskDomain.AddTask(model);
         }
@@ -31,12 +31,12 @@ namespace SpiderTool.Service
             return _resourceDomain.Delete(model);
         }
 
-        public string DeleteSpider(SpiderDtoSetter model)
+        public string DeleteSpider(SpiderEditDto model)
         {
             return _spiderDomain.Delete(model);
         }
 
-        public string DeleteTemplate(TemplateDto model)
+        public string DeleteTemplate(TemplateEditDto model)
         {
             return _templateDomain.Delete(model);
         }
@@ -46,32 +46,32 @@ namespace SpiderTool.Service
             return _resourceDomain.GetResourceDtoList();
         }
 
-        public SpiderDto? GetSpider(int id)
+        public SpiderDetailViewModel? GetSpider(int id)
         {
             return _spiderDomain.GetSpiderDto(id);
         }
 
-        public List<SpiderDtoSetter> GetSpiderDtoList()
+        public List<SpiderListItemViewModel> GetSpiderDtoList()
         {
             return _spiderDomain.GetSpiderDtoList();
         }
 
-        public List<TaskDto> GetTaskList()
+        public List<TaskListItemViewModel> GetTaskList()
         {
             return _taskDomain.GetTaskList();
         }
 
-        public List<TemplateDto> GetTemplateDtoList()
+        public List<TemplateDetailViewModel> GetTemplateDtoList()
         {
             return _templateDomain.GetTemplateDtoList();
         }
 
-        public async Task<List<TemplateDto>> GetTemplateDtoListAsync()
+        public async Task<List<TemplateDetailViewModel>> GetTemplateDtoListAsync()
         {
             return await _templateDomain.GetTemplateDtoListAsync();
         }
 
-        public void UpdateTask(TaskSetter model)
+        public void UpdateTask(TaskEditDto model)
         {
             _taskDomain.UpdateTask(model);
         }
@@ -86,27 +86,27 @@ namespace SpiderTool.Service
             return _resourceDomain.Submit(model);
         }
 
-        public string SubmitSpider(SpiderDtoSetter model)
+        public string SubmitSpider(SpiderEditDto model)
         {
             return _spiderDomain.Submit(model);
         }
 
-        public string SubmitTemplate(TemplateDto model)
+        public string SubmitTemplate(TemplateEditDto model)
         {
             return _templateDomain.Submit(model);
         }
 
-        public async Task<List<TaskDto>> GetTaskListAsync()
+        public async Task<List<TaskListItemViewModel>> GetTaskListAsync()
         {
             return await _taskDomain.GetTaskListAsync();
         }
 
-        public async Task<int> AddTaskAsync(TaskSetter model)
+        public async Task<int> AddTaskAsync(TaskEditDto model)
         {
             return await _taskDomain.AddTaskAsync(model);
         }
 
-        public async Task UpdateTaskAsync(TaskSetter model)
+        public async Task UpdateTaskAsync(TaskEditDto model)
         {
             await _taskDomain.UpdateTaskAsync(model);
         }
@@ -116,32 +116,32 @@ namespace SpiderTool.Service
             await _taskDomain.SetTaskStatusAsync(taskId, taskStatus);
         }
 
-        public async Task<List<SpiderDtoSetter>> GetSpiderDtoListAsync()
+        public async Task<List<SpiderListItemViewModel>> GetSpiderDtoListAsync()
         {
             return await _spiderDomain.GetSpiderDtoListAsync();
         }
 
-        public async Task<string> SubmitSpiderAsync(SpiderDtoSetter model)
+        public async Task<string> SubmitSpiderAsync(SpiderEditDto model)
         {
             return await _spiderDomain.SubmitAsync(model);
         }
 
-        public async Task<string> DeleteSpiderAsync(SpiderDtoSetter model)
+        public async Task<string> DeleteSpiderAsync(SpiderEditDto model)
         {
             return await _spiderDomain.DeleteAsync(model);
         }
 
-        public async Task<string> SubmitTemplateAsync(TemplateDto model)
+        public async Task<string> SubmitTemplateAsync(TemplateEditDto model)
         {
             return await _templateDomain.SubmitAsync(model);
         }
 
-        public async Task<string> DeleteTemplateAsync(TemplateDto model)
+        public async Task<string> DeleteTemplateAsync(TemplateEditDto model)
         {
             return await _templateDomain.DeleteAsync(model);
         }
 
-        public Task<SpiderDto?> GetSpiderAsync(int id)
+        public Task<SpiderDetailViewModel?> GetSpiderAsync(int id)
         {
             return _spiderDomain.GetSpiderDtoAsync(id);
         }

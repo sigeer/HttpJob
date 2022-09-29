@@ -1,4 +1,5 @@
-﻿using Google.Protobuf.Collections;
+﻿using AutoMapper;
+using Google.Protobuf.Collections;
 using Google.Protobuf.WellKnownTypes;
 using Grpc.Core;
 using SpiderTool;
@@ -11,10 +12,12 @@ namespace SpiderService.Services
     public class SpiderWorkService : SpiderWorkerProtoService.SpiderWorkerProtoServiceBase
     {
         readonly ISpiderService _service;
+        readonly IMapper _mapper;
 
-        public SpiderWorkService(ISpiderService service)
+        public SpiderWorkService(ISpiderService service, IMapper mapper)
         {
             _service = service;
+            _mapper = mapper;
         }
 
         public override async Task<StringModel> Crawl(RequestModel request, ServerCallContext context)
@@ -32,32 +35,18 @@ namespace SpiderService.Services
             });
         }
 
-        public override Task<IntModel> AddTask(TaskProtoDto request, ServerCallContext context)
+        public override async Task<IntModel> AddTask(TaskProtoEditDto request, ServerCallContext context)
         {
-            var result = _service.AddTask(new TaskSetter()
+            return new IntModel
             {
-                RootUrl = request.RootUrl,
-                SpiderId = request.SpiderId,
-                Description = request.Description,
-                Status = request.Status
-            });
-            return Task.FromResult(new IntModel
-            {
-                 Data = result
-            });
+                Data = await _service.AddTaskAsync(_mapper.Map<TaskEditDto>(request))
+            };
         }
 
-        public override Task<Empty> UpdateTask(TaskProtoDto request, ServerCallContext context)
+        public override async Task<Empty> UpdateTask(TaskProtoEditDto request, ServerCallContext context)
         {
-            _service.UpdateTask(new TaskSetter()
-            {
-                Id = request.Id,
-                RootUrl = request.RootUrl,
-                SpiderId = request.SpiderId,
-                Description = request.Description,
-                Status = request.Status
-            });
-            return Task.FromResult(new Empty());
+            await _service.UpdateTaskAsync(_mapper.Map<TaskEditDto>(request));
+            return new Empty();
         }
 
         public override Task<TaskListResult> GetTaskList(Empty request, ServerCallContext context)
@@ -66,7 +55,7 @@ namespace SpiderService.Services
             var resultModel = new TaskListResult();
             list.ForEach(x =>
             {
-                resultModel.List.Add(new TaskProtoDto
+                resultModel.List.Add(new TaskProtoViewModel
                 {
                     Description = x.Description,
                     Id = x.Id,
@@ -78,51 +67,38 @@ namespace SpiderService.Services
             return Task.FromResult(resultModel);
         }
 
-        public override Task<StringModel> SubmitSpider(SpiderEditProtoDto request, ServerCallContext context)
+        public override Task<StringModel> SubmitSpider(SpiderProtoEditDto request, ServerCallContext context)
         {
-            var submitResult = _service.SubmitSpider(new SpiderDtoSetter
-            {
-                Id = request.Id,
-                Description = request.Description,
-                Headers = request.Headers,
-                Method = request.Method,
-                Name = request.Name,
-                NextPageTemplateId = request.NextPageId,
-                PostObjStr = request.PostObjStr,
-                Templates = request.Templates.ToList()
-            });
+            var submitResult = _service.SubmitSpider(_mapper.Map<SpiderEditDto>(request));
             return Task.FromResult(new StringModel
             {
                 Data = submitResult
             });
         }
 
-        public override async Task<StringModel> DeleteSpider(SpiderEditProtoDto request, ServerCallContext context)
+        public override async Task<StringModel> DeleteSpider(SpiderProtoEditDto request, ServerCallContext context)
         {
-            var result = await _service.DeleteSpiderAsync(new SpiderDtoSetter
-            {
-                Id = request.Id
-            });
+            var result = await _service.DeleteSpiderAsync(_mapper.Map<SpiderEditDto>(request));
             return new StringModel
             {
                 Data = result
             };
         }
 
-        public override async Task<SpiderProtoDto> GetSpider(IntModel request, ServerCallContext context)
+        public override async Task<SpiderProtoDetailViewModel> GetSpider(IntModel request, ServerCallContext context)
         {
             var model = await _service.GetSpiderAsync(request.Data);
             if (model == null)
-                return new SpiderProtoDto();
+                return new SpiderProtoDetailViewModel();
 
-            var data = new SpiderProtoDto
+            var data = new SpiderProtoDetailViewModel
             {
                 Id = model.Id,
                 Name = model.Name,
                 Description = model.Description,
-                Headers = model.Headers,
+                Headers = model.HeaderStr,
                 Method = model.Method,
-                NextPageId = model.NextPageTemplateId ?? 0,
+                NextPageId = model.NextPageTemplate?.Id ?? 0,
                 PostObjStr = model.PostObjStr,
                 NextPage = model.NextPageTemplate == null ? null : new TemplateProtoDto
                 {
@@ -154,11 +130,7 @@ namespace SpiderService.Services
             var data = new SpiderListResult();
             result.ForEach(x =>
             {
-                data.List.Add(new SpiderEditProtoDto
-                {
-                    Id = x.Id,
-                    Name = x.Name
-                });
+                data.List.Add(_mapper.Map<SpiderProtoListItemViewModel>(x));
             });
             return data;
         }
@@ -169,21 +141,14 @@ namespace SpiderService.Services
             var data = new TemplateListResult();
             result.ForEach(x =>
             {
-                data.List.Add(new TemplateProtoDto
-                {
-                    Id = x.Id,
-                    LinkedSpiderId = x.LinkedSpiderId ?? 0,
-                    Name = x.Name,
-                    Type = x.Type,
-                    XPath = x.TemplateStr
-                });
+                data.List.Add(_mapper.Map<TemplateProtoDto>(x));
             });
             return data;
         }
 
         public override async Task<StringModel> SubmitTemplateConfig(TemplateProtoDto request, ServerCallContext context)
         {
-            var editModel = new TemplateDto
+            var editModel = new TemplateEditDto
             {
                 Id = request.Id,
                 TemplateStr = request.XPath,
@@ -198,7 +163,7 @@ namespace SpiderService.Services
 
         public override async Task<StringModel> DeleteTemplateConfig(TemplateProtoDto request, ServerCallContext context)
         {
-            var result = await _service.DeleteTemplateAsync(new TemplateDto
+            var result = await _service.DeleteTemplateAsync(new TemplateEditDto
             {
                 Id = request.Id
             });
@@ -208,7 +173,7 @@ namespace SpiderService.Services
             };
         }
 
-        public override async Task<StringModel> SetTaskStatus(TaskProtoDto request, ServerCallContext context)
+        public override async Task<StringModel> SetTaskStatus(TaskProtoEditDto request, ServerCallContext context)
         {
             await _service.SetTaskStatusAsync(request.Id, request.Status);
             return new StringModel
