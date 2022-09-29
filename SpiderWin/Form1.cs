@@ -138,7 +138,7 @@ namespace SpiderWin
         {
             return new Task(() =>
             {
-                var worker = new SpiderWorker(spiderId, _coreService);
+                var worker = new SpiderWorker(spiderId, _coreService, url);
                 Stopwatch childSW = new Stopwatch();
 
                 worker.OnTaskStart += (obj, taskId) =>
@@ -170,7 +170,7 @@ namespace SpiderWin
 
                 BeginInvoke(new MethodInvoker(async () =>
                 {
-                    await worker.Start(url, tokenSource.Token);
+                    await worker.Start(tokenSource.Token);
                 }));
             });
         }

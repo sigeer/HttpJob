@@ -78,7 +78,8 @@ namespace MineServer.Controllers
         [HttpGet]
         public async Task<ResponseModel<string>> Run(string url, int spiderId)
         {
-            return new ResponseModel<string>(await new SpiderWorker(_spiderService).Start(url, spiderId));
+            await new SpiderWorker(spiderId, _spiderService, url).Start();
+            return new ResponseModel<string>("success");
         }
     }
 }
