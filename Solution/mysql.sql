@@ -6,17 +6,6 @@ CREATE TABLE If Not Exists `db_replacementrule` (
   PRIMARY KEY (`Id`)
 );
 
-CREATE TABLE If Not Exists `db_resourcehistory` (
-  `Id` int NOT NULL AUTO_INCREMENT,
-  `Name` varchar(100) DEFAULT NULL,
-  `Url` varchar(500) DEFAULT NULL,
-  `Description` varchar(200) DEFAULT NULL,
-  `CreateTime` datetime(6) NOT NULL,
-  `LastUpdatedTime` datetime(6) NOT NULL,
-  `SpiderId` int DEFAULT NULL,
-  PRIMARY KEY (`Id`)
-);
-
 CREATE TABLE If Not Exists  `db_spider` (
   `Id` int NOT NULL AUTO_INCREMENT,
   `Name` varchar(100) DEFAULT NULL,

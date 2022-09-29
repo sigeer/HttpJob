@@ -17,9 +17,8 @@ namespace SpiderWin
         ISpiderService localServiceBackup;
 
         List<SpiderListItemViewModel> _spiderList = new List<SpiderListItemViewModel>();
-        List<TaskListItemViewModel> _taskList = new List<TaskListItemViewModel>();
+        List<TaskSimpleViewModel> _taskHistoryList = new List<TaskSimpleViewModel>();
 
-        List<SpiderWorker> _taskRunningList = new List<SpiderWorker>();
         StringBuilder logSb = new StringBuilder();
 
         CancellationTokenSource tokenSource = new CancellationTokenSource();
@@ -63,6 +62,7 @@ namespace SpiderWin
         private void LoadForm()
         {
             LoadTaskList();
+            LoadTaskHistory();
             LoadSpiderList();
         }
 
@@ -82,25 +82,36 @@ namespace SpiderWin
             ComboxSpider.DataSource = (new List<SpiderListItemViewModel>() { new SpiderListItemViewModel() { Id = 0, Name = "--请选择--" } }.Concat(_spiderList)).ToList();
         }
 
+        private async void LoadTaskHistory()
+        {
+            await Task.Run(async () =>
+            {
+                _taskHistoryList = await _coreService.GetTaskHistoryListAsync();
+            });
+            ComboxUrl.DataSource = _taskHistoryList;
+        }
+
         private async void LoadTaskList()
         {
-            await Task.Run(() =>
+            await Task.Run(async () =>
             {
-                _taskList = _coreService.GetTaskList();
-            });
-            ComboxUrl.DataSource = Enumerable.DistinctBy(_taskList, x => x.RootUrl).ToList();
-            DataGridTasks.Rows.Clear();
-            _taskList.ForEach(x =>
-            {
-                var row = new DataGridViewRow();
-                row.Cells.Add(new DataGridViewTextBoxCell() { Value = x.Id, ValueType = typeof(int) });
-                row.Cells.Add(new DataGridViewTextBoxCell() { Value = x.Description });
-                row.Cells.Add(new DataGridViewTextBoxCell() { Value = x.RootUrl });
-                row.Cells.Add(new DataGridViewTextBoxCell() { Value = x.SpiderId, ValueType = typeof(int) });
-                row.Cells.Add(new DataGridViewTextBoxCell() { Value = x.CreateTime.ToString("yyyy-MM-dd HH:mm:ss") });
-                row.Cells.Add(new DataGridViewTextBoxCell() { Value = x.StatusName });
-                row.Cells.Add(new DataGridViewTextBoxCell() { Value = x.CompleteTime == null ? "-" : x.CompleteTime.Value.ToString("yyyy-MM-dd HH:mm:ss") });
-                DataGridTasks.Rows.Add(row);
+                var taskList = await _coreService.GetTaskListAsync();
+                BeginInvoke(() =>
+                {
+                    DataGridTasks.Rows.Clear();
+                    taskList.ForEach(x =>
+                    {
+                        var row = new DataGridViewRow();
+                        row.Cells.Add(new DataGridViewTextBoxCell() { Value = x.Id, ValueType = typeof(int) });
+                        row.Cells.Add(new DataGridViewTextBoxCell() { Value = x.Description });
+                        row.Cells.Add(new DataGridViewTextBoxCell() { Value = x.RootUrl });
+                        row.Cells.Add(new DataGridViewTextBoxCell() { Value = x.SpiderId, ValueType = typeof(int) });
+                        row.Cells.Add(new DataGridViewTextBoxCell() { Value = x.CreateTime.ToString("yyyy-MM-dd HH:mm:ss") });
+                        row.Cells.Add(new DataGridViewTextBoxCell() { Value = x.StatusName });
+                        row.Cells.Add(new DataGridViewTextBoxCell() { Value = x.CompleteTime == null ? "-" : x.CompleteTime.Value.ToString("yyyy-MM-dd HH:mm:ss") });
+                        DataGridTasks.Rows.Add(row);
+                    });
+                });
             });
         }
 
@@ -128,13 +139,13 @@ namespace SpiderWin
             return new Task(() =>
             {
                 var worker = new SpiderWorker(spiderId, _coreService);
-                _taskRunningList.Add(worker);
                 Stopwatch childSW = new Stopwatch();
 
                 worker.OnTaskStart += (obj, taskId) =>
                 {
                     childSW.Start();
                     PrintLog($"任务{taskId}开始==========", string.Empty);
+                    LoadTaskHistory();
                 };
                 worker.OnTaskComplete += (obj, task) =>
                 {
@@ -217,11 +228,14 @@ namespace SpiderWin
 
         private void LinkExportLog_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
         {
+            if (logSb.Length == 0)
+                return;
+
             var saveLogDialog = new SaveFileDialog()
             {
                 Title = "导出日志",
                 Filter = "*.txt|*.log",
-                FileName = DateTime.Now.ToString("yyyy-MM-dd HH:mm"),
+                FileName = DateTime.Now.ToString("yyyy-MM-dd HH-mm"),
             };
             saveLogDialog.ShowDialog();
             using var fs = saveLogDialog.OpenFile();

@@ -14,6 +14,7 @@ namespace SpiderRemoteServiceClient.Mapper.Spiders
         {
             CreateMap<TaskEditDto, TaskProtoEditDto>();
             CreateMap<TaskProtoViewModel, TaskListItemViewModel>();
+            CreateMap<TaskProtoSimpleViewModel, TaskSimpleViewModel>();
 
             CreateMap<SpiderEditDto, SpiderProtoEditDto>()
                 .ForMember(x => x.NextPageId, opt => opt.MapFrom(y => y.NextPageTemplateId));

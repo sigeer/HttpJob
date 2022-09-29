@@ -30,33 +30,13 @@ namespace SpiderTool.Dapper.Domain
         public List<TaskListItemViewModel> GetTaskList()
         {
             var sql = $"select * from {taskTable} where status != ${(int)TaskType.Canceled} order by createTime desc";
-            return _dbConn.Query<DB_Task>(sql).ToList().Select(x => new TaskListItemViewModel()
-            {
-                Id = x.Id,
-                Status = x.Status,
-                CompleteTime = x.CompleteTime,
-                CreateTime = x.CreateTime,
-                CronExpression = x.CronExpression,
-                Description = x.Description,
-                RootUrl = x.RootUrl,
-                SpiderId = x.SpiderId,
-            }).ToList();
+            return _dbConn.Query<TaskListItemViewModel>(sql).ToList();
         }
 
         public async Task<List<TaskListItemViewModel>> GetTaskListAsync()
         {
             var sql = $"select * from {taskTable} where status != ${(int)TaskType.Canceled} order by createTime desc";
-            return (await _dbConn.QueryAsync<DB_Task>(sql)).ToList().Select(x => new TaskListItemViewModel()
-            {
-                Id = x.Id,
-                Status = x.Status,
-                CompleteTime = x.CompleteTime,
-                CreateTime = x.CreateTime,
-                CronExpression = x.CronExpression,
-                Description = x.Description,
-                RootUrl = x.RootUrl,
-                SpiderId = x.SpiderId,
-            }).ToList();
+            return (await _dbConn.QueryAsync<TaskListItemViewModel>(sql)).ToList();
         }
 
         public void UpdateTask(TaskEditDto model)
@@ -77,6 +57,18 @@ namespace SpiderTool.Dapper.Domain
         public async Task SetTaskStatusAsync(int taskId, int taskStatus)
         {
             await _dbConn.ExecuteScalarAsync($"update {taskTable} set status = @taskStatus, completetime = if({taskStatus == (int)TaskType.Completed}, now(6), null) where id = @taskid");
+        }
+
+        public List<TaskSimpleViewModel> GetTaskHistoryList()
+        {
+            var sql = $"select * from {taskTable} order by createTime desc";
+            return _dbConn.Query<TaskSimpleViewModel>(sql).DistinctBy(x => x.RootUrl).ToList();
+        }
+
+        public async Task<List<TaskSimpleViewModel>> GetTaskHistoryListAsync()
+        {
+            var sql = $"select * from {taskTable} order by createTime desc";
+            return (await _dbConn.QueryAsync<TaskSimpleViewModel>(sql)).DistinctBy(x => x.RootUrl).ToList();
         }
     }
 }

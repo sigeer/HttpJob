@@ -9,19 +9,6 @@ CREATE TABLE If Not Exists "DB_ReplacementRule" (
 );
 
 -- ----------------------------
--- Table structure for DB_ResourceHistory
--- ----------------------------
-CREATE TABLE If Not Exists "DB_ResourceHistory" (
-  "Id" integer NOT NULL PRIMARY KEY AUTOINCREMENT,
-  "Name" varchar(100),
-  "Url" varchar(500),
-  "Description" varchar(200),
-  "CreateTime" datetime NOT NULL,
-  "LastUpdatedTime" datetime NOT NULL,
-  "SpiderId" integer
-);
-
--- ----------------------------
 -- Table structure for DB_Spider
 -- ----------------------------
 CREATE TABLE If Not Exists "DB_Spider" (

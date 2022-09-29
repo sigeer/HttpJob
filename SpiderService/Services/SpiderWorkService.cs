@@ -1,5 +1,4 @@
 ﻿using AutoMapper;
-using Google.Protobuf.Collections;
 using Google.Protobuf.WellKnownTypes;
 using Grpc.Core;
 using SpiderTool;
@@ -55,14 +54,7 @@ namespace SpiderService.Services
             var resultModel = new TaskListResult();
             list.ForEach(x =>
             {
-                resultModel.List.Add(new TaskProtoViewModel
-                {
-                    Description = x.Description,
-                    Id = x.Id,
-                    RootUrl = x.RootUrl,
-                    SpiderId = x.SpiderId,
-                    Status = x.Status
-                });
+                resultModel.List.Add(_mapper.Map<TaskProtoViewModel>(request));
             });
             return Task.FromResult(resultModel);
         }
@@ -91,37 +83,7 @@ namespace SpiderService.Services
             if (model == null)
                 return new SpiderProtoDetailViewModel();
 
-            var data = new SpiderProtoDetailViewModel
-            {
-                Id = model.Id,
-                Name = model.Name,
-                Description = model.Description,
-                Headers = model.HeaderStr,
-                Method = model.Method,
-                NextPageId = model.NextPageTemplate?.Id ?? 0,
-                PostObjStr = model.PostObjStr,
-                NextPage = model.NextPageTemplate == null ? null : new TemplateProtoDto
-                {
-                    Id = model.NextPageTemplate.Id,
-                    Name = model.NextPageTemplate.Name,
-                    LinkedSpiderId = model.NextPageTemplate.LinkedSpiderId ?? 0,
-                    XPath = model.NextPageTemplate.TemplateStr,
-                    Type = model.NextPageTemplate.Type
-                }
-            };
-            model.TemplateList.ForEach(x =>
-            {
-                data.TemplateList.Add(new TemplateProtoDto
-                {
-                    Id = x.Id,
-                    LinkedSpiderId = x.LinkedSpiderId ?? 0,
-                    Name = x.Name,
-                    Type = x.Type,
-                    XPath = x.TemplateStr
-                });
-                data.Templates.Add(x.Id);
-            });
-            return data;
+            return _mapper.Map<SpiderProtoDetailViewModel>(model);
         }
 
         public override async Task<SpiderListResult> GetSpiderList(Empty request, ServerCallContext context)
@@ -180,6 +142,17 @@ namespace SpiderService.Services
             {
                 Data = "ok"
             };
+        }
+
+        public override async Task<TaskProtoSimpleListResult> GetTaskHistoryList(Empty request, ServerCallContext context)
+        {
+            var result = await _service.GetTaskHistoryListAsync();
+            var data = new TaskProtoSimpleListResult();
+            result.ForEach(x =>
+            {
+                data.List.Add(_mapper.Map<TaskProtoSimpleViewModel>(x));
+            });
+            return data;
         }
     }
 }

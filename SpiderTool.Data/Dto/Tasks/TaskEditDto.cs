@@ -16,12 +16,9 @@ namespace SpiderTool.Dto.Tasks
         public string? CronExpression { get; set; }
     }
 
-    public class TaskListItemViewModel
+    public class TaskListItemViewModel: TaskSimpleViewModel
     {
-        public int Id { get; set; }
         public string? Description { get; set; }
-        public string? RootUrl { get; set; } = String.Empty;
-        public int SpiderId { get; set; }
         /// <summary>
         /// 0未开始 1正在执行 2完成 3取消
         /// </summary>
@@ -35,6 +32,13 @@ namespace SpiderTool.Dto.Tasks
     public class TaskDetailViewModel : TaskListItemViewModel
     {
 
+    }
+
+    public class TaskSimpleViewModel
+    {
+        public int Id { get; set; }
+        public string? RootUrl { get; set; } = string.Empty;
+        public int SpiderId { get; set; }
     }
 
     public enum TaskType

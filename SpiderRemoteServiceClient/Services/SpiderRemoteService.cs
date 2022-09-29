@@ -1,9 +1,7 @@
 ﻿using AutoMapper;
 using SpiderService;
-using SpiderTool.Dto.Resource;
 using SpiderTool.Dto.Spider;
 using SpiderTool.Dto.Tasks;
-using SpiderTool.IService;
 
 namespace SpiderRemoteServiceClient.Services
 {
@@ -88,21 +86,6 @@ namespace SpiderRemoteServiceClient.Services
             return data.Data == "ok";
         }
 
-        public List<ResourceHistoryDto> GetResourceHistoryDtoList()
-        {
-            throw new NotImplementedException();
-        }
-
-        public string SubmitResouceHistory(ResourceHistorySetter model)
-        {
-            throw new NotImplementedException();
-        }
-
-        public string DeleteResource(ResourceHistorySetter model)
-        {
-            throw new NotImplementedException();
-        }
-
         public List<SpiderListItemViewModel> GetSpiderDtoList()
         {
             var result = _client.GetSpiderList(new Google.Protobuf.WellKnownTypes.Empty());
@@ -164,6 +147,18 @@ namespace SpiderRemoteServiceClient.Services
         {
             var data = _client.GetSpider(new IntModel { Data = id });
             return Mapper.Map<SpiderDetailViewModel>(data);
+        }
+
+        public List<TaskSimpleViewModel> GetTaskHistoryList()
+        {
+            var data = _client.GetTaskHistoryList(new Google.Protobuf.WellKnownTypes.Empty());
+            return Mapper.Map<List<TaskSimpleViewModel>>(data.List);
+        }
+
+        public async Task<List<TaskSimpleViewModel>> GetTaskHistoryListAsync()
+        {
+            var data = await _client.GetTaskHistoryListAsync(new Google.Protobuf.WellKnownTypes.Empty());
+            return Mapper.Map<List<TaskSimpleViewModel>>(data.List);
         }
     }
 }
