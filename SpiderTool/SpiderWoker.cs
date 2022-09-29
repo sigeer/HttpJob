@@ -58,20 +58,22 @@ namespace SpiderTool
         public event EventHandler<string>? OnTaskCanceled;
 
 
-        public SpiderWorker(int spiderId, ISpiderService service)
+        public SpiderWorker(int spiderId, ISpiderService service, string url)
         {
             _service = service;
             _processor = new DefaultSpiderProcessor(service);
+            _rootUrl = url;
 
             _spider = _service.GetSpider(spiderId);
             if (Spider == null)
                 throw new Exception($"spider {spiderId} not existed");
         }
 
-        public SpiderWorker(int spiderId, ISpiderService service, ISpiderProcessor processor)
+        public SpiderWorker(int spiderId, ISpiderService service, string url, ISpiderProcessor processor)
         {
             _service = service;
             _processor = processor;
+            _rootUrl = url;
 
             _spider = _service.GetSpider(spiderId);
             if (Spider == null)
@@ -113,9 +115,8 @@ namespace SpiderTool
             };
         }
 
-        public async Task Start(string url, CancellationToken cancellationToken = default)
+        public async Task Start(CancellationToken cancellationToken = default)
         {
-            _rootUrl = url;
             _taskId = _service.AddTask(new TaskEditDto
             {
                 RootUrl = _rootUrl,
@@ -125,7 +126,7 @@ namespace SpiderTool
             OnTaskStart?.Invoke(this, _taskId);
             OnTaskStatusChanged?.Invoke(this, _taskId);
 
-            await ProcessUrl(url, true, cancellationToken);
+            await ProcessUrl(_rootUrl, true, cancellationToken);
             await CompleteTask();
         }
 

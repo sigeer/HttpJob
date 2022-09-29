@@ -86,9 +86,9 @@ namespace SpiderTool
 
                         var url = resource.GetTotalUrl(rootSpider.HostUrl);
 
-                        var spider = new SpiderWorker(rule.LinkedSpiderId ?? 0, _service, this);
+                        var spider = new SpiderWorker(rule.LinkedSpiderId ?? 0, _service, url, this);
                         rootSpider.MountChildTaskEvent(spider);
-                        await spider.Start(url);
+                        await spider.Start(cancellationToken);
                     }
                 }
             }
