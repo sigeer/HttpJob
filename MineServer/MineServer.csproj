@@ -16,7 +16,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\SpiderTool\SpiderTool.csproj" />
+    <ProjectReference Include="..\SpiderRemoteServiceClient\SpiderRemoteServiceClient.csproj" />
   </ItemGroup>
 
 </Project>
