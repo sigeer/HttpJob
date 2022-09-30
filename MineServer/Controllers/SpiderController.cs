@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using SpiderTool;
-using SpiderTool.Dto.Resource;
+using SpiderRemoteServiceClient.Services;
 using SpiderTool.Dto.Spider;
 using SpiderTool.IService;
 using Utility.Constants;
@@ -9,47 +8,28 @@ namespace MineServer.Controllers
 {
     public class SpiderController : BaseApiController
     {
-        readonly ISpiderService _spiderService;
+        readonly ISpiderRemoteService _spiderService;
 
-        public SpiderController(ISpiderService spiderService)
+        public SpiderController(ISpiderRemoteService spiderService)
         {
             _spiderService = spiderService;
         }
-        #region
-        [HttpGet]
-        public ResponseModel<List<ResourceHistoryDto>> GetResourceList()
-        {
-            return new ResponseModel<List<ResourceHistoryDto>>(_spiderService.GetResourceHistoryDtoList());
-        }
-
-        [HttpPost]
-        public ResponseModel<string> SubmitResource([FromBody] ResourceHistorySetter model)
-        {
-            return new ResponseModel<string>(_spiderService.SubmitResouceHistory(model));
-        }
-
-        [HttpPost]
-        public ResponseModel<string> DeleteResource([FromBody] ResourceHistorySetter model)
-        {
-            return new ResponseModel<string>(_spiderService.DeleteResource(model));
-        }
-        #endregion
 
         #region
         [HttpGet]
-        public ResponseModel<List<SpiderEditDto>> GetSpiderList()
+        public ResponseModel<List<SpiderListItemViewModel>> GetSpiderList()
         {
-            return new ResponseModel<List<SpiderEditDto>>(_spiderService.GetSpiderDtoList());
+            return new ResponseModel<List<SpiderListItemViewModel>>(_spiderService.GetSpiderDtoList());
         }
 
         [HttpPost]
-        public ResponseModel<string> SubmitSpider([FromBody] SpiderDto model)
+        public ResponseModel<string> SubmitSpider([FromBody] SpiderEditDto model)
         {
             return new ResponseModel<string>(_spiderService.SubmitSpider(model));
         }
 
         [HttpPost]
-        public ResponseModel<string> DeleteSpider([FromBody] SpiderDto model)
+        public ResponseModel<string> DeleteSpider([FromBody] SpiderEditDto model)
         {
             return new ResponseModel<string>(_spiderService.DeleteSpider(model));
         }
@@ -57,9 +37,9 @@ namespace MineServer.Controllers
 
         #region
         [HttpGet]
-        public ResponseModel<List<TemplateEditDto>> GetTemplateList()
+        public ResponseModel<List<TemplateDetailViewModel>> GetTemplateList()
         {
-            return new ResponseModel<List<TemplateEditDto>>(_spiderService.GetTemplateDtoList());
+            return new ResponseModel<List<TemplateDetailViewModel>>(_spiderService.GetTemplateDtoList());
         }
 
         [HttpPost]
@@ -78,8 +58,7 @@ namespace MineServer.Controllers
         [HttpGet]
         public async Task<ResponseModel<string>> Run(string url, int spiderId)
         {
-            await new SpiderWorker(spiderId, _spiderService, url).Start();
-            return new ResponseModel<string>("success");
+            return new ResponseModel<string>(await _spiderService.CrawlAsync(spiderId, url));
         }
     }
 }

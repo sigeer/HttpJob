@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using SpiderService;
+using SpiderTool.Constants;
 using SpiderTool.Dto.Spider;
 using SpiderTool.Dto.Tasks;
 
@@ -159,6 +160,26 @@ namespace SpiderRemoteServiceClient.Services
         {
             var data = await _client.GetTaskHistoryListAsync(new Google.Protobuf.WellKnownTypes.Empty());
             return Mapper.Map<List<TaskSimpleViewModel>>(data.List);
+        }
+
+        public string Crawl(int spiderId, string url)
+        {
+            _client.Crawl(new RequestModel
+            {
+                SpiderId = spiderId,
+                Url = url
+            });
+            return StatusMessage.Success;
+        }
+
+        public async Task<string> CrawlAsync(int spiderId, string url)
+        {
+            await _client.CrawlAsync(new RequestModel
+            {
+                SpiderId = spiderId,
+                Url = url
+            });
+            return StatusMessage.Success;
         }
     }
 }
