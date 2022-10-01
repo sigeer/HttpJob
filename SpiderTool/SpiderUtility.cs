@@ -45,7 +45,7 @@ namespace SpiderTool
             return dir;
         }
 
-        public static async void BulkDownload(string dir, List<string> urls, Action<string>? log = null, CancellationToken cancellationToken = default)
+        public static async Task BulkDownload(string dir, List<string> urls, Action<string>? log = null, CancellationToken cancellationToken = default)
         {
             var snowFlake = Utility.GuidHelper.Snowflake.GetInstance(1);
             var data = urls.Distinct().ToDictionary(x => x, x => snowFlake.NextId().ToString());
