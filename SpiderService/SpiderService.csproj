@@ -4,6 +4,8 @@
     <TargetFramework>net6.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
+    <UserSecretsId>13e25fb5-c672-40d6-9486-e6e6efc6e412</UserSecretsId>
+    <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
   </PropertyGroup>
 
   <ItemGroup>
@@ -12,6 +14,8 @@
 	  <PackageReference Include="Microsoft.Data.Sqlite" Version="6.0.9" />
 
 	  <PackageReference Include="AutoMapper" Version="11.0.1" />
+
+	  <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.14.0" />
   </ItemGroup>
 
 	<ItemGroup>
