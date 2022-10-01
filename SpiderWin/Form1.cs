@@ -91,9 +91,9 @@ namespace SpiderWin
             ComboxUrl.DataSource = _taskHistoryList;
         }
 
-        private async void LoadTaskList()
+        private void LoadTaskList()
         {
-            await Task.Run(async () =>
+            Task.Run(async () =>
             {
                 var taskList = await _coreService.GetTaskListAsync();
                 BeginInvoke(() =>
