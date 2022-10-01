@@ -47,7 +47,7 @@ namespace SpiderTool
                 if (rule.Type == (int)TemplateTypeEnum.Object)
                 {
                     var urlList = nodes.Select(item => (item.Attributes["src"] ?? item.Attributes["data-src"]).Value.GetTotalUrl(rootSpider.HostUrl)).ToList();
-                    SpiderUtility.BulkDownload(savePath, urlList, (log) =>
+                    await SpiderUtility.BulkDownload(savePath, urlList, (log) =>
                     {
                         rootSpider.CallLog(log);
                     }, cancellationToken);
