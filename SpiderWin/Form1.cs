@@ -265,10 +265,13 @@ namespace SpiderWin
 
         private void PrintLog(string type, string str)
         {
-            var msg = $"[{DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")}] >>{type}：{str} \r\n";
-            logSb.Append(msg);
-            ResultTxtBox.AppendText(msg);
-            ResultTxtBox.Focus();
+            BeginInvoke(() =>
+            {
+                var msg = $"[{DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")}] >>{type}：{str} \r\n";
+                logSb.Append(msg);
+                ResultTxtBox.AppendText(msg);
+                ResultTxtBox.Focus();
+            });
         }
 
         private void LinkClearLog_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
