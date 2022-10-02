@@ -25,6 +25,6 @@ var app = builder.Build();
 sqlClient.CreateDatabase(DbType.Sqlite);
 // Configure the HTTP request pipeline.
 app.MapGrpcService<SpiderWorkService>();
-//app.MapGet("/", () => "Communication with gRPC endpoints must be made through a gRPC client. To learn how to create a client, visit: https://go.microsoft.com/fwlink/?linkid=2086909");
+app.MapGet("/health", () => "web health check");
 
 app.Run();
