@@ -141,7 +141,7 @@ namespace SpiderTool.EntityFrameworkCore.Domain
                 ReplacementOldStr = x.ReplacementOldStr
             }));
             await _dbContext.SaveChangesAsync();
-            dbTrans.CommitAsync();
+            await dbTrans.CommitAsync();
 
             return StatusMessage.Success;
         }

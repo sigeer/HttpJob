@@ -20,6 +20,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\SpiderRemoteServiceClient\SpiderRemoteServiceClient.csproj" />
+    <ProjectReference Include="..\SpiderTool.EntityFrameworkCore\SpiderTool.EntityFrameworkCore.csproj" />
   </ItemGroup>
 
 </Project>
