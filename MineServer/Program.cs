@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using SpiderTool;
+using SpiderTool.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
