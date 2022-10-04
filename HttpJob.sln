@@ -36,6 +36,13 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SpiderRemoteServiceClient",
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SpiderTool.Data", "SpiderTool.Data\SpiderTool.Data.csproj", "{FB62FD43-8313-49B6-808C-15D5D2748F5F}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Gateways", "Gateways", "{CA042AFA-A816-46AA-B722-BF0D2751F087}"
+	ProjectSection(SolutionItems) = preProject
+		envoy.yaml = envoy.yaml
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SpiderTool.MongoDB", "SpiderTool.MongoDB\SpiderTool.MongoDB.csproj", "{CD55B066-71C1-46CE-819D-A27088F4ABDC}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -78,6 +85,10 @@ Global
 		{FB62FD43-8313-49B6-808C-15D5D2748F5F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{FB62FD43-8313-49B6-808C-15D5D2748F5F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{FB62FD43-8313-49B6-808C-15D5D2748F5F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CD55B066-71C1-46CE-819D-A27088F4ABDC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CD55B066-71C1-46CE-819D-A27088F4ABDC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CD55B066-71C1-46CE-819D-A27088F4ABDC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CD55B066-71C1-46CE-819D-A27088F4ABDC}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
