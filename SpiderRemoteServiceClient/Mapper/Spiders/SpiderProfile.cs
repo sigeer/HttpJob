@@ -25,6 +25,11 @@ namespace SpiderRemoteServiceClient.Mapper.Spiders
 
             CreateMap<TemplateEditDto, TemplateProtoDto>()
                 .ForMember(x => x.XPath, opt => opt.MapFrom(y => y.TemplateStr));
+
+            CreateMap<TemplateDetailViewModel, TemplateProtoDto>()
+                .ForMember(x => x.XPath, opt => opt.MapFrom(y => y.TemplateStr));
+            CreateMap<TemplateProtoDto, TemplateDetailViewModel>()
+                .ForMember(x => x.TemplateStr, opt => opt.MapFrom(y => y.XPath));
         }
     }
 }

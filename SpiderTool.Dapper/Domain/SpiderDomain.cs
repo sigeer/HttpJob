@@ -48,7 +48,7 @@ namespace SpiderTool.Dapper.Domain
                 $"where a.id = @id";
 
             var ids = new Dictionary<int, SpiderDetailViewModel>();
-            return _dbConn.Query<SpiderDetailViewModel, TemplateEditDto, TemplateEditDto, SpiderDetailViewModel>(sql, (a, b, c) =>
+            return _dbConn.Query<SpiderDetailViewModel, TemplateDetailViewModel, TemplateDetailViewModel, SpiderDetailViewModel>(sql, (a, b, c) =>
             {
                 SpiderDetailViewModel? temp;
                 if (!ids.TryGetValue(a.Id, out temp))
@@ -60,7 +60,7 @@ namespace SpiderTool.Dapper.Domain
                     temp.NextPageTemplate = b;
                 if (temp.TemplateList == null)
                 {
-                    temp.TemplateList = new List<TemplateEditDto>();
+                    temp.TemplateList = new List<TemplateDetailViewModel>();
                 }
                 else
                 {
@@ -82,7 +82,7 @@ namespace SpiderTool.Dapper.Domain
                 $"where a.id = @id";
 
             var ids = new Dictionary<int, SpiderDetailViewModel>();
-            return (await _dbConn.QueryAsync<SpiderDetailViewModel, TemplateEditDto, TemplateEditDto, SpiderDetailViewModel>(sql, (a, b, c) =>
+            return (await _dbConn.QueryAsync<SpiderDetailViewModel, TemplateDetailViewModel, TemplateDetailViewModel, SpiderDetailViewModel>(sql, (a, b, c) =>
             {
                 SpiderDetailViewModel? temp;
                 if (!ids.TryGetValue(a.Id, out temp))
@@ -94,7 +94,7 @@ namespace SpiderTool.Dapper.Domain
                     temp.NextPageTemplate = b;
                 if (temp.TemplateList == null)
                 {
-                    temp.TemplateList = new List<TemplateEditDto>();
+                    temp.TemplateList = new List<TemplateDetailViewModel>();
                 }
                 else
                 {

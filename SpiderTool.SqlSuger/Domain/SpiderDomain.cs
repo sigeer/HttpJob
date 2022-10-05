@@ -64,7 +64,7 @@ namespace SpiderTool.SqlSugar.Domain
                 Method = dbModel.Method,
                 PostObjStr = dbModel.PostObjStr,
                 HeaderStr = dbModel.Headers,
-                NextPageTemplate = nextPage == null ? new TemplateEditDto() : new TemplateEditDto
+                NextPageTemplate = nextPage == null ? new TemplateDetailViewModel() : new TemplateDetailViewModel
                 {
                     Id = nextPage.Id,
                     LinkedSpiderId = nextPage.LinkedSpiderId,
@@ -76,7 +76,7 @@ namespace SpiderTool.SqlSugar.Domain
 
             var templateIdList = _dbContext.Queryable<DB_SpiderTemplate>().Where(x => x.SpiderId == id).Select(x => x.TemplateId).ToList();
             var templateReplaceList = _dbContext.Queryable<DB_ReplacementRule>().Where(x => templateIdList.Contains(x.TemplateId)).ToList();
-            var templateList = _dbContext.Queryable<DB_Template>().Where(x => templateIdList.Contains(x.Id)).ToList().Select(b => new TemplateEditDto()
+            var templateList = _dbContext.Queryable<DB_Template>().Where(x => templateIdList.Contains(x.Id)).ToList().Select(b => new TemplateDetailViewModel()
             {
                 Id = b.Id,
                 LinkedSpiderId = b.LinkedSpiderId,
@@ -111,7 +111,7 @@ namespace SpiderTool.SqlSugar.Domain
                 Method = dbModel.Method,
                 PostObjStr = dbModel.PostObjStr,
                 HeaderStr = dbModel.Headers,
-                NextPageTemplate = nextPage == null ? new TemplateEditDto() : new TemplateEditDto
+                NextPageTemplate = nextPage == null ? new TemplateDetailViewModel() : new TemplateDetailViewModel
                 {
                     Id = nextPage.Id,
                     LinkedSpiderId = nextPage.LinkedSpiderId,
@@ -123,7 +123,7 @@ namespace SpiderTool.SqlSugar.Domain
 
             var templateIdList = await _dbContext.Queryable<DB_SpiderTemplate>().Where(x => x.SpiderId == id).Select(x => x.TemplateId).ToListAsync();
             var templateReplaceList = await _dbContext.Queryable<DB_ReplacementRule>().Where(x => templateIdList.Contains(x.TemplateId)).ToListAsync();
-            var templateList = (await _dbContext.Queryable<DB_Template>().Where(x => templateIdList.Contains(x.Id)).ToListAsync()).Select(b => new TemplateEditDto()
+            var templateList = (await _dbContext.Queryable<DB_Template>().Where(x => templateIdList.Contains(x.Id)).ToListAsync()).Select(b => new TemplateDetailViewModel()
             {
                 Id = b.Id,
                 LinkedSpiderId = b.LinkedSpiderId,

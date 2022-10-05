@@ -9,3 +9,4 @@
 查看详细时，通过Id获取DetailViewModel
 编辑保存时，从DetailViewModel提取需要提交的值组成 EditDto
 
+Dto -> Entity -> ViewModel -> Dto

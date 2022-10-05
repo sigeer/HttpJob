@@ -69,14 +69,14 @@ namespace SpiderTool.EntityFrameworkCore.Domain
                 HeaderStr = x.spider.Headers,
                 Method = x.spider.Method,
                 PostObjStr = x.spider.PostObjStr,
-                TemplateList = x.templates.Select(y => new TemplateEditDto
+                TemplateList = x.templates.Select(y => new TemplateDetailViewModel
                 {
                     Id = y.TemplateInfo.Id,
                     Name = y.TemplateInfo.Name,
                     TemplateStr = y.TemplateInfo.TemplateStr,
                     Type = y.TemplateInfo.Type,
                 }).ToList(),
-                NextPageTemplate = x.nextPage == null ? null : new TemplateEditDto
+                NextPageTemplate = x.nextPage == null ? null : new TemplateDetailViewModel
                 {
                     Id = x.nextPage.Id,
                     Name = x.nextPage.Name,
@@ -115,14 +115,14 @@ namespace SpiderTool.EntityFrameworkCore.Domain
                 HeaderStr = x.spider.Headers,
                 Method = x.spider.Method,
                 PostObjStr = x.spider.PostObjStr,
-                TemplateList = x.templates.Select(y => new TemplateEditDto
+                TemplateList = x.templates.Select(y => new TemplateDetailViewModel
                 {
                     Id = y.TemplateInfo.Id,
                     Name = y.TemplateInfo.Name,
                     TemplateStr = y.TemplateInfo.TemplateStr,
                     Type = y.TemplateInfo.Type,
                 }).ToList(),
-                NextPageTemplate = x.nextPage == null ? null : new TemplateEditDto
+                NextPageTemplate = x.nextPage == null ? null : new TemplateDetailViewModel
                 {
                     Id = x.nextPage.Id,
                     Name = x.nextPage.Name,

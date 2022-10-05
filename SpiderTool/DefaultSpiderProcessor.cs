@@ -24,7 +24,7 @@ namespace SpiderTool
             return false;
         }
 
-        public async Task ProcessContentAsync(SpiderWorker rootSpider, string documentContent, List<TemplateEditDto> templateRules, CancellationToken cancellationToken = default)
+        public async Task ProcessContentAsync(SpiderWorker rootSpider, string documentContent, List<TemplateDetailViewModel> templateRules, CancellationToken cancellationToken = default)
         {
             if (IsCanceled(rootSpider, cancellationToken))
                 return;

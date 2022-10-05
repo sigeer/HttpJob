@@ -3,11 +3,6 @@ using MongoDB.Driver;
 using SpiderTool.DataBase;
 using SpiderTool.Dto.Tasks;
 using SpiderTool.IDomain;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace SpiderTool.MongoDB.Domain
 {
@@ -25,52 +20,105 @@ namespace SpiderTool.MongoDB.Domain
         public int AddTask(TaskEditDto model)
         {
             var table = _db.GetCollection<DB_Task>(nameof(DB_Task));
-            throw new NotImplementedException();
+            var maxId = table.Find(x => x.Id > 0).SortByDescending(x => x.Id).Skip(0).Limit(1).FirstOrDefault()?.Id ?? 0;
+            var dbModel = _mapper.Map<DB_Task>(model);
+            dbModel.Id = maxId + 1;
+            dbModel.CreateTime = DateTime.Now;
+            table.InsertOne(dbModel);
+            return maxId;
         }
 
-        public Task<int> AddTaskAsync(TaskEditDto model)
+        public async Task<int> AddTaskAsync(TaskEditDto model)
         {
-            throw new NotImplementedException();
+            var table = _db.GetCollection<DB_Task>(nameof(DB_Task));
+            var maxId = (await table.Find(x => x.Id > 0).SortByDescending(x => x.Id).Skip(0).Limit(1).FirstOrDefaultAsync())?.Id ?? 0;
+            var dbModel = _mapper.Map<DB_Task>(model);
+            dbModel.Id = maxId + 1;
+            dbModel.CreateTime = DateTime.Now;
+            await table.InsertOneAsync(dbModel);
+            return maxId;
         }
 
         public List<TaskSimpleViewModel> GetTaskHistoryList()
         {
-            throw new NotImplementedException();
+            var table = _db.GetCollection<DB_Task>(nameof(DB_Task));
+            var taskList = table.Find(Builders<DB_Task>.Filter.Empty).ToList();
+            return taskList.Select(x => new TaskSimpleViewModel
+            {
+                Id = x.Id,
+                RootUrl = x.RootUrl,
+                SpiderId = x.SpiderId,
+            }).ToList();
         }
 
-        public Task<List<TaskSimpleViewModel>> GetTaskHistoryListAsync()
+        public async Task<List<TaskSimpleViewModel>> GetTaskHistoryListAsync()
         {
-            throw new NotImplementedException();
+            var table = _db.GetCollection<DB_Task>(nameof(DB_Task));
+            var taskList = await table.Find(Builders<DB_Task>.Filter.Empty).ToListAsync();
+            return taskList.Select(x => new TaskSimpleViewModel
+            {
+                Id = x.Id,
+                RootUrl = x.RootUrl,
+                SpiderId = x.SpiderId,
+            }).ToList();
         }
 
         public List<TaskListItemViewModel> GetTaskList()
         {
-            throw new NotImplementedException();
+            var table = _db.GetCollection<DB_Task>(nameof(DB_Task));
+            var taskList = table.Find(Builders<DB_Task>.Filter.Empty).ToList();
+            return taskList.Select(x => new TaskListItemViewModel
+            {
+                Id = x.Id,
+                RootUrl = x.RootUrl,
+                SpiderId = x.SpiderId,
+                CompleteTime = x.CompleteTime,
+                CreateTime = x.CreateTime,
+                CronExpression = x.CronExpression,
+                Description = x.Description,
+                Status = x.Status,
+            }).ToList();
         }
 
-        public Task<List<TaskListItemViewModel>> GetTaskListAsync()
+        public async Task<List<TaskListItemViewModel>> GetTaskListAsync()
         {
-            throw new NotImplementedException();
+            var table = _db.GetCollection<DB_Task>(nameof(DB_Task));
+            var taskList = await table.Find(Builders<DB_Task>.Filter.Empty).ToListAsync();
+            return taskList.Select(x => new TaskListItemViewModel
+            {
+                Id = x.Id,
+                RootUrl = x.RootUrl,
+                SpiderId = x.SpiderId,
+                CompleteTime = x.CompleteTime,
+                CreateTime = x.CreateTime,
+                CronExpression = x.CronExpression,
+                Description = x.Description,
+                Status = x.Status,
+            }).ToList();
         }
 
         public void SetTaskStatus(int taskId, int taskStatus)
         {
-            throw new NotImplementedException();
+            var table = _db.GetCollection<DB_Task>(nameof(DB_Task));
+            table.UpdateMany(x => x.Id == taskId, Builders<DB_Task>.Update.Set(x => x.Status, taskStatus));
         }
 
-        public Task SetTaskStatusAsync(int taskId, int taskStatus)
+        public async Task SetTaskStatusAsync(int taskId, int taskStatus)
         {
-            throw new NotImplementedException();
+            var table = _db.GetCollection<DB_Task>(nameof(DB_Task));
+            await table.UpdateManyAsync(x => x.Id == taskId, Builders<DB_Task>.Update.Set(x => x.Status, taskStatus));
         }
 
         public void UpdateTask(TaskEditDto model)
         {
-            throw new NotImplementedException();
+            var table = _db.GetCollection<DB_Task>(nameof(DB_Task));
+            table.ReplaceOne(x => x.Id == model.Id,  _mapper.Map<DB_Task>(model));
         }
 
-        public Task UpdateTaskAsync(TaskEditDto model)
+        public async Task UpdateTaskAsync(TaskEditDto model)
         {
-            throw new NotImplementedException();
+            var table = _db.GetCollection<DB_Task>(nameof(DB_Task));
+            await table.ReplaceOneAsync(x => x.Id == model.Id,  _mapper.Map<DB_Task>(model));
         }
     }
 }

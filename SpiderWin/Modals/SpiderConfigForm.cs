@@ -141,7 +141,10 @@ namespace SpiderWin.Modals
 
         private void BtnRefreshTemplate_Click(object sender, EventArgs e)
         {
-            Task.Run(() => LoadTemplateListData());
+            Task.Run(async () =>
+            {
+                _templateList = await _coreService.GetTemplateDtoListAsync();
+            });
         }
     }
 }

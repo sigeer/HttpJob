@@ -122,7 +122,7 @@ namespace SpiderTool
             }
         }
 
-        public static string ReadHtmlNodeInnerHtml(HtmlNode item, TemplateEditDto rule)
+        public static string ReadHtmlNodeInnerHtml(HtmlNode item, TemplateDetailViewModel rule)
         {
             var finalText = HttpUtility.HtmlDecode(item.InnerHtml);
             foreach (var handle in rule.ReplacementRules)
