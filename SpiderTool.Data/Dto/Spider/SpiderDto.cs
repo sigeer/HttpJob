@@ -54,8 +54,8 @@ namespace SpiderTool.Dto.Spider
         /// <see cref="List{SpiderHeaderDto}"/> => json
         /// </summary>
         public string? HeaderStr { get; set; }
-        public List<TemplateEditDto> TemplateList { get; set; } = new List<TemplateEditDto>();
-        public TemplateEditDto? NextPageTemplate { get; set; }
+        public List<TemplateDetailViewModel> TemplateList { get; set; } = new List<TemplateDetailViewModel>();
+        public TemplateDetailViewModel? NextPageTemplate { get; set; }
         public object? PostObj => string.IsNullOrEmpty(PostObjStr) ? null : JsonConvert.DeserializeObject(PostObjStr);
         public Dictionary<string, string> GetHeaders()
         {

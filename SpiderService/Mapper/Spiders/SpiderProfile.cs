@@ -26,6 +26,11 @@ namespace SpiderService.Mapper.Spiders
                 .ForMember(x => x.XPath, opt => opt.MapFrom(y => y.TemplateStr));
             CreateMap<TemplateProtoDto, TemplateEditDto>()
                 .ForMember(x => x.TemplateStr, opt => opt.MapFrom(y => y.XPath));
+
+            CreateMap<TemplateDetailViewModel, TemplateProtoDto>()
+                .ForMember(x => x.XPath, opt => opt.MapFrom(y => y.TemplateStr));
+            CreateMap<TemplateProtoDto, TemplateDetailViewModel>()
+                .ForMember(x => x.TemplateStr, opt => opt.MapFrom(y => y.XPath));
         }
     }
 }
