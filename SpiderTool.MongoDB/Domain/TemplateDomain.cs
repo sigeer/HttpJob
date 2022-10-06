@@ -36,6 +36,7 @@ namespace SpiderTool.MongoDB.Domain
         {
             var templateCollection = _db.GetCollection<DB_Template>(nameof(DB_Template));
             var templateReplacementRuleCollection = _db.GetCollection<DB_ReplacementRule>(nameof(DB_ReplacementRule));
+
             var total = templateCollection.Find(Builders<DB_Template>.Filter.Empty).ToList();
             var allRule = templateReplacementRuleCollection.Find(Builders<DB_ReplacementRule>.Filter.Empty).ToList();
             return total.Select(a => new TemplateDetailViewModel
@@ -58,6 +59,7 @@ namespace SpiderTool.MongoDB.Domain
         {
             var templateCollection = _db.GetCollection<DB_Template>(nameof(DB_Template));
             var templateReplacementRuleCollection = _db.GetCollection<DB_ReplacementRule>(nameof(DB_ReplacementRule));
+
             var total = await (await templateCollection.FindAsync(Builders<DB_Template>.Filter.Empty)).ToListAsync();
             var allRule = await (await templateReplacementRuleCollection.FindAsync(Builders<DB_ReplacementRule>.Filter.Empty)).ToListAsync();
             return total.Select(a => new TemplateDetailViewModel
