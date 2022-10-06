@@ -75,7 +75,7 @@ namespace SpiderTool.MongoDB.Domain
             var relatedTemplateIds = relatedTable.Find(x => x.SpiderId == id).ToList().Select(x => x.TemplateId).ToList();
 
             var detailTable = _db.GetCollection<DB_Template>(nameof(DB_Template));
-            var detailList = detailTable.Find(x => relatedTemplateIds.Contains(x.Id)).ToList();
+            var detailList = await detailTable.Find(x => relatedTemplateIds.Contains(x.Id)).ToListAsync();
             var nextDetail = await detailTable.Find(x => x.Id == model.NextPageTemplateId).FirstOrDefaultAsync();
 
             return new SpiderDetailViewModel
