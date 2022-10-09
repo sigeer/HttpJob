@@ -37,11 +37,22 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SpiderTool.Data", "SpiderTool.Data\SpiderTool.Data.csproj", "{FB62FD43-8313-49B6-808C-15D5D2748F5F}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Gateways", "Gateways", "{CA042AFA-A816-46AA-B722-BF0D2751F087}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SpiderTool.MongoDB", "SpiderTool.MongoDB\SpiderTool.MongoDB.csproj", "{CD55B066-71C1-46CE-819D-A27088F4ABDC}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "dynamic", "dynamic", "{5A653E6B-526E-494A-984A-0866340AF109}"
 	ProjectSection(SolutionItems) = preProject
-		envoy.yaml = envoy.yaml
+		Gateways\dynamic\cds.yml = Gateways\dynamic\cds.yml
+		Gateways\dynamic\eds.yml = Gateways\dynamic\eds.yml
+		Gateways\dynamic\envoy.yaml = Gateways\dynamic\envoy.yaml
+		Gateways\dynamic\lds.yml = Gateways\dynamic\lds.yml
+		Gateways\dynamic\rds.yml = Gateways\dynamic\rds.yml
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SpiderTool.MongoDB", "SpiderTool.MongoDB\SpiderTool.MongoDB.csproj", "{CD55B066-71C1-46CE-819D-A27088F4ABDC}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "static", "static", "{542F01C7-EEE9-4899-9C5D-D672313C9E0D}"
+	ProjectSection(SolutionItems) = preProject
+		Gateways\static\envoy.yaml = Gateways\static\envoy.yaml
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -96,6 +107,8 @@ Global
 	GlobalSection(NestedProjects) = preSolution
 		{E7888030-414F-4E72-9A28-A01B7467F3D2} = {2226B7E3-B2D1-4FC5-8554-35A396574902}
 		{2F66A09A-320E-41B1-A6FE-3AEAA5C2BEC5} = {2226B7E3-B2D1-4FC5-8554-35A396574902}
+		{5A653E6B-526E-494A-984A-0866340AF109} = {CA042AFA-A816-46AA-B722-BF0D2751F087}
+		{542F01C7-EEE9-4899-9C5D-D672313C9E0D} = {CA042AFA-A816-46AA-B722-BF0D2751F087}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {0F8B381A-A723-4F3E-9B5B-2865B1799CDE}

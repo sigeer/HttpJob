@@ -1,0 +1,23 @@
+admin:
+  access_log_path: /tmp/admin_access.log
+  address:
+    socket_address: { address: 127.0.0.1, port_value: 9901 }
+dynamic_resources:
+  lds_config:
+    api_config_source:
+      api_type: GRPC
+      cluster_name: [xds_cluster]
+  cds_config:
+    api_config_source:
+      api_type: GRPC
+      cluster_name: [xds_cluster]
+static_resources:
+  clusters:
+  - name: xds_cluster
+      connect_timeout: 0.25s
+      lb_policy: ROUND_ROBIN
+      type: EDS
+      eds_cluster_config:
+      service_name: localservices  # 可选，代替集群的名称，提供给 EDS 服务    
+      eds_config:  # 集群的 EDS 更新源配置      
+          path: '/etc/envoy/eds.yaml'
