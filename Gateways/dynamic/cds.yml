@@ -1,0 +1,12 @@
+version_info: "0"
+resources:
+- "@type": type.googleapis.com/envoy.api.v2.Cluster
+  name: some_service
+  connect_timeout: 0.25s
+  lb_policy: ROUND_ROBIN
+  type: EDS
+  eds_cluster_config:
+    eds_config:
+      api_config_source:
+        api_type: GRPC
+        cluster_name: [xds_cluster]
