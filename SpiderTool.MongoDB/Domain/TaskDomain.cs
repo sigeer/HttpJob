@@ -66,7 +66,7 @@ namespace SpiderTool.MongoDB.Domain
         public List<TaskListItemViewModel> GetTaskList()
         {
             var table = _db.GetCollection<DB_Task>(nameof(DB_Task));
-            var taskList = table.Find(Builders<DB_Task>.Filter.Empty).ToList();
+            var taskList = table.Find(Builders<DB_Task>.Filter.Empty).Sort(Builders<DB_Task>.Sort.Descending(x => x.CreateTime)).Limit(10).ToList();
             return taskList.Select(x => new TaskListItemViewModel
             {
                 Id = x.Id,
@@ -83,7 +83,7 @@ namespace SpiderTool.MongoDB.Domain
         public async Task<List<TaskListItemViewModel>> GetTaskListAsync()
         {
             var table = _db.GetCollection<DB_Task>(nameof(DB_Task));
-            var taskList = await table.Find(Builders<DB_Task>.Filter.Empty).ToListAsync();
+            var taskList = await table.Find(Builders<DB_Task>.Filter.Empty).Sort(Builders<DB_Task>.Sort.Descending(x => x.CreateTime)).Limit(10).ToListAsync();
             return taskList.Select(x => new TaskListItemViewModel
             {
                 Id = x.Id,

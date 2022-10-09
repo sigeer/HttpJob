@@ -18,9 +18,11 @@ namespace SpiderTool.MongoDB.Domain
         readonly IMongoDatabase _db;
         readonly IMapper _mapper;
         readonly Snowflake _guidGenerator;
+        readonly IMongoClient _dbClient;
 
         public SpiderDomain(IMongoClient client, IMapper mapper, Snowflake snowflake)
         {
+            _dbClient = client;
             _db = client.GetDatabase("spider");
             _mapper = mapper;
             _guidGenerator = snowflake;
@@ -107,42 +109,21 @@ namespace SpiderTool.MongoDB.Domain
 
         public string Submit(SpiderEditDto model)
         {
-            var table = _db.GetCollection<DB_Spider>(nameof(DB_Spider));
-
-            var template = _db.GetCollection<DB_SpiderTemplate>(nameof(DB_SpiderTemplate));
-            if (model.Id == 0)
+            using var session = _dbClient.StartSession();
+            try
             {
-                var maxId = table.Find(x => x.Id > 0).SortByDescending(x => x.Id).Skip(0).Limit(1).FirstOrDefault()?.Id ?? 0;
-                var dbModel = _mapper.Map<DB_Spider>(model);
-                dbModel.Id = maxId + 1;
-                dbModel.CreateTime = DateTime.Now;
-                dbModel.LastUpdatedTime = DateTime.Now;
-                table.InsertOne(dbModel);
+                session.StartTransaction();
+                var table = _db.GetCollection<DB_Spider>(nameof(DB_Spider));
 
-                if (model.Templates.Count > 0)
-                    template.InsertMany(model.Templates.Select(x => new DB_SpiderTemplate
-                    {
-                        Id = (int)_guidGenerator.NextId(),
-                        TemplateId = x,
-                        SpiderId = dbModel.Id,
-                    }));
-            }
-            else
-            {
-                var dbModel = table.Find(x => x.Id == model.Id).FirstOrDefault();
-                if (dbModel != null)
+                var template = _db.GetCollection<DB_SpiderTemplate>(nameof(DB_SpiderTemplate));
+                if (model.Id == 0)
                 {
-                    dbModel.Name = model.Name;
-                    dbModel.Method = model.Method;
-                    dbModel.Description = model.Description;
-                    dbModel.Headers = model.Headers;
-                    dbModel.PostObjStr = model.PostObjStr;
-                    dbModel.NextPageTemplateId = model.NextPageTemplateId;
+                    var maxId = table.Find(x => x.Id > 0).SortByDescending(x => x.Id).Skip(0).Limit(1).FirstOrDefault()?.Id ?? 0;
+                    var dbModel = _mapper.Map<DB_Spider>(model);
+                    dbModel.Id = maxId + 1;
+                    dbModel.CreateTime = DateTime.Now;
                     dbModel.LastUpdatedTime = DateTime.Now;
-
-                    table.ReplaceOne(x => x.Id == dbModel.Id, dbModel);
-
-                    template.DeleteMany(x => x.SpiderId == dbModel.Id);
+                    table.InsertOne(dbModel);
 
                     if (model.Templates.Count > 0)
                         template.InsertMany(model.Templates.Select(x => new DB_SpiderTemplate
@@ -152,46 +133,58 @@ namespace SpiderTool.MongoDB.Domain
                             SpiderId = dbModel.Id,
                         }));
                 }
+                else
+                {
+                    var dbModel = table.Find(x => x.Id == model.Id).FirstOrDefault();
+                    if (dbModel != null)
+                    {
+                        dbModel.Name = model.Name;
+                        dbModel.Method = model.Method;
+                        dbModel.Description = model.Description;
+                        dbModel.Headers = model.Headers;
+                        dbModel.PostObjStr = model.PostObjStr;
+                        dbModel.NextPageTemplateId = model.NextPageTemplateId;
+                        dbModel.LastUpdatedTime = DateTime.Now;
+
+                        table.ReplaceOne(x => x.Id == dbModel.Id, dbModel);
+
+                        template.DeleteMany(x => x.SpiderId == dbModel.Id);
+
+                        if (model.Templates.Count > 0)
+                            template.InsertMany(model.Templates.Select(x => new DB_SpiderTemplate
+                            {
+                                Id = (int)_guidGenerator.NextId(),
+                                TemplateId = x,
+                                SpiderId = dbModel.Id,
+                            }));
+                    }
+                }
+                session.CommitTransaction();
+                return StatusMessage.Success;
             }
-            return StatusMessage.Success;
+            catch (Exception ex)
+            {
+                session.AbortTransaction();
+                return ex.Message;
+            }
         }
 
         public async Task<string> SubmitAsync(SpiderEditDto model)
         {
-            var table = _db.GetCollection<DB_Spider>(nameof(DB_Spider));
-
-            var template = _db.GetCollection<DB_SpiderTemplate>(nameof(DB_SpiderTemplate));
-            if (model.Id == 0)
+            using var session = _dbClient.StartSession();
+            try
             {
-                var maxId = (await table.Find(x => x.Id > 0).SortByDescending(x => x.Id).Skip(0).Limit(1).FirstOrDefaultAsync())?.Id ?? 0;
-                var dbModel = _mapper.Map<DB_Spider>(model);
-                dbModel.Id = maxId + 1;
-                await table.InsertOneAsync(dbModel);
+                session.StartTransaction();
+                var table = _db.GetCollection<DB_Spider>(nameof(DB_Spider));
 
-                if (model.Templates.Count>0)
-                    await template.InsertManyAsync(model.Templates.Select(x => new DB_SpiderTemplate
-                    {
-                        Id = (int)_guidGenerator.NextId(),
-                        TemplateId = x,
-                        SpiderId = dbModel.Id,
-                    }));
-            }
-            else
-            {
-                var dbModel = await table.Find(x => x.Id == model.Id).FirstOrDefaultAsync();
-                if (dbModel != null)
+                var template = _db.GetCollection<DB_SpiderTemplate>(nameof(DB_SpiderTemplate));
+                if (model.Id == 0)
                 {
-                    dbModel.Name = model.Name;
-                    dbModel.Method = model.Method;
-                    dbModel.Description = model.Description;
-                    dbModel.Headers = model.Headers;
-                    dbModel.PostObjStr = model.PostObjStr;
-                    dbModel.NextPageTemplateId = model.NextPageTemplateId;
-                    dbModel.LastUpdatedTime = DateTime.Now;
+                    var maxId = (await table.Find(x => x.Id > 0).SortByDescending(x => x.Id).Skip(0).Limit(1).FirstOrDefaultAsync())?.Id ?? 0;
+                    var dbModel = _mapper.Map<DB_Spider>(model);
+                    dbModel.Id = maxId + 1;
+                    await table.InsertOneAsync(dbModel);
 
-                    await table.ReplaceOneAsync(x => x.Id == dbModel.Id,  dbModel);
-
-                    await template.DeleteManyAsync(x => x.SpiderId == dbModel.Id);
                     if (model.Templates.Count > 0)
                         await template.InsertManyAsync(model.Templates.Select(x => new DB_SpiderTemplate
                         {
@@ -200,8 +193,39 @@ namespace SpiderTool.MongoDB.Domain
                             SpiderId = dbModel.Id,
                         }));
                 }
+                else
+                {
+                    var dbModel = await table.Find(x => x.Id == model.Id).FirstOrDefaultAsync();
+                    if (dbModel != null)
+                    {
+                        dbModel.Name = model.Name;
+                        dbModel.Method = model.Method;
+                        dbModel.Description = model.Description;
+                        dbModel.Headers = model.Headers;
+                        dbModel.PostObjStr = model.PostObjStr;
+                        dbModel.NextPageTemplateId = model.NextPageTemplateId;
+                        dbModel.LastUpdatedTime = DateTime.Now;
+
+                        await table.ReplaceOneAsync(x => x.Id == dbModel.Id, dbModel);
+
+                        await template.DeleteManyAsync(x => x.SpiderId == dbModel.Id);
+                        if (model.Templates.Count > 0)
+                            await template.InsertManyAsync(model.Templates.Select(x => new DB_SpiderTemplate
+                            {
+                                Id = (int)_guidGenerator.NextId(),
+                                TemplateId = x,
+                                SpiderId = dbModel.Id,
+                            }));
+                    }
+                }
+                await session.CommitTransactionAsync();
+                return StatusMessage.Success;
             }
-            return StatusMessage.Success;
+            catch (Exception ex)
+            {
+                await session.AbortTransactionAsync();
+                return ex.Message;
+            }
         }
     }
 }
