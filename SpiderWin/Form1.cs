@@ -102,13 +102,19 @@ namespace SpiderWin
                     taskList.ForEach(x =>
                     {
                         var row = new DataGridViewRow();
-                        row.Cells.Add(new DataGridViewTextBoxCell() { Value = x.Id, ValueType = typeof(int) });
-                        row.Cells.Add(new DataGridViewTextBoxCell() { Value = x.Description });
-                        row.Cells.Add(new DataGridViewTextBoxCell() { Value = x.RootUrl });
-                        row.Cells.Add(new DataGridViewTextBoxCell() { Value = x.SpiderId, ValueType = typeof(int) });
-                        row.Cells.Add(new DataGridViewTextBoxCell() { Value = x.CreateTime.ToString("yyyy-MM-dd HH:mm:ss") });
-                        row.Cells.Add(new DataGridViewTextBoxCell() { Value = x.StatusName });
-                        row.Cells.Add(new DataGridViewTextBoxCell() { Value = x.CompleteTime == null ? "-" : x.CompleteTime.Value.ToString("yyyy-MM-dd HH:mm:ss") });
+                        var rowStyle = new DataGridViewCellStyle();
+                        if (x.Status == TaskType.InProgress.ToInt()|| x.Status == TaskType.Completed.ToInt())
+                        {
+                            rowStyle.BackColor = Color.FromArgb(130, 240, 150);
+                        }
+                        row.Cells.Add(new DataGridViewTextBoxCell() { Value = x.Id, ValueType = typeof(int), Style = rowStyle });
+                        row.Cells.Add(new DataGridViewTextBoxCell() { Value = x.Description, Style = rowStyle });
+                        row.Cells.Add(new DataGridViewTextBoxCell() { Value = x.RootUrl, Style = rowStyle });
+                        row.Cells.Add(new DataGridViewTextBoxCell() { Value = x.SpiderId, ValueType = typeof(int), Style = rowStyle });
+                        row.Cells.Add(new DataGridViewTextBoxCell() { Value = x.CreateTime.ToString("yyyy-MM-dd HH:mm:ss"), Style = rowStyle });
+                        row.Cells.Add(new DataGridViewTextBoxCell() { Value = x.StatusName, Style = rowStyle });
+                        row.Cells.Add(new DataGridViewTextBoxCell() { Value = x.CompleteTime == null ? "-" : x.CompleteTime.Value.ToString("yyyy-MM-dd HH:mm:ss"), Style = rowStyle });
+
                         DataGridTasks.Rows.Add(row);
                     });
                 });
