@@ -4,11 +4,6 @@ using SpiderTool.Constants;
 using SpiderTool.DataBase;
 using SpiderTool.Dto.Spider;
 using SpiderTool.IDomain;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Utility.GuidHelper;
 
 namespace SpiderTool.MongoDB.Domain
@@ -18,11 +13,9 @@ namespace SpiderTool.MongoDB.Domain
         readonly IMongoDatabase _db;
         readonly IMapper _mapper;
         readonly Snowflake _guidGenerator;
-        readonly IMongoClient _dbClient;
 
         public SpiderDomain(IMongoClient client, IMapper mapper, Snowflake snowflake)
         {
-            _dbClient = client;
             _db = client.GetDatabase("spider");
             _mapper = mapper;
             _guidGenerator = snowflake;
@@ -47,6 +40,8 @@ namespace SpiderTool.MongoDB.Domain
         {
             var table = _db.GetCollection<DB_Spider>(nameof(DB_Spider));
             var model = table.Find<DB_Spider>(x => x.Id == id).FirstOrDefault();
+            if (model == null)
+                return null;
 
             var relatedTable = _db.GetCollection<DB_SpiderTemplate>(nameof(DB_SpiderTemplate));
             var relatedTemplateIds = relatedTable.Find(x => x.SpiderId == id).ToList().Select(x => x.TemplateId).ToList();
@@ -72,6 +67,8 @@ namespace SpiderTool.MongoDB.Domain
         {
             var table = _db.GetCollection<DB_Spider>(nameof(DB_Spider));
             var model = await table.Find<DB_Spider>(x => x.Id == id).FirstOrDefaultAsync();
+            if (model == null)
+                return null;
 
             var relatedTable = _db.GetCollection<DB_SpiderTemplate>(nameof(DB_SpiderTemplate));
             var relatedTemplateIds = relatedTable.Find(x => x.SpiderId == id).ToList().Select(x => x.TemplateId).ToList();
@@ -109,10 +106,8 @@ namespace SpiderTool.MongoDB.Domain
 
         public string Submit(SpiderEditDto model)
         {
-            using var session = _dbClient.StartSession();
             try
             {
-                session.StartTransaction();
                 var table = _db.GetCollection<DB_Spider>(nameof(DB_Spider));
 
                 var template = _db.GetCollection<DB_SpiderTemplate>(nameof(DB_SpiderTemplate));
@@ -159,22 +154,18 @@ namespace SpiderTool.MongoDB.Domain
                             }));
                     }
                 }
-                session.CommitTransaction();
                 return StatusMessage.Success;
             }
             catch (Exception ex)
             {
-                session.AbortTransaction();
                 return ex.Message;
             }
         }
 
         public async Task<string> SubmitAsync(SpiderEditDto model)
         {
-            using var session = _dbClient.StartSession();
             try
             {
-                session.StartTransaction();
                 var table = _db.GetCollection<DB_Spider>(nameof(DB_Spider));
 
                 var template = _db.GetCollection<DB_SpiderTemplate>(nameof(DB_SpiderTemplate));
@@ -218,12 +209,10 @@ namespace SpiderTool.MongoDB.Domain
                             }));
                     }
                 }
-                await session.CommitTransactionAsync();
                 return StatusMessage.Success;
             }
             catch (Exception ex)
             {
-                await session.AbortTransactionAsync();
                 return ex.Message;
             }
         }

@@ -31,10 +31,10 @@ namespace SpiderWin.Modals
         }
         private async void LoadTemplateListData()
         {
+            LoadNextPageControl();
             await Task.Run(async () =>
             {
                 _currentSpider = (await _coreService.GetSpiderAsync(_spiderId))?.ToEditModel() ?? new SpiderEditDto();
-                _templateList = await _coreService.GetTemplateDtoListAsync();
             });
 
             TxtName.Text = _currentSpider.Name;
@@ -42,11 +42,24 @@ namespace SpiderWin.Modals
             TxtPostObj.Text = _currentSpider.PostObjStr;
             TextRequestHeaders.Text = _currentSpider.Headers;
             ComboMethod.SelectedItem = _currentSpider.Method;
+
             labelTemplateInfo.Text = $"已选择{_currentSpider.Templates.Count}项";
 
-            ComboBoxNextPage.DataSource = (new List<TemplateDetailViewModel>() { new TemplateDetailViewModel() { Id = 0, Name = "" } }.Concat(_templateList)).ToList();
-            if (_currentSpider.NextPageTemplateId != null)
-                ComboBoxNextPage.SelectedValue = _currentSpider.NextPageTemplateId;
+
+        }
+
+        private void LoadNextPageControl()
+        {
+            Task.Run(async () =>
+            {
+                _templateList = await _coreService.GetTemplateDtoListAsync();
+                BeginInvoke(() =>
+                {
+                    ComboBoxNextPage.DataSource = (new List<TemplateDetailViewModel>() { new TemplateDetailViewModel() { Id = 0, Name = "" } }.Concat(_templateList)).ToList();
+                    if (_currentSpider.NextPageTemplateId != null)
+                        ComboBoxNextPage.SelectedValue = _currentSpider.NextPageTemplateId;
+                });
+            });
         }
 
         private void PreLoadForm()
@@ -141,10 +154,7 @@ namespace SpiderWin.Modals
 
         private void BtnRefreshTemplate_Click(object sender, EventArgs e)
         {
-            Task.Run(async () =>
-            {
-                _templateList = await _coreService.GetTemplateDtoListAsync();
-            });
+            LoadNextPageControl();
         }
     }
 }
