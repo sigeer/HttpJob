@@ -44,13 +44,9 @@ namespace SpiderTool.MongoDB.Domain
             var table = _db.GetCollection<DB_Task>(nameof(DB_Task));
             var taskList = table.Find(Builders<DB_Task>.Filter.Where(x => x.RootUrl != "" && x.RootUrl != null))
                 .Sort(Builders<DB_Task>.Sort.Descending(x => x.CreateTime))
+                .Project<TaskSimpleViewModel>(Builders<DB_Task>.Projection.Include(x => x.Id).Include(x => x.RootUrl).Include(x => x.SpiderId))
                 .ToList();
-            return taskList.Select(x => new TaskSimpleViewModel
-            {
-                Id = x.Id,
-                RootUrl = x.RootUrl,
-                SpiderId = x.SpiderId,
-            }).DistinctBy(x => x.RootUrl).ToList();
+            return taskList.DistinctBy(x => x.RootUrl).ToList();
         }
 
         public async Task<List<TaskSimpleViewModel>> GetTaskHistoryListAsync()
@@ -58,13 +54,9 @@ namespace SpiderTool.MongoDB.Domain
             var table = _db.GetCollection<DB_Task>(nameof(DB_Task));
             var taskList = await table.Find(Builders<DB_Task>.Filter.Where(x => x.RootUrl != "" && x.RootUrl != null))
                 .Sort(Builders<DB_Task>.Sort.Descending(x => x.CreateTime))
+                .Project<TaskSimpleViewModel>(Builders<DB_Task>.Projection.Include(x => x.Id).Include(x => x.RootUrl).Include(x => x.SpiderId))
                 .ToListAsync();
-            return taskList.Select(x => new TaskSimpleViewModel
-            {
-                Id = x.Id,
-                RootUrl = x.RootUrl,
-                SpiderId = x.SpiderId,
-            }).DistinctBy(x => x.RootUrl).ToList();
+            return taskList.DistinctBy(x => x.RootUrl).ToList();
         }
 
         public List<TaskListItemViewModel> GetTaskList()

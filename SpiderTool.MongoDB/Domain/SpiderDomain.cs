@@ -79,15 +79,15 @@ namespace SpiderTool.MongoDB.Domain
         public List<SpiderListItemViewModel> GetSpiderDtoList()
         {
             var table = _db.GetCollection<DB_Spider>(nameof(DB_Spider));
-            var model = (table.AsQueryable<DB_Spider>()).ToList();
-            return _mapper.Map<List<SpiderListItemViewModel>>(model);
+            return table.Find(Builders<DB_Spider>.Filter.Empty)
+                .Project<SpiderListItemViewModel>(Builders<DB_Spider>.Projection.Include(x => x.Id).Include(x => x.Name)).ToList();
         }
 
         public async Task<List<SpiderListItemViewModel>> GetSpiderDtoListAsync()
         {
             var table = _db.GetCollection<DB_Spider>(nameof(DB_Spider));
-            var model = await table.AsQueryable<DB_Spider>().ToListAsync();
-            return _mapper.Map<List<SpiderListItemViewModel>>(model);
+            return await table.Find(Builders<DB_Spider>.Filter.Empty)
+                .Project<SpiderListItemViewModel>(Builders<DB_Spider>.Projection.Include(x => x.Id).Include(x => x.Name)).ToListAsync();
         }
 
         public string Submit(SpiderEditDto model)
