@@ -39,6 +39,7 @@ namespace SpiderTool.MongoDB.Domain
 
             var total = templateCollection.Find(Builders<DB_Template>.Filter.Empty).ToList();
             var allRule = templateReplacementRuleCollection.Find(Builders<DB_ReplacementRule>.Filter.Empty).ToList();
+
             return total.Select(a => new TemplateDetailViewModel
             {
                 Id = a.Id,
