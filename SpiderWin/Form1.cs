@@ -241,7 +241,7 @@ namespace SpiderWin
             {
                 Title = "导出日志",
                 Filter = "*.txt|*.log",
-                FileName = DateTime.Now.ToString("yyyy-MM-dd HH-mm"),
+                FileName = DateTime.Now.ToString("yyyy-MM-dd-HH"),
             };
             saveLogDialog.ShowDialog();
             using var fs = saveLogDialog.OpenFile();

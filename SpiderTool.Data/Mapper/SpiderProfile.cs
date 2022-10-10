@@ -24,6 +24,8 @@ namespace SpiderTool.Data.Mapper
             CreateMap<SpiderEditDto, DB_Spider>();
             CreateMap<TemplateEditDto, DB_Template>();
             CreateMap<TaskEditDto, DB_Task>();
+
+            CreateMap<DB_ReplacementRule, ReplacementRuleDto>();
         }
     }
 }

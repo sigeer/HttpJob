@@ -50,17 +50,10 @@ namespace SpiderTool.MongoDB.Domain
             var detailList = detailTable.Find(x => relatedTemplateIds.Contains(x.Id)).ToList();
             var nextDetail = detailTable.Find(x => x.Id == model.NextPageTemplateId).FirstOrDefault();
 
-            return new SpiderDetailViewModel
-            {
-                Id = id,
-                Name = model.Name,
-                Description = model.Description,
-                HeaderStr = model.Headers,
-                Method = model.Method,
-                PostObjStr = model.PostObjStr,
-                TemplateList = _mapper.Map<List<TemplateDetailViewModel>>(detailList),
-                NextPageTemplate = _mapper.Map<TemplateDetailViewModel>(nextDetail)
-            };
+            var data = _mapper.Map<SpiderDetailViewModel>(model);
+            data.TemplateList = _mapper.Map<List<TemplateDetailViewModel>>(detailList);
+            data.NextPageTemplate = _mapper.Map<TemplateDetailViewModel>(nextDetail);
+            return data;
         }
 
         public async Task<SpiderDetailViewModel?> GetSpiderDtoAsync(int id)
@@ -77,17 +70,10 @@ namespace SpiderTool.MongoDB.Domain
             var detailList = await detailTable.Find(x => relatedTemplateIds.Contains(x.Id)).ToListAsync();
             var nextDetail = await detailTable.Find(x => x.Id == model.NextPageTemplateId).FirstOrDefaultAsync();
 
-            return new SpiderDetailViewModel
-            {
-                Id = id,
-                Name = model.Name,
-                Description = model.Description,
-                HeaderStr = model.Headers,
-                Method = model.Method,
-                PostObjStr = model.PostObjStr,
-                TemplateList = _mapper.Map<List<TemplateDetailViewModel>>(detailList),
-                NextPageTemplate = _mapper.Map<TemplateDetailViewModel>(nextDetail)
-            };
+            var data = _mapper.Map<SpiderDetailViewModel>(model);
+            data.TemplateList = _mapper.Map<List<TemplateDetailViewModel>>(detailList);
+            data.NextPageTemplate = _mapper.Map<TemplateDetailViewModel>(nextDetail);
+            return data;
         }
 
         public List<SpiderListItemViewModel> GetSpiderDtoList()
