@@ -40,14 +40,14 @@ namespace SpiderWin
             IConfiguration configuration = cfgBuilder.Build();
             services.AddSingleton<IConfiguration>(configuration);
 
-            services.AddScoped<Form1>();
+            services.AddSingleton<Form1>();
             services.AddSpiderService(() =>
             {
                 return new MongoClient(configuration.GetConnectionString("MongoDB"));
             }, ServiceLifetime.Singleton);
 
             var serviceProvider = services.BuildServiceProvider();
-            System.Text.Encoding.RegisterProvider(System.Text.CodePagesEncodingProvider.Instance);
+            
             Application.Run(serviceProvider.GetService<Form1>()!);
         }
 
