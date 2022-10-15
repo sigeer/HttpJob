@@ -11,6 +11,8 @@ namespace SpiderRemoteServiceClient.Services
         readonly SpiderWorkerProtoService.SpiderWorkerProtoServiceClient _client;
         readonly IMapper Mapper;
 
+        public bool IsConnected => PingSync();
+
         public SpiderRemoteService(SpiderWorkerProtoService.SpiderWorkerProtoServiceClient client, IMapper mapper)
         {
             _client = client;
@@ -79,6 +81,12 @@ namespace SpiderRemoteServiceClient.Services
         {
             var data = await _client.GetSpiderAsync(new IntModel { Data = id });
             return Mapper.Map<SpiderDetailViewModel>(data);
+        }
+
+        private bool PingSync()
+        {
+            var data = _client.Ping(new Google.Protobuf.WellKnownTypes.Empty());
+            return data.Data == "ok";
         }
 
         public async Task<bool> Ping()

@@ -2,7 +2,6 @@
 using SpiderTool.Dapper.Domain;
 using SpiderTool.IDomain;
 using SpiderTool.IService;
-using SpiderTool.Service;
 using System.Data;
 
 namespace SpiderTool.Dapper
@@ -18,7 +17,7 @@ namespace SpiderTool.Dapper
             services.Add(new ServiceDescriptor(typeof(ITemplateDomain), typeof(TemplateDomain), serviceLifetime));
             services.Add(new ServiceDescriptor(typeof(ITaskDomain), typeof(TaskDomain), serviceLifetime));
 
-            services.Add(new ServiceDescriptor(typeof(ISpiderService), typeof(SpiderService), serviceLifetime));
+            services.Add(new ServiceDescriptor(typeof(ISpiderService), typeof(DapperService), serviceLifetime));
 
             return services;
         }

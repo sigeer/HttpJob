@@ -27,7 +27,7 @@ namespace SpiderTool.MongoDB
             services.Add(new ServiceDescriptor(typeof(ITemplateDomain), typeof(TemplateDomain), serviceLifetime));
             services.Add(new ServiceDescriptor(typeof(ITaskDomain), typeof(TaskDomain), serviceLifetime));
 
-            services.Add(new ServiceDescriptor(typeof(ISpiderService), typeof(SpiderService), serviceLifetime));
+            services.Add(new ServiceDescriptor(typeof(ISpiderService), typeof(MongoSpiderService), serviceLifetime));
             return services;
         }
     }

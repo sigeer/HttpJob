@@ -5,13 +5,13 @@ using SpiderTool.IService;
 
 namespace SpiderTool.Service
 {
-    public class SpiderService : ISpiderService
+    public class SpiderBaseService
     {
         readonly ISpiderDomain _spiderDomain;
         readonly ITemplateDomain _templateDomain;
         readonly ITaskDomain _taskDomain;
 
-        public SpiderService(ISpiderDomain spiderDomain, ITemplateDomain templateDomain, ITaskDomain taskDomain)
+        public SpiderBaseService(ISpiderDomain spiderDomain, ITemplateDomain templateDomain, ITaskDomain taskDomain)
         {
             _spiderDomain = spiderDomain;
             _templateDomain = templateDomain;
