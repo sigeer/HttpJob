@@ -18,7 +18,21 @@ namespace SpiderTool.Dapper
             _dbConn = dbConn;
         }
 
-        public bool IsConnected => _dbConn.State != ConnectionState.Closed;
-
+        public bool CanConnect()
+        {
+            try
+            {
+                _dbConn.Open();
+                return true;
+            }
+            catch (Exception ex)
+            {
+                return false;
+            }
+            finally
+            {
+                _dbConn.Close();
+            }
+        }
     }
 }
