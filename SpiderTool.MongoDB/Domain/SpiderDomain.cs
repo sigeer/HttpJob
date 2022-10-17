@@ -39,8 +39,8 @@ namespace SpiderTool.MongoDB.Domain
         public SpiderDetailViewModel? GetSpiderDto(int id)
         {
             var table = _db.GetCollection<DB_Spider>(nameof(DB_Spider));
-            var model = table.Find<DB_Spider>(x => x.Id == id).FirstOrDefault();
-            if (model == null)
+            var dbModel = table.Find<DB_Spider>(x => x.Id == id).FirstOrDefault();
+            if (dbModel == null)
                 return null;
 
             var relatedTable = _db.GetCollection<DB_SpiderTemplate>(nameof(DB_SpiderTemplate));
@@ -48,19 +48,50 @@ namespace SpiderTool.MongoDB.Domain
 
             var detailTable = _db.GetCollection<DB_Template>(nameof(DB_Template));
             var detailList = detailTable.Find(x => relatedTemplateIds.Contains(x.Id)).ToList();
-            var nextDetail = detailTable.Find(x => x.Id == model.NextPageTemplateId).FirstOrDefault();
+            var nextPage = detailTable.Find(x => x.Id == dbModel.NextPageTemplateId).FirstOrDefault();
 
-            var data = _mapper.Map<SpiderDetailViewModel>(model);
-            data.TemplateList = _mapper.Map<List<TemplateDetailViewModel>>(detailList);
-            data.NextPageTemplate = _mapper.Map<TemplateDetailViewModel>(nextDetail);
+            var replaceRuleTable = _db.GetCollection<DB_ReplacementRule>(nameof(DB_ReplacementRule));
+            var replaceRules = replaceRuleTable.Find(x => relatedTemplateIds.Contains(x.TemplateId)).ToList();
+
+            var data = new SpiderDetailViewModel()
+            {
+                Id = dbModel.Id,
+                Description = dbModel.Description,
+                Name = dbModel.Name,
+                Method = dbModel.Method,
+                PostObjStr = dbModel.PostObjStr,
+                HeaderStr = dbModel.Headers,
+                NextPageTemplate = nextPage == null ? new TemplateDetailViewModel() : new TemplateDetailViewModel
+                {
+                    Id = nextPage.Id,
+                    LinkedSpiderId = nextPage.LinkedSpiderId,
+                    Name = nextPage.Name,
+                    TemplateStr = nextPage.TemplateStr,
+                    Type = nextPage.Type
+                }
+            };
+            data.TemplateList = detailList.Select(b => new TemplateDetailViewModel()
+            {
+                Id = b.Id,
+                LinkedSpiderId = b.LinkedSpiderId,
+                Name = b.Name,
+                TemplateStr = b.TemplateStr,
+                Type = b.Type,
+                ReplacementRules = replaceRules.Where(x => x.TemplateId == b.Id).Select(x => new ReplacementRuleDto()
+                {
+                    Id = x.Id,
+                    ReplacementNewlyStr = x.ReplacementNewlyStr,
+                    ReplacementOldStr = x.ReplacementOldStr,
+                }).ToList()
+            }).ToList();
             return data;
         }
 
         public async Task<SpiderDetailViewModel?> GetSpiderDtoAsync(int id)
         {
             var table = _db.GetCollection<DB_Spider>(nameof(DB_Spider));
-            var model = await table.Find<DB_Spider>(x => x.Id == id).FirstOrDefaultAsync();
-            if (model == null)
+            var dbModel = await table.Find<DB_Spider>(x => x.Id == id).FirstOrDefaultAsync();
+            if (dbModel == null)
                 return null;
 
             var relatedTable = _db.GetCollection<DB_SpiderTemplate>(nameof(DB_SpiderTemplate));
@@ -68,11 +99,43 @@ namespace SpiderTool.MongoDB.Domain
 
             var detailTable = _db.GetCollection<DB_Template>(nameof(DB_Template));
             var detailList = await detailTable.Find(x => relatedTemplateIds.Contains(x.Id)).ToListAsync();
-            var nextDetail = await detailTable.Find(x => x.Id == model.NextPageTemplateId).FirstOrDefaultAsync();
+            var nextPage = await detailTable.Find(x => x.Id == dbModel.NextPageTemplateId).FirstOrDefaultAsync();
 
-            var data = _mapper.Map<SpiderDetailViewModel>(model);
-            data.TemplateList = _mapper.Map<List<TemplateDetailViewModel>>(detailList);
-            data.NextPageTemplate = _mapper.Map<TemplateDetailViewModel>(nextDetail);
+            var replaceRuleTable= _db.GetCollection<DB_ReplacementRule>(nameof(DB_ReplacementRule));
+            var replaceRules = await replaceRuleTable.Find(x => relatedTemplateIds.Contains(x.TemplateId)).ToListAsync();
+
+            var data = new SpiderDetailViewModel()
+            {
+                Id = dbModel.Id,
+                Description = dbModel.Description,
+                Name = dbModel.Name,
+                Method = dbModel.Method,
+                PostObjStr = dbModel.PostObjStr,
+                HeaderStr = dbModel.Headers,
+                NextPageTemplate = nextPage == null ? new TemplateDetailViewModel() : new TemplateDetailViewModel
+                {
+                    Id = nextPage.Id,
+                    LinkedSpiderId = nextPage.LinkedSpiderId,
+                    Name = nextPage.Name,
+                    TemplateStr = nextPage.TemplateStr,
+                    Type = nextPage.Type
+                }
+            };
+            data.TemplateList = detailList.Select(b => new TemplateDetailViewModel()
+            {
+                Id = b.Id,
+                LinkedSpiderId = b.LinkedSpiderId,
+                Name = b.Name,
+                TemplateStr = b.TemplateStr,
+                Type = b.Type,
+                ReplacementRules = replaceRules.Where(x => x.TemplateId == b.Id).Select(x => new ReplacementRuleDto()
+                {
+                    Id = x.Id,
+                    ReplacementNewlyStr = x.ReplacementNewlyStr,
+                    ReplacementOldStr = x.ReplacementOldStr,
+                }).ToList()
+            }).ToList();
+            data.NextPageTemplate = _mapper.Map<TemplateDetailViewModel>(nextPage);
             return data;
         }
 

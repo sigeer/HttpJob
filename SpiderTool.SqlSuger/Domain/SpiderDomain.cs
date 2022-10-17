@@ -83,7 +83,7 @@ namespace SpiderTool.SqlSugar.Domain
                 Name = b.Name,
                 TemplateStr = b.TemplateStr,
                 Type = b.Type,
-                ReplacementRules = templateReplaceList.Select(x => new ReplacementRuleDto()
+                ReplacementRules = templateReplaceList.Where(x => x.TemplateId == b.Id).Select(x => new ReplacementRuleDto()
                 {
                     Id = x.Id,
                     ReplacementNewlyStr = x.ReplacementNewlyStr,
@@ -130,7 +130,7 @@ namespace SpiderTool.SqlSugar.Domain
                 Name = b.Name,
                 TemplateStr = b.TemplateStr,
                 Type = b.Type,
-                ReplacementRules = templateReplaceList.Select(x => new ReplacementRuleDto()
+                ReplacementRules = templateReplaceList.Where(x => x.TemplateId == b.Id).Select(x => new ReplacementRuleDto()
                 {
                     Id = x.Id,
                     ReplacementNewlyStr = x.ReplacementNewlyStr,
