@@ -97,15 +97,15 @@ namespace SpiderTool.EntityFrameworkCore.Domain
                                      };
 
             var data = await (from a in _dbContext.Spiders.Where(x => x.Id == id)
-                        join b in _dbContext.Templates on a.NextPageTemplateId equals b.Id into bss
-                        from bs in bss.DefaultIfEmpty()
-                        let c = spiderTemplateInfo.Where(x => x.SpiderId == a.Id).ToList()
-                        select new
-                        {
-                            spider = a,
-                            nextPage = bs,
-                            templates = c
-                        }).AsSplitQuery().ToListAsync();
+                              join b in _dbContext.Templates on a.NextPageTemplateId equals b.Id into bss
+                              from bs in bss.DefaultIfEmpty()
+                              let c = spiderTemplateInfo.Where(x => x.SpiderId == a.Id).ToList()
+                              select new
+                              {
+                                  spider = a,
+                                  nextPage = bs,
+                                  templates = c
+                              }).AsSplitQuery().ToListAsync();
 
             return data.Select(x => new SpiderDetailViewModel
             {

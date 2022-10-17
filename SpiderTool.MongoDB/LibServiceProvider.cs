@@ -4,7 +4,6 @@ using SpiderTool.Data.Mapper;
 using SpiderTool.IDomain;
 using SpiderTool.IService;
 using SpiderTool.MongoDB.Domain;
-using SpiderTool.Service;
 using Utility.GuidHelper;
 
 namespace SpiderTool.MongoDB

@@ -1,7 +1,6 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using SpiderTool.IDomain;
 using SpiderTool.IService;
-using SpiderTool.Service;
 using SpiderTool.SqlSugar.Domain;
 using SqlSugar;
 using System.ComponentModel.DataAnnotations;

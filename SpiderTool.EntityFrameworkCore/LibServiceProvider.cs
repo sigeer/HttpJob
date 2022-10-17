@@ -4,7 +4,6 @@ using SpiderTool.EntityFrameworkCore.ContextModel;
 using SpiderTool.EntityFrameworkCore.Domain;
 using SpiderTool.IDomain;
 using SpiderTool.IService;
-using SpiderTool.Service;
 
 namespace SpiderTool.EntityFrameworkCore
 {
