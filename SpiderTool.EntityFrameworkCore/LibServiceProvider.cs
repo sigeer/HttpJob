@@ -4,7 +4,6 @@ using SpiderTool.EntityFrameworkCore.ContextModel;
 using SpiderTool.EntityFrameworkCore.Domain;
 using SpiderTool.IDomain;
 using SpiderTool.IService;
-using SpiderTool.Service;
 
 namespace SpiderTool.EntityFrameworkCore
 {
@@ -21,6 +20,7 @@ namespace SpiderTool.EntityFrameworkCore
             services.Add(new ServiceDescriptor(typeof(ITaskDomain), typeof(TaskDomain), serviceLifetime));
 
             services.Add(new ServiceDescriptor(typeof(ISpiderService), typeof(EFSpiderService), serviceLifetime));
+            System.Text.Encoding.RegisterProvider(System.Text.CodePagesEncodingProvider.Instance);
             return services;
         }
     }

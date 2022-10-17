@@ -1,9 +1,4 @@
 ﻿using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace SpiderTool.Dto.Spider
 {
@@ -39,7 +34,7 @@ namespace SpiderTool.Dto.Spider
         public string? Name { get; set; }
     }
 
-    public class SpiderDetailViewModel: SpiderListItemViewModel
+    public class SpiderDetailViewModel : SpiderListItemViewModel
     {
         public string? Description { get; set; }
         /// <summary>

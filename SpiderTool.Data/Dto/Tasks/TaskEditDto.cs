@@ -16,7 +16,7 @@ namespace SpiderTool.Dto.Tasks
         public string? CronExpression { get; set; }
     }
 
-    public class TaskListItemViewModel: TaskSimpleViewModel
+    public class TaskListItemViewModel : TaskSimpleViewModel
     {
         public string? Description { get; set; }
         /// <summary>

@@ -1,7 +1,4 @@
-﻿using SpiderTool.Constants;
-using SpiderTool.DataBase;
-using SqlSugar;
-using System.ComponentModel.DataAnnotations;
+﻿using SqlSugar;
 using System.Reflection;
 
 namespace SpiderTool.SqlSugar
