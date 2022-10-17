@@ -18,6 +18,22 @@ namespace SpiderTool.SqlSugar
             _dbContext = dbContext;
         }
 
-        public bool IsConnected => _dbContext.Ado.Connection.State != System.Data.ConnectionState.Closed;
+
+        public bool CanConnect()
+        {
+            try
+            {
+                _dbContext.Ado.Open();
+                return true;
+            }
+            catch (Exception ex)
+            {
+                return false;
+            }
+            finally
+            {
+                _dbContext.Ado.Close();
+            }
+        }
     }
 }
