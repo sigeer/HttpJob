@@ -26,6 +26,7 @@ namespace SpiderWin
         {
             _coreService = coreService;
             localServiceBackup = _coreService;
+            var b = _coreService.IsConnected;
 
             InitializeComponent();
         }

@@ -5,6 +5,7 @@ namespace SpiderTool.IService
 {
     public interface ISpiderService
     {
+        bool IsConnected { get; }
         List<TaskSimpleViewModel> GetTaskHistoryList();
         Task<List<TaskSimpleViewModel>> GetTaskHistoryListAsync();
 

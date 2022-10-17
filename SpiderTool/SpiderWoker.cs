@@ -25,6 +25,7 @@ namespace SpiderTool
         /// 会经过下一页设置进行变换
         /// </summary>
         private string? _currentUrl;
+
         private string? _currentDir;
         public string CurrentDir
         {
@@ -32,7 +33,7 @@ namespace SpiderTool
             {
                 if (string.IsNullOrEmpty(_currentDir))
                 {
-                    _currentDir = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "wwwroot", "download", $"task{_taskId}");
+                    _currentDir = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "wwwroot", "download", GenarteDirName());
                     _currentDir.GetDirectory();
                 }
                 return _currentDir;
@@ -190,6 +191,13 @@ namespace SpiderTool
                 if (!string.IsNullOrEmpty(nextUrl))
                     await ProcessUrl(nextUrl, false, cancellationToken);
             }
+        }
+
+        private string GenarteDirName()
+        {
+            if (!string.IsNullOrEmpty(DocumentTitle) && !SpiderUtility.InvalidFolderSymbol.Any(x => DocumentTitle.Contains(x)))
+                return DocumentTitle;
+            return $"task_{_taskId}";
         }
     }
 }
