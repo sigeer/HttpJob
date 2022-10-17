@@ -33,7 +33,7 @@ namespace SpiderTool
             {
                 if (string.IsNullOrEmpty(_currentDir))
                 {
-                    _currentDir = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "wwwroot", "download", GenarteDirName());
+                    _currentDir = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "wwwroot", "download", $"{TaskId}_{GenarteDirName()}");
                     _currentDir.GetDirectory();
                 }
                 return _currentDir;
@@ -124,8 +124,8 @@ namespace SpiderTool
                 SpiderId = Spider.Id,
                 Status = (int)TaskType.NotEffective
             });
-            OnTaskStart?.Invoke(this, _taskId);
-            OnTaskStatusChanged?.Invoke(this, _taskId);
+            OnTaskStart?.Invoke(this, TaskId);
+            OnTaskStatusChanged?.Invoke(this, TaskId);
 
             await ProcessUrl(_rootUrl, true, cancellationToken);
             await CompleteTask();
@@ -133,9 +133,9 @@ namespace SpiderTool
 
         public async Task CompleteTask()
         {
-            _service.SetTaskStatus(_taskId, (int)TaskType.Completed);
+            _service.SetTaskStatus(TaskId, (int)TaskType.Completed);
             OnTaskComplete?.Invoke(this, this);
-            OnTaskStatusChanged?.Invoke(this, _taskId);
+            OnTaskStatusChanged?.Invoke(this, TaskId);
             await SpiderUtility.MergeTextFileAsync(CurrentDir);
         }
 
@@ -163,11 +163,11 @@ namespace SpiderTool
             {
                 _service.UpdateTask(new TaskEditDto
                 {
-                    Id = _taskId,
+                    Id = TaskId,
                     Description = DocumentTitle,
                     Status = (int)TaskType.InProgress
                 });
-                OnTaskStatusChanged?.Invoke(this, _taskId);
+                OnTaskStatusChanged?.Invoke(this, TaskId);
             }
 
             await _processor.ProcessContentAsync(this, documentContent, Spider.TemplateList, cancellationToken);
@@ -197,7 +197,7 @@ namespace SpiderTool
         {
             if (!string.IsNullOrEmpty(DocumentTitle) && !SpiderUtility.InvalidFolderSymbol.Any(x => DocumentTitle.Contains(x)))
                 return DocumentTitle;
-            return $"task_{_taskId}";
+            return $"task_{TaskId}";
         }
     }
 }

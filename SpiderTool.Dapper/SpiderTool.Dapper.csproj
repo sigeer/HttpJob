@@ -13,10 +13,13 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\SpiderTool\SpiderTool.csproj" />
 
 	  <EmbeddedResource Include="..\Solution\mysql.sql" />
 	  <EmbeddedResource Include="..\Solution\sqlite.sql" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\SpiderTool.Injection\SpiderTool.Injection.csproj" />
   </ItemGroup>
 
 </Project>

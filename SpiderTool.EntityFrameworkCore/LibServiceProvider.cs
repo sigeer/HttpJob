@@ -2,8 +2,7 @@
 using Microsoft.Extensions.DependencyInjection;
 using SpiderTool.EntityFrameworkCore.ContextModel;
 using SpiderTool.EntityFrameworkCore.Domain;
-using SpiderTool.IDomain;
-using SpiderTool.IService;
+using SpiderTool.Injection;
 
 namespace SpiderTool.EntityFrameworkCore
 {
@@ -15,12 +14,11 @@ namespace SpiderTool.EntityFrameworkCore
 
             services.AddDbContext<SpiderDbContext>(options, serviceLifetime);
 
-            services.Add(new ServiceDescriptor(typeof(ISpiderDomain), typeof(SpiderDomain), serviceLifetime));
-            services.Add(new ServiceDescriptor(typeof(ITemplateDomain), typeof(TemplateDomain), serviceLifetime));
-            services.Add(new ServiceDescriptor(typeof(ITaskDomain), typeof(TaskDomain), serviceLifetime));
+            services.AddSpiderDomain<SpiderDomain>(serviceLifetime);
+            services.AddTemplateDomain<TemplateDomain>(serviceLifetime);
+            services.AddTaskDomain<TaskDomain>(serviceLifetime);
 
-            services.Add(new ServiceDescriptor(typeof(ISpiderService), typeof(EFSpiderService), serviceLifetime));
-            System.Text.Encoding.RegisterProvider(System.Text.CodePagesEncodingProvider.Instance);
+            services.AddSpiderService<EFSpiderService>(serviceLifetime);
             return services;
         }
     }

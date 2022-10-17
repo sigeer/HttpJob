@@ -1,7 +1,6 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using SpiderTool.Dapper.Domain;
-using SpiderTool.IDomain;
-using SpiderTool.IService;
+using SpiderTool.Injection;
 using System.Data;
 
 namespace SpiderTool.Dapper
@@ -13,12 +12,12 @@ namespace SpiderTool.Dapper
             ArgumentNullException.ThrowIfNull(services);
 
             services.Add(new ServiceDescriptor(typeof(IDbConnection), e => dbConnection, serviceLifetime));
-            services.Add(new ServiceDescriptor(typeof(ISpiderDomain), typeof(SpiderDomain), serviceLifetime));
-            services.Add(new ServiceDescriptor(typeof(ITemplateDomain), typeof(TemplateDomain), serviceLifetime));
-            services.Add(new ServiceDescriptor(typeof(ITaskDomain), typeof(TaskDomain), serviceLifetime));
 
-            services.Add(new ServiceDescriptor(typeof(ISpiderService), typeof(DapperService), serviceLifetime));
-            System.Text.Encoding.RegisterProvider(System.Text.CodePagesEncodingProvider.Instance);
+            services.AddSpiderDomain<SpiderDomain>(serviceLifetime);
+            services.AddTemplateDomain<TemplateDomain>(serviceLifetime);
+            services.AddTaskDomain<TaskDomain>(serviceLifetime);
+
+            services.AddSpiderService<DapperService>(serviceLifetime);
 
             return services;
         }

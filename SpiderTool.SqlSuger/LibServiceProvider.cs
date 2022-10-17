@@ -1,6 +1,5 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
-using SpiderTool.IDomain;
-using SpiderTool.IService;
+using SpiderTool.Injection;
 using SpiderTool.SqlSugar.Domain;
 using SqlSugar;
 using System.ComponentModel.DataAnnotations;
@@ -15,12 +14,12 @@ namespace SpiderTool.SqlSugar
             ArgumentNullException.ThrowIfNull(services);
 
             services.Add(new ServiceDescriptor(typeof(ISqlSugarClient), e => sugarClient, serviceLifetime));
-            services.Add(new ServiceDescriptor(typeof(ISpiderDomain), typeof(SpiderDomain), serviceLifetime));
-            services.Add(new ServiceDescriptor(typeof(ITemplateDomain), typeof(TemplateDomain), serviceLifetime));
-            services.Add(new ServiceDescriptor(typeof(ITaskDomain), typeof(TaskDomain), serviceLifetime));
 
-            services.Add(new ServiceDescriptor(typeof(ISpiderService), typeof(SqlSugarSpiderService), serviceLifetime));
-            System.Text.Encoding.RegisterProvider(System.Text.CodePagesEncodingProvider.Instance);
+            services.AddSpiderDomain<SpiderDomain>(serviceLifetime);
+            services.AddTemplateDomain<TemplateDomain>(serviceLifetime);
+            services.AddTaskDomain<TaskDomain>(serviceLifetime);
+
+            services.AddSpiderService<SqlSugarSpiderService>(serviceLifetime);
             return services;
         }
     }

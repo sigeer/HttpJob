@@ -1,8 +1,7 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using MongoDB.Driver;
 using SpiderTool.Data.Mapper;
-using SpiderTool.IDomain;
-using SpiderTool.IService;
+using SpiderTool.Injection;
 using SpiderTool.MongoDB.Domain;
 using Utility.GuidHelper;
 
@@ -19,15 +18,13 @@ namespace SpiderTool.MongoDB
             });
             services.AddSingleton<Snowflake>(s => Snowflake.GetInstance(1));
 
-
             services.Add(new ServiceDescriptor(typeof(IMongoClient), x => options(), serviceLifetime));
 
-            services.Add(new ServiceDescriptor(typeof(ISpiderDomain), typeof(SpiderDomain), serviceLifetime));
-            services.Add(new ServiceDescriptor(typeof(ITemplateDomain), typeof(TemplateDomain), serviceLifetime));
-            services.Add(new ServiceDescriptor(typeof(ITaskDomain), typeof(TaskDomain), serviceLifetime));
+            services.AddSpiderDomain<SpiderDomain>(serviceLifetime);
+            services.AddTemplateDomain<TemplateDomain>(serviceLifetime);
+            services.AddTaskDomain<TaskDomain>(serviceLifetime);
 
-            services.Add(new ServiceDescriptor(typeof(ISpiderService), typeof(MongoSpiderService), serviceLifetime));
-            System.Text.Encoding.RegisterProvider(System.Text.CodePagesEncodingProvider.Instance);
+            services.AddSpiderService<MongoSpiderService>(serviceLifetime);
             return services;
         }
     }

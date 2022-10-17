@@ -13,8 +13,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<ProjectReference Include="..\SpiderTool.Data\SpiderTool.Data.csproj" />
-		<ProjectReference Include="..\SpiderTool\SpiderTool.csproj" />
+	  <ProjectReference Include="..\SpiderTool.Injection\SpiderTool.Injection.csproj" />
 	</ItemGroup>
 
 </Project>
