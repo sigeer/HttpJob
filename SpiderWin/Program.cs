@@ -49,7 +49,7 @@ namespace SpiderWin
             services.AddSpiderService(() => new MongoClient(configuration.GetConnectionString("MongoDB")), ServiceLifetime.Singleton);
 
             var serviceProvider = services.BuildServiceProvider();
-            var remoteService = serviceProvider.GetService<MongoSpiderService>()!;
+            var remoteService = serviceProvider.GetService<ISpiderService>()!;
             if (!remoteService.CanConnect())
             {
                 services.AddSpiderService(new SqlSugarScope(new ConnectionConfig
