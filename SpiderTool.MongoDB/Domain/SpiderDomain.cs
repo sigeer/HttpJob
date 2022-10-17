@@ -14,11 +14,11 @@ namespace SpiderTool.MongoDB.Domain
         readonly IMapper _mapper;
         readonly Snowflake _guidGenerator;
 
-        public SpiderDomain(IMongoClient client, IMapper mapper, Snowflake snowflake)
+        public SpiderDomain(IMongoClient client, IMapper mapper)
         {
             _db = client.GetDatabase("spider");
             _mapper = mapper;
-            _guidGenerator = snowflake;
+            _guidGenerator = Snowflake.GetInstance(1);
 
         }
 

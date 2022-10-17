@@ -1,47 +1,57 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using SpiderTool.IDomain;
 using SpiderTool.IService;
+using AutoMapper;
+using SpiderTool.Data.Mapper;
 
 namespace SpiderTool.Injection
 {
     public static class LibServiceCollectionExtension
     {
-        public static IServiceCollection AddSpiderDomain<TImplemetation>(this IServiceCollection services, 
-            ServiceLifetime serviceLifetime = ServiceLifetime.Scoped) 
-            where TImplemetation : ISpiderDomain
+        public static IServiceCollection AddService<TType, TImplemetation>(this IServiceCollection services,
+            ServiceLifetime serviceLifetime = ServiceLifetime.Scoped)
+            where TImplemetation : class, TType
         {
             ArgumentNullException.ThrowIfNull(services);
-            services.Add(new ServiceDescriptor(typeof(ISpiderDomain), typeof(TImplemetation), serviceLifetime));
+            services.Add(new ServiceDescriptor(typeof(TType), typeof(TImplemetation), serviceLifetime));
             return services;
+        }
+        public static IServiceCollection AddSpiderDomain<TImplemetation>(this IServiceCollection services, 
+            ServiceLifetime serviceLifetime = ServiceLifetime.Scoped) 
+            where TImplemetation : class, ISpiderDomain
+        {
+            return services.AddService<ISpiderDomain, TImplemetation>(serviceLifetime);
         }
 
         public static IServiceCollection AddTemplateDomain<TImplemetation>(this IServiceCollection services, 
             ServiceLifetime serviceLifetime = ServiceLifetime.Scoped)
-            where TImplemetation : ITemplateDomain
+            where TImplemetation : class, ITemplateDomain
         {
-            ArgumentNullException.ThrowIfNull(services);
-            services.Add(new ServiceDescriptor(typeof(ITemplateDomain), typeof(TImplemetation), serviceLifetime));
-            return services;
+            return services.AddService<ITemplateDomain, TImplemetation>(serviceLifetime);
         }
 
         public static IServiceCollection AddTaskDomain<TImplemetation>(this IServiceCollection services, 
             ServiceLifetime serviceLifetime = ServiceLifetime.Scoped)
-            where TImplemetation : ITaskDomain
+            where TImplemetation : class, ITaskDomain
         {
-            ArgumentNullException.ThrowIfNull(services);
-            services.Add(new ServiceDescriptor(typeof(ITaskDomain), typeof(TImplemetation), serviceLifetime));
-            return services;
+            return services.AddService<ITaskDomain, TImplemetation>(serviceLifetime);
         }
+
 
         public static IServiceCollection AddSpiderService<TImplemetation>(this IServiceCollection services,
             ServiceLifetime serviceLifetime = ServiceLifetime.Scoped)
-            where TImplemetation : ISpiderService
+            where TImplemetation : class, ISpiderService
         {
-            ArgumentNullException.ThrowIfNull(services);
-            services.Add(new ServiceDescriptor(typeof(ISpiderService), typeof(TImplemetation), serviceLifetime));
-
-
             System.Text.Encoding.RegisterProvider(System.Text.CodePagesEncodingProvider.Instance);
+            return services.AddService<ISpiderService, TImplemetation>(serviceLifetime);
+        }
+
+        public static IServiceCollection AddSpiderAutoMapper(this IServiceCollection services)
+        {
+            services.AddAutoMapper(x =>
+            {
+                x.AddProfile<SpiderProfile>();
+            });
             return services;
         }
     }

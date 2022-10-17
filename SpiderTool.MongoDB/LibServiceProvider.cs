@@ -12,11 +12,7 @@ namespace SpiderTool.MongoDB
         public static IServiceCollection AddSpiderService(this IServiceCollection services, Func<MongoClient> options, ServiceLifetime serviceLifetime = ServiceLifetime.Scoped)
         {
             ArgumentNullException.ThrowIfNull(services);
-            services.AddAutoMapper(x =>
-            {
-                x.AddProfile<SpiderProfile>();
-            });
-            services.AddSingleton<Snowflake>(s => Snowflake.GetInstance(1));
+            services.AddSpiderAutoMapper();
 
             services.Add(new ServiceDescriptor(typeof(IMongoClient), x => options(), serviceLifetime));
 
