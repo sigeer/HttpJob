@@ -18,6 +18,9 @@ namespace SpiderTool.MongoDB
             _db = db;
         }
 
-        public bool IsConnected => _db.Cluster.Settings.DirectConnection ?? false;
+        public bool CanConnect()
+        {
+            return _db.Cluster.Settings.DirectConnection ?? false;
+        }
     }
 }

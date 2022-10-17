@@ -18,6 +18,10 @@ namespace SpiderTool.EntityFrameworkCore
             _dbContext = dbContext;
         }
 
-        public bool IsConnected => _dbContext.Database.EnsureCreated();
+
+        public bool CanConnect()
+        {
+            return _dbContext.Database.CanConnect();
+        }
     }
 }

@@ -11,7 +11,7 @@ namespace SpiderRemoteServiceClient.Services
         readonly SpiderWorkerProtoService.SpiderWorkerProtoServiceClient _client;
         readonly IMapper Mapper;
 
-        public bool IsConnected => PingSync();
+        public bool CanConnect() => PingSync();
 
         public SpiderRemoteService(SpiderWorkerProtoService.SpiderWorkerProtoServiceClient client, IMapper mapper)
         {
