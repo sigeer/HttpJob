@@ -54,6 +54,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "static", "static", "{542F01
 		Gateways\static\envoy.yaml = Gateways\static\envoy.yaml
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SpiderTool.Injection", "SpiderTool.Injection\SpiderTool.Injection.csproj", "{A9EEE01C-AF69-410E-BA23-C4299A968120}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -100,6 +102,10 @@ Global
 		{CD55B066-71C1-46CE-819D-A27088F4ABDC}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{CD55B066-71C1-46CE-819D-A27088F4ABDC}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{CD55B066-71C1-46CE-819D-A27088F4ABDC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A9EEE01C-AF69-410E-BA23-C4299A968120}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A9EEE01C-AF69-410E-BA23-C4299A968120}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A9EEE01C-AF69-410E-BA23-C4299A968120}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A9EEE01C-AF69-410E-BA23-C4299A968120}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

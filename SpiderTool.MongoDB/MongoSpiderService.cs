@@ -5,7 +5,7 @@ using SpiderTool.Service;
 
 namespace SpiderTool.MongoDB
 {
-    internal class MongoSpiderService : SpiderBaseService, ISpiderService
+    public class MongoSpiderService : SpiderBaseService, ISpiderService
     {
         readonly IMongoClient _db;
         public MongoSpiderService(IMongoClient db, ISpiderDomain spiderDomain, ITemplateDomain templateDomain, ITaskDomain taskDomain) : base(spiderDomain, templateDomain, taskDomain)

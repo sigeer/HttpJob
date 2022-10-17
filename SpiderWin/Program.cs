@@ -1,7 +1,12 @@
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using MongoDB.Driver;
+using SpiderTool.IDomain;
+using SpiderTool.Injection;
+using SpiderTool.IService;
 using SpiderTool.MongoDB;
+using SpiderTool.SqlSugar;
+using SqlSugar;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
 
@@ -41,13 +46,21 @@ namespace SpiderWin
             services.AddSingleton<IConfiguration>(configuration);
 
             services.AddSingleton<Form1>();
-            services.AddSpiderService(() =>
-            {
-                return new MongoClient(configuration.GetConnectionString("MongoDB"));
-            }, ServiceLifetime.Singleton);
+            services.AddSpiderService(() => new MongoClient(configuration.GetConnectionString("MongoDB")), ServiceLifetime.Singleton);
 
             var serviceProvider = services.BuildServiceProvider();
-            
+            var remoteService = serviceProvider.GetService<MongoSpiderService>()!;
+            if (!remoteService.CanConnect())
+            {
+                services.AddSpiderService(new SqlSugarScope(new ConnectionConfig
+                {
+                    ConnectionString = "data source=database.db",
+                    DbType = DbType.Sqlite,
+                    ConfigureExternalServices = ExternalServiceDefaultBuilder.Build()
+                }), ServiceLifetime.Singleton);
+                serviceProvider = services.BuildServiceProvider();
+            }
+
             Application.Run(serviceProvider.GetService<Form1>()!);
         }
 

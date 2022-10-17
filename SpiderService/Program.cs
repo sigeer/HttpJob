@@ -22,7 +22,6 @@ builder.Services.AddAutoMapper(x =>
 });
 
 var app = builder.Build();
-sqlClient.CreateDatabase(DbType.Sqlite);
 // Configure the HTTP request pipeline.
 app.MapGrpcService<SpiderWorkService>();
 app.MapGet("/health", () => "web health check");

@@ -5,7 +5,7 @@ using SqlSugar;
 
 namespace SpiderTool.SqlSugar
 {
-    internal class SqlSugarSpiderService : SpiderBaseService, ISpiderService
+    public class SqlSugarSpiderService : SpiderBaseService, ISpiderService
     {
         readonly ISqlSugarClient _dbContext;
         public SqlSugarSpiderService(ISqlSugarClient dbContext, ISpiderDomain spiderDomain, ITemplateDomain templateDomain, ITaskDomain taskDomain) : base(spiderDomain, templateDomain, taskDomain)
