@@ -16,6 +16,7 @@
 	  
 	  <EmbeddedResource Include="..\Solution\mysql.sql" />
 	  <EmbeddedResource Include="..\Solution\sqlite.sql" />
+	  <EmbeddedResource Include="..\Solution\sqlserver.sql" />
   </ItemGroup>
 
   <ItemGroup>
