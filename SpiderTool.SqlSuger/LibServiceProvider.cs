@@ -20,6 +20,7 @@ namespace SpiderTool.SqlSugar
             services.AddTaskDomain<TaskDomain>(serviceLifetime);
 
             services.AddSpiderService<SqlSugarSpiderService>(serviceLifetime);
+            DbMigration.CreateDatabase(sugarClient);
             return services;
         }
     }
