@@ -44,17 +44,17 @@ namespace SpiderWin
 
             IConfiguration configuration = cfgBuilder.Build();
             services.AddSingleton<IConfiguration>(configuration);
-
             services.AddSingleton<Form1>();
+
             services.AddSpiderService(() => new MongoClient(configuration.GetConnectionString("MongoDB")), ServiceLifetime.Singleton);
 
             var serviceProvider = services.BuildServiceProvider();
-            var remoteService = serviceProvider.GetService<MongoSpiderService>()!;
+            var remoteService = serviceProvider.GetService<ISpiderService>()!;
             if (!remoteService.CanConnect())
             {
                 services.AddSpiderService(new SqlSugarScope(new ConnectionConfig
                 {
-                    ConnectionString = "data source=database.db",
+                    ConnectionString = configuration.GetConnectionString("Sqlite"),
                     DbType = DbType.Sqlite,
                     ConfigureExternalServices = ExternalServiceDefaultBuilder.Build()
                 }), ServiceLifetime.Singleton);
