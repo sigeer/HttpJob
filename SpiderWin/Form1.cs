@@ -2,6 +2,7 @@ using SpiderTool;
 using SpiderTool.Dto.Spider;
 using SpiderTool.Dto.Tasks;
 using SpiderTool.IService;
+using SpiderWin.Constants;
 using SpiderWin.Modals;
 using SpiderWin.Server;
 using SpiderWin.Services;
@@ -50,12 +51,12 @@ namespace SpiderWin
             ComboxUrl.ValueMember = nameof(TaskListItemViewModel.RootUrl);
 
             DataGridTasks.ReadOnly = true;
+            DataGridTasks.Columns.Add(nameof(TaskListItemViewModel.Status), "状态");
             DataGridTasks.Columns.Add(nameof(TaskListItemViewModel.Id), nameof(TaskListItemViewModel.Id));
             DataGridTasks.Columns.Add(nameof(TaskListItemViewModel.Description), "描述");
             DataGridTasks.Columns.Add(nameof(TaskListItemViewModel.RootUrl), nameof(TaskListItemViewModel.RootUrl));
             DataGridTasks.Columns.Add(nameof(TaskListItemViewModel.SpiderId), nameof(TaskListItemViewModel.SpiderId));
             DataGridTasks.Columns.Add(nameof(TaskListItemViewModel.CreateTime), "创建时间");
-            DataGridTasks.Columns.Add(nameof(TaskListItemViewModel.Status), "状态");
             DataGridTasks.Columns.Add(nameof(TaskListItemViewModel.CompleteTime), "完成时间");
         }
 
@@ -103,16 +104,17 @@ namespace SpiderWin
                     {
                         var row = new DataGridViewRow();
                         var rowStyle = new DataGridViewCellStyle();
-                        if (x.Status == TaskType.InProgress.ToInt()|| x.Status == TaskType.Completed.ToInt())
-                        {
-                            rowStyle.BackColor = Color.FromArgb(130, 240, 150);
-                        }
+                        if (x.Status == TaskType.InProgress.ToInt())
+                            rowStyle.BackColor = ConstantsVariable.InProgressColor;
+                        else if (x.Status == TaskType.Completed.ToInt())
+                            rowStyle.BackColor = ConstantsVariable.CompletedColor;
+                        row.Cells.Add(new DataGridViewTextBoxCell() { Value = x.StatusName, Style = rowStyle });
                         row.Cells.Add(new DataGridViewTextBoxCell() { Value = x.Id, ValueType = typeof(int), Style = rowStyle });
                         row.Cells.Add(new DataGridViewTextBoxCell() { Value = x.Description, Style = rowStyle });
                         row.Cells.Add(new DataGridViewTextBoxCell() { Value = x.RootUrl, Style = rowStyle });
                         row.Cells.Add(new DataGridViewTextBoxCell() { Value = x.SpiderId, ValueType = typeof(int), Style = rowStyle });
                         row.Cells.Add(new DataGridViewTextBoxCell() { Value = x.CreateTime.ToString("yyyy-MM-dd HH:mm:ss"), Style = rowStyle });
-                        row.Cells.Add(new DataGridViewTextBoxCell() { Value = x.StatusName, Style = rowStyle });
+
                         row.Cells.Add(new DataGridViewTextBoxCell() { Value = x.CompleteTime == null ? "-" : x.CompleteTime.Value.ToString("yyyy-MM-dd HH:mm:ss"), Style = rowStyle });
 
                         DataGridTasks.Rows.Add(row);
@@ -151,6 +153,7 @@ namespace SpiderWin
                 {
                     childSW.Start();
                     PrintLog($"任务{taskId}开始==========", string.Empty);
+                    PrintLog($"任务{taskId}将保存到", $"file://{worker.CurrentDir}");
                     LoadTaskHistory();
                 };
                 worker.OnTaskComplete += (obj, task) =>

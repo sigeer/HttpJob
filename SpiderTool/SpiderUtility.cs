@@ -140,6 +140,12 @@ namespace SpiderTool
             if (!dirInfo.Exists)
                 throw new Exception("dir not exist");
 
+            var dirs = dirInfo.GetDirectories();
+            foreach (var childDir in dirs)
+            {
+                await MergeTextFileAsync(childDir.FullName);
+            }
+
             var files = dirInfo.GetFiles().Where(x => x.Extension.ToLower() == ".txt").OrderBy(x => x.CreationTime).Select(x => x.FullName).ToList();
             if (files.Count == 0)
                 return;
@@ -149,12 +155,6 @@ namespace SpiderTool
             {
                 await File.AppendAllTextAsync(filePath, File.ReadAllText(file));
                 File.Delete(file);
-            }
-
-            var dirs = dirInfo.GetDirectories();
-            foreach (var childDir in dirs)
-            {
-                await MergeTextFileAsync(childDir.FullName);
             }
         }
 
