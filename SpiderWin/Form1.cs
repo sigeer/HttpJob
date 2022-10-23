@@ -149,12 +149,15 @@ namespace SpiderWin
                 var worker = new SpiderWorker(spiderId, _coreService, url);
                 Stopwatch childSW = new Stopwatch();
 
-                worker.OnTaskStart += (obj, taskId) =>
+                worker.OnTaskInit += (obj, taskId) =>
                 {
                     childSW.Start();
                     PrintLog($"任务{taskId}开始==========", string.Empty);
-                    PrintLog($"任务{taskId}将保存到", $"file://{worker.CurrentDir}");
                     LoadTaskHistory();
+                };
+                worker.OnTaskStart += (obj, taskId) =>
+                {
+                    PrintLog($"任务{taskId}将保存到", $"file://{worker.CurrentDir}");
                 };
                 worker.OnTaskComplete += (obj, task) =>
                 {
