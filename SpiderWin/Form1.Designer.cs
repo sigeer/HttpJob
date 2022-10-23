@@ -187,9 +187,12 @@
             // 
             // DataGridTasks
             // 
+            this.DataGridTasks.AllowUserToAddRows = false;
+            this.DataGridTasks.AllowUserToDeleteRows = false;
             this.DataGridTasks.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.DataGridTasks.Location = new System.Drawing.Point(78, 153);
             this.DataGridTasks.Name = "DataGridTasks";
+            this.DataGridTasks.ReadOnly = true;
             this.DataGridTasks.RowTemplate.Height = 25;
             this.DataGridTasks.Size = new System.Drawing.Size(548, 137);
             this.DataGridTasks.TabIndex = 13;

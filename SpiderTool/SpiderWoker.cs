@@ -51,8 +51,9 @@ namespace SpiderTool
         readonly ISpiderService _service;
         readonly ISpiderProcessor _processor;
 
-        public event EventHandler<int>? OnTaskStart;
+        public event EventHandler<int>? OnTaskInit;
         public event EventHandler<int>? OnTaskStatusChanged;
+        public event EventHandler<int>? OnTaskStart;
         public event EventHandler<SpiderWorker>? OnTaskComplete;
         public event EventHandler<string>? OnLog;
         public event EventHandler<SpiderWorker>? OnNewTask;
@@ -102,9 +103,9 @@ namespace SpiderTool
             {
                 OnNewTask?.Invoke(obj, evt);
             };
-            childTask.OnTaskStart += (obj, evt) =>
+            childTask.OnTaskInit += (obj, evt) =>
             {
-                OnTaskStart?.Invoke(obj, evt);
+                OnTaskInit?.Invoke(obj, evt);
             };
             childTask.OnTaskComplete += (obj, evt) =>
             {
@@ -124,7 +125,7 @@ namespace SpiderTool
                 SpiderId = Spider.Id,
                 Status = (int)TaskType.NotEffective
             });
-            OnTaskStart?.Invoke(this, TaskId);
+            OnTaskInit?.Invoke(this, TaskId);
             OnTaskStatusChanged?.Invoke(this, TaskId);
 
             await ProcessUrl(_rootUrl, true, cancellationToken);
@@ -168,6 +169,7 @@ namespace SpiderTool
                     Status = (int)TaskType.InProgress
                 });
                 OnTaskStatusChanged?.Invoke(this, TaskId);
+                OnTaskStart?.Invoke(this, TaskId);
             }
 
             await _processor.ProcessContentAsync(this, documentContent, Spider.TemplateList, cancellationToken);
