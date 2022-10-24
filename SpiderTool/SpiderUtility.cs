@@ -150,7 +150,8 @@ namespace SpiderTool
             if (files.Count == 0)
                 return;
 
-            var filePath = Path.Combine(dir, $"{dirInfo.Name}.txt");
+            var fileName = dirInfo.Parent == null ? $"{dirInfo.Name}.txt" : $"{dirInfo.Parent.Name}_{dirInfo.Name}.txt";
+            var filePath = Path.Combine(dir, fileName);
             foreach (var file in files)
             {
                 await File.AppendAllTextAsync(filePath, File.ReadAllText(file));

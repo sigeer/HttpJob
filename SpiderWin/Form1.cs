@@ -157,7 +157,7 @@ namespace SpiderWin
                 };
                 worker.OnTaskStart += (obj, taskId) =>
                 {
-                    PrintLog($"任务{taskId}将保存到", $"file://{worker.CurrentDir}");
+                    PrintLog($"任务{taskId}将保存到", $"\"file://{worker.CurrentDir}\"");
                 };
                 worker.OnTaskComplete += (obj, task) =>
                 {
@@ -165,7 +165,7 @@ namespace SpiderWin
 
                     var cost = $"共耗时：{childSW.Elapsed.TotalSeconds.ToFixed(2)}秒";
                     mainModalStatusLabel.Text = cost;
-                    PrintLog($"任务{task.TaskId}结束==========", $"{cost} file:///{task.CurrentDir}");
+                    PrintLog($"任务{task.TaskId}结束==========", $"{cost} \"file:///{task.CurrentDir}\"");
                 };
                 worker.OnTaskStatusChanged += (obj, taskId) =>
                 {
