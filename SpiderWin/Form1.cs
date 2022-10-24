@@ -103,11 +103,10 @@ namespace SpiderWin
                     taskList.ForEach(x =>
                     {
                         var row = new DataGridViewRow();
+
                         var rowStyle = new DataGridViewCellStyle();
-                        if (x.Status == TaskType.InProgress.ToInt())
-                            rowStyle.BackColor = ConstantsVariable.InProgressColor;
-                        else if (x.Status == TaskType.Completed.ToInt())
-                            rowStyle.BackColor = ConstantsVariable.CompletedColor;
+                        rowStyle.BackColor = ConstantsVariable.TaskColor[(TaskType)x.Status];
+
                         row.Cells.Add(new DataGridViewTextBoxCell() { Value = x.StatusName, Style = rowStyle });
                         row.Cells.Add(new DataGridViewTextBoxCell() { Value = x.Id, ValueType = typeof(int), Style = rowStyle });
                         row.Cells.Add(new DataGridViewTextBoxCell() { Value = x.Description, Style = rowStyle });
@@ -232,8 +231,8 @@ namespace SpiderWin
                 var selectedRow = DataGridTasks.Rows[e.RowIndex];
                 if (selectedRow != null)
                 {
-                    ComboxUrl.SelectedValue = selectedRow.Cells[2].Value;
-                    ComboxSpider.SelectedValue = selectedRow.Cells[3].Value;
+                    ComboxUrl.SelectedValue = selectedRow.Cells[3].Value;
+                    ComboxSpider.SelectedValue = selectedRow.Cells[4].Value;
                 }
             }
         }

@@ -51,12 +51,33 @@ namespace SpiderTool
         readonly ISpiderService _service;
         readonly ISpiderProcessor _processor;
 
+        /// <summary>
+        /// 初始化任务（插入数据，尚未执行）
+        /// </summary>
         public event EventHandler<int>? OnTaskInit;
+        /// <summary>
+        /// 状态变更事件（Init,Start,Complete）
+        /// </summary>
         public event EventHandler<int>? OnTaskStatusChanged;
+        /// <summary>
+        /// 任务开始 （发起请求并获取数据，未处理响应内容）
+        /// </summary>
         public event EventHandler<int>? OnTaskStart;
+        /// <summary>
+        /// 任务完成
+        /// </summary>
         public event EventHandler<SpiderWorker>? OnTaskComplete;
+        /// <summary>
+        /// 日志
+        /// </summary>
         public event EventHandler<string>? OnLog;
+        /// <summary>
+        /// 创建子任务
+        /// </summary>
         public event EventHandler<SpiderWorker>? OnNewTask;
+        /// <summary>
+        /// 任务取消
+        /// </summary>
         public event EventHandler<string>? OnTaskCanceled;
 
 
@@ -87,11 +108,6 @@ namespace SpiderTool
             OnLog?.Invoke(this, logStr);
         }
 
-        public void CallCancelTask(string logStr)
-        {
-            OnTaskCanceled?.Invoke(this, logStr);
-        }
-
         public void MountChildTaskEvent(SpiderWorker childTask)
         {
             OnNewTask?.Invoke(this, childTask);
@@ -107,6 +123,10 @@ namespace SpiderTool
             {
                 OnTaskInit?.Invoke(obj, evt);
             };
+            childTask.OnTaskStart += (obj, evt) =>
+            {
+                OnTaskStart?.Invoke(obj, evt);
+            };
             childTask.OnTaskComplete += (obj, evt) =>
             {
                 OnTaskComplete?.Invoke(obj, evt);
@@ -114,6 +134,10 @@ namespace SpiderTool
             childTask.OnTaskStatusChanged += (obj, evt) =>
             {
                 OnTaskStatusChanged?.Invoke(obj, evt);
+            };
+            childTask.OnTaskCanceled += (obj, evt) =>
+            {
+                OnTaskCanceled?.Invoke(obj, evt);
             };
         }
 
@@ -125,8 +149,7 @@ namespace SpiderTool
                 SpiderId = Spider.Id,
                 Status = (int)TaskType.NotEffective
             });
-            OnTaskInit?.Invoke(this, TaskId);
-            OnTaskStatusChanged?.Invoke(this, TaskId);
+            UpdateTaskStatus(TaskType.NotEffective);
 
             await ProcessUrl(_rootUrl, true, cancellationToken);
             await CompleteTask();
@@ -134,10 +157,35 @@ namespace SpiderTool
 
         public async Task CompleteTask()
         {
-            _service.SetTaskStatus(TaskId, (int)TaskType.Completed);
-            OnTaskComplete?.Invoke(this, this);
-            OnTaskStatusChanged?.Invoke(this, TaskId);
+            UpdateTaskStatus(TaskType.Completed);
             await SpiderUtility.MergeTextFileAsync(CurrentDir);
+        }
+
+        public void UpdateTaskStatus(TaskType taskStatus, string logStr = "")
+        {
+            switch (taskStatus)
+            {
+                case TaskType.NotEffective:
+                    OnTaskInit?.Invoke(this, TaskId);
+                    OnTaskStatusChanged?.Invoke(this, TaskId);
+                    break;
+                case TaskType.InProgress:
+                    OnTaskStart?.Invoke(this, TaskId);
+                    OnTaskStatusChanged?.Invoke(this, TaskId);
+                    break;
+                case TaskType.Completed:
+                    _service.SetTaskStatus(TaskId, (int)TaskType.Completed);
+                    OnTaskComplete?.Invoke(this, this);
+                    OnTaskStatusChanged?.Invoke(this, TaskId);
+                    break;
+                case TaskType.Canceled:
+                    _service.SetTaskStatus(TaskId, (int)TaskType.Canceled);
+                    OnTaskCanceled?.Invoke(this, logStr);
+                    OnTaskStatusChanged?.Invoke(this, TaskId);
+                    break;
+                default:
+                    break;
+            }
         }
 
         public async Task<string> LoadDocumentContent()
@@ -168,8 +216,7 @@ namespace SpiderTool
                     Description = DocumentTitle,
                     Status = (int)TaskType.InProgress
                 });
-                OnTaskStatusChanged?.Invoke(this, TaskId);
-                OnTaskStart?.Invoke(this, TaskId);
+                UpdateTaskStatus(TaskType.InProgress);
             }
 
             await _processor.ProcessContentAsync(this, documentContent, Spider.TemplateList, cancellationToken);
@@ -180,8 +227,7 @@ namespace SpiderTool
         {
             if (cancellationToken.IsCancellationRequested)
             {
-                OnTaskCanceled?.Invoke(this, "MoveToNextPage");
-                OnLog?.Invoke(this, $"task {TaskId} canceled | from method MoveToNextPage ");
+                UpdateTaskStatus(TaskType.Canceled, $"task {TaskId} canceled | from method MoveToNextPage ");
                 return;
             }
             if (Spider.NextPageTemplate == null || string.IsNullOrEmpty(Spider.NextPageTemplate.TemplateStr))
@@ -197,8 +243,8 @@ namespace SpiderTool
 
         private string GenarteDirName()
         {
-            if (!string.IsNullOrEmpty(DocumentTitle) && !SpiderUtility.InvalidFolderSymbol.Any(x => DocumentTitle.Contains(x)))
-                return DocumentTitle;
+            if (!string.IsNullOrEmpty(DocumentTitle))
+                return DocumentTitle.RenameFolder();
             return $"AutoGenerate";
         }
     }
