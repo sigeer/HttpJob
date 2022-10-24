@@ -1,6 +1,7 @@
 ﻿using SpiderTool.Dto.Spider;
 using HtmlAgilityPack;
 using SpiderTool.IService;
+using SpiderTool.Dto.Tasks;
 
 namespace SpiderTool
 {
@@ -17,7 +18,7 @@ namespace SpiderTool
         {
             if (cancellationToken.IsCancellationRequested)
             {
-                rootSpider.CallCancelTask("ProcessContentAsync");
+                rootSpider.UpdateTaskStatus(TaskType.Canceled, $"task {rootSpider.TaskId} canceled | from method ProcessContentAsync ");
                 return true;
             }
             return false;
