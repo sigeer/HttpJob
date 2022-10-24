@@ -43,7 +43,7 @@ namespace SpiderTool
                 if (nodes == null)
                     continue;
 
-                var savePath = Path.Combine(rootSpider.CurrentDir, rule.Id.ToString());
+                var savePath = Path.Combine(rootSpider.CurrentDir, $"Rule{rule.Id.ToString()}");
                 if (rule.Type == (int)TemplateTypeEnum.Object)
                 {
                     var urlList = nodes.Select(item => (item.Attributes["src"] ?? item.Attributes["data-src"]).Value.GetTotalUrl(rootSpider.HostUrl)).ToList();

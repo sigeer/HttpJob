@@ -199,7 +199,7 @@ namespace SpiderTool
         {
             if (!string.IsNullOrEmpty(DocumentTitle) && !SpiderUtility.InvalidFolderSymbol.Any(x => DocumentTitle.Contains(x)))
                 return DocumentTitle;
-            return $"task_{TaskId}";
+            return $"AutoGenerate";
         }
     }
 }
