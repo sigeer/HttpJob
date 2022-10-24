@@ -90,6 +90,7 @@ namespace SpiderTool
         public void CallCancelTask(string logStr)
         {
             OnTaskCanceled?.Invoke(this, logStr);
+            CallLog(logStr);
         }
 
         public void MountChildTaskEvent(SpiderWorker childTask)
@@ -180,8 +181,7 @@ namespace SpiderTool
         {
             if (cancellationToken.IsCancellationRequested)
             {
-                OnTaskCanceled?.Invoke(this, "MoveToNextPage");
-                OnLog?.Invoke(this, $"task {TaskId} canceled | from method MoveToNextPage ");
+                CallCancelTask($"task {TaskId} canceled | from method MoveToNextPage ");
                 return;
             }
             if (Spider.NextPageTemplate == null || string.IsNullOrEmpty(Spider.NextPageTemplate.TemplateStr))
@@ -197,8 +197,8 @@ namespace SpiderTool
 
         private string GenarteDirName()
         {
-            if (!string.IsNullOrEmpty(DocumentTitle) && !SpiderUtility.InvalidFolderSymbol.Any(x => DocumentTitle.Contains(x)))
-                return DocumentTitle;
+            if (!string.IsNullOrEmpty(DocumentTitle))
+                return DocumentTitle.RenameFolder();
             return $"AutoGenerate";
         }
     }

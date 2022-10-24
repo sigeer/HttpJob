@@ -13,11 +13,18 @@ namespace SpiderTool
 {
     public static class SpiderUtility
     {
-        public static readonly char[] InvalidFolderSymbol = new char[] { '\\', '/', '|', ':', '*', '^', '<', '>', '\'' };
+        public static readonly char[] InvalidFolderSymbol = new char[] { '\\', '/', '|', ':', '*', '^', '<', '>', '?' };
         public static string RenameFolder(this string str)
         {
-            var disbaledSymbol = new char[] { '\\', '/', '|', ':', '?', '^', '<', '>', '"', '*' };
-            return new string(str.ToArray().Where(x => !InvalidFolderSymbol.Contains(x)).ToArray());
+            StringBuilder sb = new StringBuilder();
+            foreach (var c in str)
+            {
+                if (InvalidFolderSymbol.Contains(c))
+                    sb.Append('_');
+                else
+                    sb.Append(c);
+            }
+            return sb.ToString();
         }
         public static string GetHostUrl(this Uri uri)
         {

@@ -17,7 +17,6 @@ namespace SpiderTool
         {
             if (cancellationToken.IsCancellationRequested)
             {
-                rootSpider.CallLog($"task {rootSpider.TaskId} canceled | from method ProcessContentAsync ");
                 rootSpider.CallCancelTask("ProcessContentAsync");
                 return true;
             }
