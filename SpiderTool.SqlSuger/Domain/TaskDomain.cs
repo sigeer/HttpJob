@@ -1,4 +1,5 @@
-﻿using SpiderTool.DataBase;
+﻿using SpiderTool.Data.Constants;
+using SpiderTool.DataBase;
 using SpiderTool.Dto.Tasks;
 using SpiderTool.IDomain;
 using SqlSugar;
@@ -38,7 +39,7 @@ namespace SpiderTool.SqlSugar.Domain
 
         public List<TaskListItemViewModel> GetTaskList()
         {
-            return _dbContext.Queryable<DB_Task>().Where(x => x.Status != (int)TaskType.Canceled).OrderByDescending(x => x.CreateTime).Take(10).Select(x => new TaskListItemViewModel()
+            return _dbContext.Queryable<DB_Task>().Where(x => x.Status != (int)TaskType.Canceled).OrderByDescending(x => x.CreateTime).Take(GlobalVariable.TaskListMaxCount).Select(x => new TaskListItemViewModel()
             {
                 Id = x.Id,
                 Status = x.Status,
@@ -99,7 +100,7 @@ namespace SpiderTool.SqlSugar.Domain
 
         public async Task<List<TaskListItemViewModel>> GetTaskListAsync()
         {
-            return await _dbContext.Queryable<DB_Task>().Where(x => x.Status != (int)TaskType.Canceled).OrderByDescending(x => x.CreateTime).Take(10).Select(x => new TaskListItemViewModel()
+            return await _dbContext.Queryable<DB_Task>().Where(x => x.Status != (int)TaskType.Canceled).OrderByDescending(x => x.CreateTime).Take(GlobalVariable.TaskListMaxCount).Select(x => new TaskListItemViewModel()
             {
                 Id = x.Id,
                 Status = x.Status,

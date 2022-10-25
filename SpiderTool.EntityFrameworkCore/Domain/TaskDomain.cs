@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using SpiderTool.Data.Constants;
 using SpiderTool.DataBase;
 using SpiderTool.Dto.Tasks;
 using SpiderTool.EntityFrameworkCore.ContextModel;
@@ -45,7 +46,7 @@ namespace SpiderTool.EntityFrameworkCore.Domain
 
         public List<TaskListItemViewModel> GetTaskList()
         {
-            return _dbContext.Tasks.Where(x => x.Status != (int)TaskType.Canceled).OrderByDescending(x => x.CreateTime).Take(10).Select(x => new TaskListItemViewModel()
+            return _dbContext.Tasks.Where(x => x.Status != (int)TaskType.Canceled).OrderByDescending(x => x.CreateTime).Take(GlobalVariable.TaskListMaxCount).Select(x => new TaskListItemViewModel()
             {
                 Id = x.Id,
                 Status = x.Status,
@@ -106,7 +107,7 @@ namespace SpiderTool.EntityFrameworkCore.Domain
 
         public async Task<List<TaskListItemViewModel>> GetTaskListAsync()
         {
-            return await _dbContext.Tasks.Where(x => x.Status != (int)TaskType.Canceled).OrderByDescending(x => x.CreateTime).Take(10).Select(x => new TaskListItemViewModel()
+            return await _dbContext.Tasks.Where(x => x.Status != (int)TaskType.Canceled).OrderByDescending(x => x.CreateTime).Take(GlobalVariable.TaskListMaxCount).Select(x => new TaskListItemViewModel()
             {
                 Id = x.Id,
                 Status = x.Status,
