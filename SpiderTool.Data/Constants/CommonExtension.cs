@@ -14,4 +14,9 @@ namespace SpiderTool.Constants
             return type.Name;
         }
     }
+
+    public class Constants
+    {
+        public const string DBName = "spider";
+    }
 }

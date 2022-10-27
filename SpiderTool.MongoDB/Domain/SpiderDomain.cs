@@ -16,7 +16,7 @@ namespace SpiderTool.MongoDB.Domain
 
         public SpiderDomain(IMongoClient client, IMapper mapper)
         {
-            _db = client.GetDatabase("spider");
+            _db = client.GetDatabase(Constants.Constants.DBName);
             _mapper = mapper;
             _guidGenerator = Snowflake.GetInstance(1);
 

@@ -14,7 +14,7 @@ namespace SpiderTool.MongoDB.Domain
 
         public TemplateDomain(IMongoClient client, IMapper mapper)
         {
-            _db = client.GetDatabase("spider");
+            _db = client.GetDatabase(Constants.Constants.DBName);
             _mapper = mapper;
         }
 
