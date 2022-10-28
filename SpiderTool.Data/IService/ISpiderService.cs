@@ -31,10 +31,9 @@ namespace SpiderTool.IService
         void SetTaskStatus(int taskId, int taskStatus);
         Task SetTaskStatusAsync(int taskId, int taskStatus);
 
-
+        void SetLinkedSpider(SpiderDetailViewModel detail);
         SpiderDetailViewModel? GetSpider(int id);
         Task<SpiderDetailViewModel?> GetSpiderAsync(int id);
-        void SetLinkedSpider(SpiderDetailViewModel detail);
     }
     public interface ISpiderService : ISpiderBaseService
     {

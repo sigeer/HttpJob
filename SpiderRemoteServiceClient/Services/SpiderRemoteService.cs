@@ -189,5 +189,10 @@ namespace SpiderRemoteServiceClient.Services
             });
             return StatusMessage.Success;
         }
+
+        public void SetLinkedSpider(SpiderDetailViewModel detail)
+        {
+            _client.SetLinkedSpider(Mapper.Map<SpiderProtoDetailViewModel>(detail));
+        }
     }
 }

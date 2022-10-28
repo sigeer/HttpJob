@@ -19,6 +19,7 @@ service SpiderWorkerProtoService {
   rpc SubmitSpider(SpiderProtoEditDto) returns(StringModel);
   rpc DeleteSpider(SpiderProtoEditDto) returns(StringModel);
   rpc GetSpider(IntModel) returns(SpiderProtoDetailViewModel);
+  rpc SetLinkedSpider(SpiderProtoDetailViewModel) returns (google.protobuf.Empty);
   rpc GetSpiderList(google.protobuf.Empty) returns(SpiderListResult);
 
   rpc SubmitTemplateConfig(TemplateProtoDto) returns(StringModel);
