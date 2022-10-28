@@ -5,7 +5,7 @@ using SpiderTool.IService;
 
 namespace SpiderTool.Service
 {
-    public class SpiderBaseService
+    public class SpiderBaseService : ISpiderBaseService
     {
         readonly ISpiderDomain _spiderDomain;
         readonly ITemplateDomain _templateDomain;
@@ -136,6 +136,11 @@ namespace SpiderTool.Service
         public async Task<List<TaskSimpleViewModel>> GetTaskHistoryListAsync()
         {
             return await _taskDomain.GetTaskHistoryListAsync();
+        }
+
+        public void SetLinkedSpider(SpiderDetailViewModel detail)
+        {
+            _spiderDomain.SetLinkedSpider(detail);
         }
     }
 }

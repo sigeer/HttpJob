@@ -142,6 +142,21 @@ namespace SpiderTool.SqlSugar.Domain
             return data;
         }
 
+        public void SetLinkedSpider(SpiderDetailViewModel detail)
+        {
+            if (detail.TemplateList != null)
+            {
+                foreach (var template in detail.TemplateList)
+                {
+                    if (template.LinkedSpiderId != null)
+                        template.LinkedSpiderDetail = GetSpiderDto(template.LinkedSpiderId.Value);
+
+                    if (template.LinkedSpiderDetail != null)
+                        SetLinkedSpider(template.LinkedSpiderDetail);
+                }
+            }
+        }
+
         public List<SpiderListItemViewModel> GetSpiderDtoList()
         {
             return _dbContext.Queryable<DB_Spider>().Select(x => new SpiderListItemViewModel
@@ -164,6 +179,10 @@ namespace SpiderTool.SqlSugar.Domain
         {
             if (!model.FormValid())
                 return StatusMessage.FormInvalid;
+
+            var selectedTemplates = _dbContext.Queryable<DB_Template>().Where(x => model.Templates.Contains(x.Id) && x.LinkedSpiderId != null).Select(x => x.LinkedSpiderId).ToList();
+            if (selectedTemplates.Contains(model.Id))
+                return "可能出现递归调用";
 
             _dbContext.Ado.BeginTran();
             var dbModel = _dbContext.Queryable<DB_Spider>().First(x => x.Id == model.Id);
@@ -198,6 +217,10 @@ namespace SpiderTool.SqlSugar.Domain
         {
             if (!model.FormValid())
                 return StatusMessage.FormInvalid;
+
+            var selectedTemplates = await _dbContext.Queryable<DB_Template>().Where(x => model.Templates.Contains(x.Id) && x.LinkedSpiderId != null).Select(x => x.LinkedSpiderId).ToListAsync();
+            if (selectedTemplates.Contains(model.Id))
+                return "可能出现递归调用";
 
             _dbContext.Ado.BeginTran();
             var dbModel = await _dbContext.Queryable<DB_Spider>().FirstAsync(x => x.Id == model.Id);
