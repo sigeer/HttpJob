@@ -188,7 +188,7 @@ namespace SpiderTool
             }
         }
 
-        public async Task<string> LoadDocumentContent()
+        private async Task<string> LoadDocumentContent()
         {
             HttpResponseMessage res;
             var url = _currentUrl!.GetTotalUrl(HostUrl);
@@ -201,7 +201,7 @@ namespace SpiderTool
             return responseStream.DecodeData(res.Content.Headers.ContentType?.CharSet);
         }
 
-        public async Task ProcessUrl(string currentUrl, bool isRootUrl = true, CancellationToken cancellationToken = default)
+        private async Task ProcessUrl(string currentUrl, bool isRootUrl = true, CancellationToken cancellationToken = default)
         {
             _currentUrl = currentUrl;
 
