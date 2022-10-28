@@ -145,7 +145,7 @@ namespace SpiderWin
         {
             return new Task(() =>
             {
-                var worker = new SpiderWorker(spiderId, _coreService, url);
+                var worker = new SpiderWorker(spiderId, url, _coreService);
                 Stopwatch childSW = new Stopwatch();
 
                 worker.OnTaskInit += (obj, taskId) =>

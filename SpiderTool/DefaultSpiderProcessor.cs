@@ -7,12 +7,6 @@ namespace SpiderTool
 {
     public class DefaultSpiderProcessor : ISpiderProcessor
     {
-        readonly ISpiderService _service;
-
-        public DefaultSpiderProcessor(ISpiderService service)
-        {
-            _service = service;
-        }
 
         private bool IsCanceled(SpiderWorker rootSpider, CancellationToken cancellationToken = default)
         {
@@ -86,9 +80,12 @@ namespace SpiderTool
 
                         var url = resource.GetTotalUrl(rootSpider.HostUrl);
 
-                        var spider = new SpiderWorker(rule.LinkedSpiderId ?? 0, _service, url, this);
-                        rootSpider.MountChildTaskEvent(spider);
-                        await spider.Start(cancellationToken);
+                        if (rule.LinkedSpiderDetail != null)
+                        {
+                            var spider = new SpiderWorker(rule.LinkedSpiderDetail, url);
+                            rootSpider.MountChildTaskEvent(spider);
+                            await spider.Start(cancellationToken);
+                        }
                     }
                 }
             }

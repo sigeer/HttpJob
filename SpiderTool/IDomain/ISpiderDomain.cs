@@ -13,6 +13,7 @@ namespace SpiderTool.IDomain
         Task<List<SpiderListItemViewModel>> GetSpiderDtoListAsync();
         SpiderDetailViewModel? GetSpiderDto(int id);
         Task<SpiderDetailViewModel?> GetSpiderDtoAsync(int id);
+        void SetLinkedSpider(SpiderDetailViewModel detail);
         string Delete(SpiderEditDto model);
         Task<string> DeleteAsync(SpiderEditDto model);
         string Submit(SpiderEditDto model);

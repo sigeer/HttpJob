@@ -48,7 +48,7 @@ namespace SpiderTool
         public int TaskId => _taskId;
         public string HostUrl => _rootUrl.GetHostUrl();
 
-        readonly ISpiderService _service;
+        readonly ISpiderService? _service;
         readonly ISpiderProcessor _processor;
 
         /// <summary>
@@ -81,26 +81,35 @@ namespace SpiderTool
         public event EventHandler<string>? OnTaskCanceled;
 
 
-        public SpiderWorker(int spiderId, ISpiderService service, string url)
+        public SpiderWorker(int spiderId, string url, ISpiderService service, ISpiderProcessor? processor = null)
         {
+            if (service == null)
+                throw new Exception("ISpiderService不能为null");
+
+            _processor = processor ?? new DefaultSpiderProcessor();
+
             _service = service;
-            _processor = new DefaultSpiderProcessor(service);
             _rootUrl = url;
 
             _spider = _service.GetSpider(spiderId);
             if (Spider == null)
                 throw new Exception($"spider {spiderId} not existed");
+
+            _service.SetLinkedSpider(Spider);
         }
 
-        public SpiderWorker(int spiderId, ISpiderService service, string url, ISpiderProcessor processor)
+        public SpiderWorker(SpiderDetailViewModel spiderDetail, string url, ISpiderService? service = null, ISpiderProcessor? processor = null)
         {
+            _processor = processor ?? new DefaultSpiderProcessor();
+
             _service = service;
-            _processor = processor;
             _rootUrl = url;
 
-            _spider = _service.GetSpider(spiderId);
+            _spider = spiderDetail;
             if (Spider == null)
-                throw new Exception($"spider {spiderId} not existed");
+                throw new Exception($"spiderDetail not existed");
+
+            _service?.SetLinkedSpider(Spider);
         }
 
         public void CallLog(string logStr)
@@ -143,12 +152,12 @@ namespace SpiderTool
 
         public async Task Start(CancellationToken cancellationToken = default)
         {
-            _taskId = _service.AddTask(new TaskEditDto
+            _taskId = _service?.AddTask(new TaskEditDto
             {
                 RootUrl = _rootUrl,
                 SpiderId = Spider.Id,
                 Status = (int)TaskType.NotEffective
-            });
+            }) ?? -1;
             UpdateTaskStatus(TaskType.NotEffective);
 
             await ProcessUrl(_rootUrl, true, cancellationToken);
@@ -174,12 +183,12 @@ namespace SpiderTool
                     OnTaskStatusChanged?.Invoke(this, TaskId);
                     break;
                 case TaskType.Completed:
-                    _service.SetTaskStatus(TaskId, (int)TaskType.Completed);
+                    _service?.SetTaskStatus(TaskId, (int)TaskType.Completed);
                     OnTaskComplete?.Invoke(this, this);
                     OnTaskStatusChanged?.Invoke(this, TaskId);
                     break;
                 case TaskType.Canceled:
-                    _service.SetTaskStatus(TaskId, (int)TaskType.Canceled);
+                    _service?.SetTaskStatus(TaskId, (int)TaskType.Canceled);
                     OnTaskCanceled?.Invoke(this, logStr);
                     OnTaskStatusChanged?.Invoke(this, TaskId);
                     break;
@@ -210,7 +219,7 @@ namespace SpiderTool
 
             if (isRootUrl)
             {
-                _service.UpdateTask(new TaskEditDto
+                _service?.UpdateTask(new TaskEditDto
                 {
                     Id = TaskId,
                     Description = DocumentTitle,

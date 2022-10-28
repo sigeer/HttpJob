@@ -40,6 +40,7 @@ namespace SpiderTool.Dto.Spider
         /// type == 跳转链接时 为必填，仅在作为子爬虫时使用
         /// </summary>
         public int? LinkedSpiderId { get; set; }
+        public SpiderDetailViewModel? LinkedSpiderDetail { get; set; }
         public List<ReplacementRuleDto> ReplacementRules { get; set; } = new List<ReplacementRuleDto>();
 
         public TemplateEditDto ToEditModel()

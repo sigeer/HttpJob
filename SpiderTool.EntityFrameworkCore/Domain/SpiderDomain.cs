@@ -39,6 +39,20 @@ namespace SpiderTool.EntityFrameworkCore.Domain
             await _dbContext.SaveChangesAsync();
             return StatusMessage.Success;
         }
+        public void SetLinkedSpider(SpiderDetailViewModel detail)
+        {
+            if (detail.TemplateList != null)
+            {
+                foreach (var template in detail.TemplateList)
+                {
+                    if (template.LinkedSpiderId != null)
+                        template.LinkedSpiderDetail = GetSpiderDto(template.LinkedSpiderId.Value);
+
+                    if (template.LinkedSpiderDetail != null)
+                        SetLinkedSpider(template.LinkedSpiderDetail);
+                }
+            }
+        }
 
         public SpiderDetailViewModel? GetSpiderDto(int id)
         {
@@ -121,6 +135,7 @@ namespace SpiderTool.EntityFrameworkCore.Domain
                     Name = y.TemplateInfo.Name,
                     TemplateStr = y.TemplateInfo.TemplateStr,
                     Type = y.TemplateInfo.Type,
+                    LinkedSpiderId = y.TemplateInfo.LinkedSpiderId
                 }).ToList(),
                 NextPageTemplate = x.nextPage == null ? null : new TemplateDetailViewModel
                 {
@@ -155,6 +170,10 @@ namespace SpiderTool.EntityFrameworkCore.Domain
             if (!model.FormValid())
                 return StatusMessage.FormInvalid;
 
+            var selectedTemplates = _dbContext.Templates.Where(x => model.Templates.Contains(x.Id) && x.LinkedSpiderId != null).Select(x => x.LinkedSpiderId).ToList();
+            if (selectedTemplates.Contains(model.Id))
+                return "可能出现递归调用";
+
             using var dbTrans = _dbContext.Database.BeginTransaction();
             var dbModel = _dbContext.Spiders.FirstOrDefault(x => x.Id == model.Id);
             if (dbModel == null)
@@ -187,6 +206,10 @@ namespace SpiderTool.EntityFrameworkCore.Domain
         {
             if (!model.FormValid())
                 return StatusMessage.FormInvalid;
+
+            var selectedTemplates = await _dbContext.Templates.Where(x => model.Templates.Contains(x.Id) && x.LinkedSpiderId != null).Select(x => x.LinkedSpiderId).ToListAsync();
+            if (selectedTemplates.Contains(model.Id))
+                return "可能出现递归调用";
 
             using var dbTrans = await _dbContext.Database.BeginTransactionAsync();
             var dbModel = await _dbContext.Spiders.FirstOrDefaultAsync(x => x.Id == model.Id);

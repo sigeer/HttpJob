@@ -3,9 +3,8 @@ using SpiderTool.Dto.Tasks;
 
 namespace SpiderTool.IService
 {
-    public interface ISpiderService
+    public interface ISpiderBaseService
     {
-        bool CanConnect();
         List<TaskSimpleViewModel> GetTaskHistoryList();
         Task<List<TaskSimpleViewModel>> GetTaskHistoryListAsync();
 
@@ -35,5 +34,11 @@ namespace SpiderTool.IService
 
         SpiderDetailViewModel? GetSpider(int id);
         Task<SpiderDetailViewModel?> GetSpiderAsync(int id);
+        void SetLinkedSpider(SpiderDetailViewModel detail);
+    }
+    public interface ISpiderService : ISpiderBaseService
+    {
+        bool CanConnect();
+
     }
 }

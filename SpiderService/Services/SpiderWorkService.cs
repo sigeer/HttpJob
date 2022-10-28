@@ -21,7 +21,7 @@ namespace SpiderService.Services
 
         public override async Task<StringModel> Crawl(RequestModel request, ServerCallContext context)
         {
-            var worker = new SpiderWorker(request.SpiderId, _service, request.Url);
+            var worker = new SpiderWorker(request.SpiderId, request.Url, _service);
             await worker.Start(context.CancellationToken);
             return new StringModel { Data = "" };
         }
