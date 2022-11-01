@@ -69,7 +69,7 @@ namespace SpiderWin.Modals
 
         private void btnReplaceRule_Click(object sender, EventArgs e)
         {
-            var txtReplaceRuleForm = new TxtReplaceRuleForm(_service, edittingModel.ReplacementRules);
+            var txtReplaceRuleForm = new TxtReplaceRuleManageForm(edittingModel.ReplacementRules);
             txtReplaceRuleForm.OnOk += (sender, evt) =>
             {
                 edittingModel.ReplacementRules = evt;

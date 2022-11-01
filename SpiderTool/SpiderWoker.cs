@@ -11,7 +11,7 @@ namespace SpiderTool
 {
     public class SpiderWorker
     {
-        private SpiderDetailViewModel? _spider;
+        private readonly SpiderDetailViewModel? _spider;
         protected SpiderDetailViewModel Spider
         {
             get
@@ -39,11 +39,11 @@ namespace SpiderTool
                 return _currentDir;
             }
         }
-        private HtmlDocument _currentDoc = new HtmlDocument();
+        private readonly HtmlDocument _currentDoc = new HtmlDocument();
         /// <summary>
         /// 在同一个爬虫任务内始终一致
         /// </summary>
-        private string _rootUrl = string.Empty;
+        private readonly string _rootUrl = string.Empty;
         private int _taskId;
         public int TaskId => _taskId;
         public string HostUrl => _rootUrl.GetHostUrl();
@@ -83,12 +83,8 @@ namespace SpiderTool
 
         public SpiderWorker(int spiderId, string url, ISpiderService service, ISpiderProcessor? processor = null)
         {
-            if (service == null)
-                throw new Exception("ISpiderService不能为null");
-
+            _service = service ?? throw new Exception("ISpiderService不能为null");
             _processor = processor ?? new DefaultSpiderProcessor();
-
-            _service = service;
             _rootUrl = url;
 
             _spider = _service.GetSpider(spiderId);
@@ -100,9 +96,8 @@ namespace SpiderTool
 
         public SpiderWorker(SpiderDetailViewModel spiderDetail, string url, ISpiderService? service = null, ISpiderProcessor? processor = null)
         {
-            _processor = processor ?? new DefaultSpiderProcessor();
-
             _service = service;
+            _processor = processor ?? new DefaultSpiderProcessor();
             _rootUrl = url;
 
             _spider = spiderDetail;
