@@ -15,14 +15,14 @@ namespace SpiderWin
     public partial class Form1 : Form
     {
         ISpiderService _coreService;
-        ISpiderService localServiceBackup;
+        readonly ISpiderService localServiceBackup;
 
         List<SpiderListItemViewModel> _spiderList = new List<SpiderListItemViewModel>();
         List<TaskSimpleViewModel> _taskHistoryList = new List<TaskSimpleViewModel>();
 
-        StringBuilder logSb = new StringBuilder();
+        readonly StringBuilder logSb = new StringBuilder();
 
-        CancellationTokenSource tokenSource = new CancellationTokenSource();
+        readonly CancellationTokenSource tokenSource = new CancellationTokenSource();
         public Form1(ISpiderService coreService)
         {
             _coreService = coreService;
@@ -104,8 +104,10 @@ namespace SpiderWin
                     {
                         var row = new DataGridViewRow();
 
-                        var rowStyle = new DataGridViewCellStyle();
-                        rowStyle.BackColor = ConstantsVariable.TaskColor[(TaskType)x.Status];
+                        var rowStyle = new DataGridViewCellStyle
+                        {
+                            BackColor = ConstantsVariable.TaskColor[(TaskType)x.Status]
+                        };
 
                         row.Cells.Add(new DataGridViewTextBoxCell() { Value = x.StatusName, Style = rowStyle });
                         row.Cells.Add(new DataGridViewTextBoxCell() { Value = x.Id, ValueType = typeof(int), Style = rowStyle });
@@ -278,7 +280,7 @@ namespace SpiderWin
         {
             BeginInvoke(() =>
             {
-                var msg = $"[{DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")}] >>{type}：{str} \r\n";
+                var msg = $"[{DateTime.Now:yyyy-MM-dd HH:mm:ss}] >>{type}：{str} \r\n";
                 logSb.Append(msg);
                 ResultTxtBox.AppendText(msg);
                 ResultTxtBox.Focus();

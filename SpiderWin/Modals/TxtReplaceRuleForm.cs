@@ -13,10 +13,8 @@ namespace SpiderWin.Modals
 
         public event EventHandler<List<ReplacementRuleDto>>? OnOk;
 
-        readonly ISpiderService _service;
-        public TxtReplaceRuleForm(ISpiderService service, List<ReplacementRuleDto>? data = null)
+        public TxtReplaceRuleForm(List<ReplacementRuleDto>? data = null)
         {
-            _service = service;
             edittingModel = data?.Clone() ?? new List<ReplacementRuleDto>();
 
             InitializeComponent();
