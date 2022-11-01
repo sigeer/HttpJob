@@ -36,21 +36,6 @@ namespace SpiderTool.MongoDB.Domain
             return StatusMessage.Success;
         }
 
-        public void SetLinkedSpider(SpiderDetailViewModel detail)
-        {
-            if (detail.TemplateList != null)
-            {
-                foreach (var template in detail.TemplateList)
-                {
-                    if (template.LinkedSpiderId != null)
-                        template.LinkedSpiderDetail = GetSpiderDto(template.LinkedSpiderId.Value);
-
-                    if (template.LinkedSpiderDetail != null)
-                        SetLinkedSpider(template.LinkedSpiderDetail);
-                }
-            }
-        }
-
         public SpiderDetailViewModel? GetSpiderDto(int id)
         {
             var table = _db.GetCollection<DB_Spider>(nameof(DB_Spider));
