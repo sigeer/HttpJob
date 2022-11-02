@@ -1,6 +1,7 @@
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using MongoDB.Driver;
+using SpiderTool;
 using SpiderTool.IDomain;
 using SpiderTool.Injection;
 using SpiderTool.IService;
@@ -8,6 +9,7 @@ using SpiderTool.MongoDB;
 using SpiderTool.SqlSugar;
 using SqlSugar;
 using System.Diagnostics;
+using System.Reflection;
 using System.Runtime.InteropServices;
 
 namespace SpiderWin
@@ -49,6 +51,14 @@ namespace SpiderWin
             services.AddSpiderService(() => new MongoClient(configuration.GetConnectionString("MongoDB")), ServiceLifetime.Singleton);
 
             var serviceProvider = services.BuildServiceProvider();
+            if (File.Exists("scripts.dll"))
+            {
+                var processorAssembly = Assembly.LoadFile("scripts.dll");
+                var newlyService = processorAssembly.GetTypes().FirstOrDefault(x => x.GetInterfaces().Any(y => y.BaseType == typeof(ISpiderProcessor)));
+                if (newlyService != null)
+                    services.AddSingleton<ISpiderProcessor>(Activator.CreateInstance(newlyService) as ISpiderProcessor);
+            }
+
             var remoteService = serviceProvider.GetService<ISpiderService>()!;
             if (!remoteService.CanConnect())
             {
