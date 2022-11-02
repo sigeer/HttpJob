@@ -35,23 +35,6 @@ namespace SpiderTool.Dapper.Domain
             dbTrans.Commit();
             return StatusMessage.Success;
         }
-
-        public void SetLinkedSpider(SpiderDetailViewModel detail)
-        {
-            if (detail.TemplateList != null)
-            {
-                foreach (var template in detail.TemplateList)
-                {
-                    if (template.LinkedSpiderId != null)
-                        template.LinkedSpiderDetail = GetSpiderDto(template.LinkedSpiderId.Value);
-
-                    if (template.LinkedSpiderDetail != null)
-                        SetLinkedSpider(template.LinkedSpiderDetail);
-                }
-            }
-        }
-
-
         public SpiderDetailViewModel? GetSpiderDto(int id)
         {
             var sql = $"select a.Id, a.Description, a.Name, a.Headers, a.Method, a.NextPageTemplateId, a.PostObjStr, " +

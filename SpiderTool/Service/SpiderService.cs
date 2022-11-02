@@ -140,7 +140,22 @@ namespace SpiderTool.Service
 
         public void SetLinkedSpider(SpiderDetailViewModel detail)
         {
-            _spiderDomain.SetLinkedSpider(detail);
+            SetLinkedSpiderCore(detail);
+        }
+
+        private void SetLinkedSpiderCore(SpiderDetailViewModel detail)
+        {
+            if (detail.TemplateList != null)
+            {
+                foreach (var template in detail.TemplateList)
+                {
+                    if (template.LinkedSpiderId != null)
+                        template.LinkedSpiderDetail = _spiderDomain.GetSpiderDto(template.LinkedSpiderId.Value);
+
+                    if (template.LinkedSpiderDetail != null)
+                        SetLinkedSpiderCore(template.LinkedSpiderDetail);
+                }
+            }
         }
     }
 }

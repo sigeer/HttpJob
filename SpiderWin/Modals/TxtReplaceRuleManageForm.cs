@@ -1,5 +1,4 @@
 ﻿using SpiderTool.Dto.Spider;
-using SpiderTool.IService;
 
 namespace SpiderWin.Modals
 {

@@ -141,22 +141,6 @@ namespace SpiderTool.SqlSugar.Domain
             data.TemplateList = templateList;
             return data;
         }
-
-        public void SetLinkedSpider(SpiderDetailViewModel detail)
-        {
-            if (detail.TemplateList != null)
-            {
-                foreach (var template in detail.TemplateList)
-                {
-                    if (template.LinkedSpiderId != null)
-                        template.LinkedSpiderDetail = GetSpiderDto(template.LinkedSpiderId.Value);
-
-                    if (template.LinkedSpiderDetail != null)
-                        SetLinkedSpider(template.LinkedSpiderDetail);
-                }
-            }
-        }
-
         public List<SpiderListItemViewModel> GetSpiderDtoList()
         {
             return _dbContext.Queryable<DB_Spider>().Select(x => new SpiderListItemViewModel
