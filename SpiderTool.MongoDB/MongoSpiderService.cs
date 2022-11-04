@@ -18,11 +18,11 @@ namespace SpiderTool.MongoDB
         {
             try
             {
-                _db.ListDatabases(_tokenSource.Token);
                 Task.Delay(3000).ContinueWith((d) =>
                 {
                     _tokenSource.Cancel();
                 });
+                _db.ListDatabases(_tokenSource.Token);
                 return true;
             }
             catch (Exception ex)
