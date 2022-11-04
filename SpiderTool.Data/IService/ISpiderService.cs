@@ -38,6 +38,7 @@ namespace SpiderTool.IService
     public interface ISpiderService : ISpiderBaseService
     {
         bool CanConnect();
+        Task<bool> CanConnectAsync();
 
     }
 }

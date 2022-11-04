@@ -30,5 +30,22 @@ namespace SpiderTool.MongoDB
                 return false;
             }
         }
+
+        public async Task<bool> CanConnectAsync()
+        {
+            try
+            {
+                await Task.Delay(3000).ContinueWith((d) =>
+                {
+                    _tokenSource.Cancel();
+                });
+                await _db.ListDatabasesAsync(_tokenSource.Token);
+                return true;
+            }
+            catch (Exception ex)
+            {
+                return false;
+            }
+        }
     }
 }

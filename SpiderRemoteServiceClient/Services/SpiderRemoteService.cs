@@ -12,6 +12,7 @@ namespace SpiderRemoteServiceClient.Services
         readonly IMapper Mapper;
 
         public bool CanConnect() => PingSync();
+        public async Task<bool> CanConnectAsync() => await Ping();
 
         public SpiderRemoteService(SpiderWorkerProtoService.SpiderWorkerProtoServiceClient client, IMapper mapper)
         {
