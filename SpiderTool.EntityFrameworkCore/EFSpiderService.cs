@@ -18,5 +18,10 @@ namespace SpiderTool.EntityFrameworkCore
         {
             return _dbContext.Database.CanConnect();
         }
+
+        public async Task<bool> CanConnectAsync()
+        {
+            return await _dbContext.Database.CanConnectAsync();
+        }
     }
 }

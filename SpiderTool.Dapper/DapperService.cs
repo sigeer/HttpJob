@@ -29,5 +29,10 @@ namespace SpiderTool.Dapper
                 _dbConn.Close();
             }
         }
+
+        public async Task<bool> CanConnectAsync()
+        {
+            return await Task.Run(() => CanConnect());
+        }
     }
 }

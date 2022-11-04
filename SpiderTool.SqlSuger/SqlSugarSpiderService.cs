@@ -30,5 +30,10 @@ namespace SpiderTool.SqlSugar
                 _dbContext.Ado.Close();
             }
         }
+
+        public Task<bool> CanConnectAsync()
+        {
+            throw new NotImplementedException();
+        }
     }
 }
