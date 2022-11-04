@@ -78,6 +78,7 @@
             this.Controls.Add(this.BtnSave);
             this.Controls.Add(this.DataGridViewMain);
             this.Name = "TxtReplaceRuleManageForm";
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "TxtReplaceRuleManageForm";
             this.Load += new System.EventHandler(this.TxtReplaceRuleManageForm_Load);
             ((System.ComponentModel.ISupportInitialize)(this.DataGridViewMain)).EndInit();
