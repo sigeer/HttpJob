@@ -41,6 +41,18 @@ namespace SpiderWin
             form.ShowDialog();
         }
 
+        private void InitDataGrid(DataGridView grid)
+        {
+            grid.ReadOnly = true;
+            grid.Columns.Add(nameof(TaskListItemViewModel.Status), "状态");
+            grid.Columns.Add(nameof(TaskListItemViewModel.Id), nameof(TaskListItemViewModel.Id));
+            grid.Columns.Add(nameof(TaskListItemViewModel.Description), "描述");
+            grid.Columns.Add(nameof(TaskListItemViewModel.RootUrl), nameof(TaskListItemViewModel.RootUrl));
+            grid.Columns.Add(nameof(TaskListItemViewModel.SpiderId), nameof(TaskListItemViewModel.SpiderId));
+            grid.Columns.Add(nameof(TaskListItemViewModel.CreateTime), "创建时间");
+            grid.Columns.Add(nameof(TaskListItemViewModel.CompleteTime), "完成时间");
+        }
+
         private void PreLoadForm()
         {
             ComboxSpider.DisplayMember = nameof(SpiderListItemViewModel.Name);
@@ -50,14 +62,8 @@ namespace SpiderWin
             ComboxUrl.DisplayMember = nameof(TaskListItemViewModel.RootUrl);
             ComboxUrl.ValueMember = nameof(TaskListItemViewModel.RootUrl);
 
-            DataGridTasks.ReadOnly = true;
-            DataGridTasks.Columns.Add(nameof(TaskListItemViewModel.Status), "状态");
-            DataGridTasks.Columns.Add(nameof(TaskListItemViewModel.Id), nameof(TaskListItemViewModel.Id));
-            DataGridTasks.Columns.Add(nameof(TaskListItemViewModel.Description), "描述");
-            DataGridTasks.Columns.Add(nameof(TaskListItemViewModel.RootUrl), nameof(TaskListItemViewModel.RootUrl));
-            DataGridTasks.Columns.Add(nameof(TaskListItemViewModel.SpiderId), nameof(TaskListItemViewModel.SpiderId));
-            DataGridTasks.Columns.Add(nameof(TaskListItemViewModel.CreateTime), "创建时间");
-            DataGridTasks.Columns.Add(nameof(TaskListItemViewModel.CompleteTime), "完成时间");
+            InitDataGrid(DataGrid_InProgressTasks);
+            InitDataGrid(DataGrid_OtherTasks);
         }
 
         private void LoadForm()
@@ -92,6 +98,31 @@ namespace SpiderWin
             ComboxUrl.DataSource = _taskHistoryList;
         }
 
+        private void LoadDataGridData(List<TaskListItemViewModel> list, DataGridView grid)
+        {
+            grid.Rows.Clear();
+            list.Where(x => x.Status == (int)TaskType.InProgress).ToList().ForEach(x =>
+            {
+                var row = new DataGridViewRow();
+
+                var rowStyle = new DataGridViewCellStyle
+                {
+                    BackColor = ConstantsVariable.TaskColor[(TaskType)x.Status]
+                };
+
+                row.Cells.Add(new DataGridViewTextBoxCell() { Value = x.StatusName, Style = rowStyle });
+                row.Cells.Add(new DataGridViewTextBoxCell() { Value = x.Id, ValueType = typeof(int), Style = rowStyle });
+                row.Cells.Add(new DataGridViewTextBoxCell() { Value = x.Description, Style = rowStyle });
+                row.Cells.Add(new DataGridViewTextBoxCell() { Value = x.RootUrl, Style = rowStyle });
+                row.Cells.Add(new DataGridViewTextBoxCell() { Value = x.SpiderId, ValueType = typeof(int), Style = rowStyle });
+                row.Cells.Add(new DataGridViewTextBoxCell() { Value = x.CreateTime.ToString("yyyy-MM-dd HH:mm:ss"), Style = rowStyle });
+
+                row.Cells.Add(new DataGridViewTextBoxCell() { Value = x.CompleteTime == null ? "-" : x.CompleteTime.Value.ToString("yyyy-MM-dd HH:mm:ss"), Style = rowStyle });
+
+                grid.Rows.Add(row);
+            });
+        }
+
         private void LoadTaskList()
         {
             Task.Run(async () =>
@@ -99,27 +130,8 @@ namespace SpiderWin
                 var taskList = await _coreService.GetTaskListAsync();
                 BeginInvoke(() =>
                 {
-                    DataGridTasks.Rows.Clear();
-                    taskList.ForEach(x =>
-                    {
-                        var row = new DataGridViewRow();
-
-                        var rowStyle = new DataGridViewCellStyle
-                        {
-                            BackColor = ConstantsVariable.TaskColor[(TaskType)x.Status]
-                        };
-
-                        row.Cells.Add(new DataGridViewTextBoxCell() { Value = x.StatusName, Style = rowStyle });
-                        row.Cells.Add(new DataGridViewTextBoxCell() { Value = x.Id, ValueType = typeof(int), Style = rowStyle });
-                        row.Cells.Add(new DataGridViewTextBoxCell() { Value = x.Description, Style = rowStyle });
-                        row.Cells.Add(new DataGridViewTextBoxCell() { Value = x.RootUrl, Style = rowStyle });
-                        row.Cells.Add(new DataGridViewTextBoxCell() { Value = x.SpiderId, ValueType = typeof(int), Style = rowStyle });
-                        row.Cells.Add(new DataGridViewTextBoxCell() { Value = x.CreateTime.ToString("yyyy-MM-dd HH:mm:ss"), Style = rowStyle });
-
-                        row.Cells.Add(new DataGridViewTextBoxCell() { Value = x.CompleteTime == null ? "-" : x.CompleteTime.Value.ToString("yyyy-MM-dd HH:mm:ss"), Style = rowStyle });
-
-                        DataGridTasks.Rows.Add(row);
-                    });
+                    LoadDataGridData(taskList.Where(x => x.Status == (int)TaskType.InProgress).ToList(), DataGrid_InProgressTasks);
+                    LoadDataGridData(taskList.Where(x => x.Status != (int)TaskType.InProgress).ToList(), DataGrid_OtherTasks);
                 });
             });
         }
@@ -228,9 +240,9 @@ namespace SpiderWin
 
         private void DataGridTasks_CellDoubleClick(object sender, DataGridViewCellEventArgs e)
         {
-            if (e.RowIndex >= 0 && e.RowIndex < DataGridTasks.Rows.Count - 1)
+            if (e.RowIndex >= 0 && e.RowIndex < DataGrid_InProgressTasks.Rows.Count - 1)
             {
-                var selectedRow = DataGridTasks.Rows[e.RowIndex];
+                var selectedRow = DataGrid_InProgressTasks.Rows[e.RowIndex];
                 if (selectedRow != null)
                 {
                     ComboxUrl.SelectedValue = selectedRow.Cells[3].Value;
