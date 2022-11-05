@@ -130,8 +130,8 @@ namespace SpiderWin
                 var taskList = await _coreService.GetTaskListAsync();
                 BeginInvoke(() =>
                 {
-                    LoadDataGridData(taskList.Where(x => x.Status == (int)TaskType.InProgress).ToList(), DataGrid_InProgressTasks);
-                    LoadDataGridData(taskList.Where(x => x.Status != (int)TaskType.InProgress).ToList(), DataGrid_OtherTasks);
+                    LoadDataGridData(taskList.Where(x => x.Status == (int)TaskType.InProgress || x.Status == (int)TaskType.NotEffective).ToList(), DataGrid_InProgressTasks);
+                    LoadDataGridData(taskList.Where(x => x.Status == (int)TaskType.Completed || x.Status == (int)TaskType.Canceled).ToList(), DataGrid_OtherTasks);
                 });
             });
         }
@@ -240,9 +240,10 @@ namespace SpiderWin
 
         private void DataGridTasks_CellDoubleClick(object sender, DataGridViewCellEventArgs e)
         {
-            if (e.RowIndex >= 0 && e.RowIndex < DataGrid_InProgressTasks.Rows.Count - 1)
+            var rows = ((DataGridView)sender).Rows;
+            if (e.RowIndex >= 0 && e.RowIndex < rows.Count - 1)
             {
-                var selectedRow = DataGrid_InProgressTasks.Rows[e.RowIndex];
+                var selectedRow = rows[e.RowIndex];
                 if (selectedRow != null)
                 {
                     ComboxUrl.SelectedValue = selectedRow.Cells[3].Value;
@@ -302,6 +303,11 @@ namespace SpiderWin
         private void LinkClearLog_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
         {
             ResultTxtBox.Clear();
+        }
+
+        private void MenuItem_Dir_Click(object sender, EventArgs e)
+        {
+            Process.Start("explorer.exe", Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "wwwroot", "download"));
         }
     }
 }
