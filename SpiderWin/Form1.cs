@@ -101,7 +101,7 @@ namespace SpiderWin
         private void LoadDataGridData(List<TaskListItemViewModel> list, DataGridView grid)
         {
             grid.Rows.Clear();
-            list.Where(x => x.Status == (int)TaskType.InProgress).ToList().ForEach(x =>
+            list.ForEach(x =>
             {
                 var row = new DataGridViewRow();
 
