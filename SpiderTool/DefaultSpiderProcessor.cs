@@ -49,6 +49,9 @@ namespace SpiderTool
                 if (resource == null)
                     continue;
 
+                if (resource.StartsWith("javascript:"))
+                    continue;
+
                 var url = resource.GetTotalUrl(rootSpider.HostUrl);
 
                 if (rule.LinkedSpiderDetail != null)
