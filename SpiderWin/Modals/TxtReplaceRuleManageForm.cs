@@ -49,7 +49,9 @@ namespace SpiderWin.Modals
             for (int i = 0; i < DataGridViewMain.Rows.Count - 1; i++)
             {
                 var row = DataGridViewMain.Rows[i];
-                if (!row.IsNewRow)
+                var col1 = row.Cells[0].Value?.ToString();
+                var col2 = row.Cells[1].Value?.ToString();
+                if (string.IsNullOrEmpty(col1) && string.IsNullOrEmpty(col2))
                     continue;
                 data.Add(new ReplacementRuleDto
                 {
