@@ -141,7 +141,7 @@ namespace SpiderTool
         {
             var dirInfo = new DirectoryInfo(dir);
             if (!dirInfo.Exists)
-                throw new Exception("dir not exist");
+                return;
 
             var dirs = dirInfo.GetDirectories();
             foreach (var childDir in dirs)
