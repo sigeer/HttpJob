@@ -53,7 +53,7 @@ namespace SpiderTool
 
                 if (rule.LinkedSpiderDetail != null)
                 {
-                    var spider = new SpiderWorker(rule.LinkedSpiderDetail, url);
+                    var spider = new SpiderWorker(rule.LinkedSpiderDetail, url, rootSpider);
                     rootSpider.MountChildTaskEvent(spider);
                     await spider.Start(cancellationToken);
                 }

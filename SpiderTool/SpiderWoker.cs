@@ -54,15 +54,15 @@ namespace SpiderTool
         /// <summary>
         /// 初始化任务（插入数据，尚未执行）
         /// </summary>
-        public event EventHandler<int>? OnTaskInit;
+        public event EventHandler<SpiderWorker>? OnTaskInit;
         /// <summary>
         /// 状态变更事件（Init,Start,Complete）
         /// </summary>
-        public event EventHandler<int>? OnTaskStatusChanged;
+        public event EventHandler<SpiderWorker>? OnTaskStatusChanged;
         /// <summary>
         /// 任务开始 （发起请求并获取数据，未处理响应内容）
         /// </summary>
-        public event EventHandler<int>? OnTaskStart;
+        public event EventHandler<SpiderWorker>? OnTaskStart;
         /// <summary>
         /// 任务完成
         /// </summary>
@@ -78,7 +78,7 @@ namespace SpiderTool
         /// <summary>
         /// 任务取消
         /// </summary>
-        public event EventHandler<string>? OnTaskCanceled;
+        public event EventHandler<SpiderWorker>? OnTaskCanceled;
 
 
         public SpiderWorker(int spiderId, string url, ISpiderService service, ISpiderProcessor? processor = null)
@@ -94,6 +94,33 @@ namespace SpiderTool
             _service.SetLinkedSpider(Spider);
         }
 
+        /// <summary>
+        /// 生成子爬虫
+        /// </summary>
+        /// <param name="spiderDetail"></param>
+        /// <param name="url"></param>
+        /// <param name="rootSpider"></param>
+        /// <exception cref="Exception"></exception>
+        public SpiderWorker(SpiderDetailViewModel spiderDetail, string url, SpiderWorker rootSpider)
+        {
+            _service = rootSpider._service;
+            _processor = rootSpider._processor;
+            _rootUrl = url;
+
+            _spider = spiderDetail;
+            if (Spider == null)
+                throw new Exception($"spiderDetail not existed");
+
+            _service?.SetLinkedSpider(Spider);
+        }
+        /// <summary>
+        /// 临时爬虫
+        /// </summary>
+        /// <param name="spiderDetail"></param>
+        /// <param name="url"></param>
+        /// <param name="service"></param>
+        /// <param name="processor"></param>
+        /// <exception cref="Exception"></exception>
         public SpiderWorker(SpiderDetailViewModel spiderDetail, string url, ISpiderService? service = null, ISpiderProcessor? processor = null)
         {
             _service = service;
@@ -170,22 +197,24 @@ namespace SpiderTool
             switch (taskStatus)
             {
                 case TaskType.NotEffective:
-                    OnTaskInit?.Invoke(this, TaskId);
-                    OnTaskStatusChanged?.Invoke(this, TaskId);
+                    OnTaskInit?.Invoke(this, this);
+                    OnTaskStatusChanged?.Invoke(this, this);
                     break;
                 case TaskType.InProgress:
-                    OnTaskStart?.Invoke(this, TaskId);
-                    OnTaskStatusChanged?.Invoke(this, TaskId);
+                    OnTaskStart?.Invoke(this, this);
+                    OnTaskStatusChanged?.Invoke(this, this);
                     break;
                 case TaskType.Completed:
                     _service?.SetTaskStatus(TaskId, (int)TaskType.Completed);
                     OnTaskComplete?.Invoke(this, this);
-                    OnTaskStatusChanged?.Invoke(this, TaskId);
+                    OnTaskStatusChanged?.Invoke(this, this);
+                    OnLog?.Invoke(this, logStr);
                     break;
                 case TaskType.Canceled:
                     _service?.SetTaskStatus(TaskId, (int)TaskType.Canceled);
-                    OnTaskCanceled?.Invoke(this, logStr);
-                    OnTaskStatusChanged?.Invoke(this, TaskId);
+                    OnTaskCanceled?.Invoke(this, this);
+                    OnTaskStatusChanged?.Invoke(this, this);
+                    OnLog?.Invoke(this, logStr);
                     break;
                 default:
                     break;

@@ -30,7 +30,7 @@ namespace SpiderWin.Modals
             LoadForm();
         }
 
-        private async void LoadData()
+        private async Task LoadData()
         {
             await Task.Run(async () =>
             {
@@ -49,7 +49,7 @@ namespace SpiderWin.Modals
             comboSpider.ValueMember = nameof(SpiderListItemViewModel.Id);
         }
 
-        private void LoadForm()
+        private async void LoadForm()
         {
             txtName.Text = edittingModel.Name;
             txtXPath.Text = edittingModel.TemplateStr;
@@ -60,7 +60,7 @@ namespace SpiderWin.Modals
             else
                 HideSelectSpider();
 
-            LoadData();
+            await LoadData();
 
             if (edittingModel.LinkedSpiderId > 0)
                 comboSpider.SelectedValue = edittingModel.LinkedSpiderId;

@@ -162,25 +162,25 @@ namespace SpiderWin
                 var worker = new SpiderWorker(spiderId, url, _coreService);
                 Stopwatch childSW = new Stopwatch();
 
-                worker.OnTaskInit += (obj, taskId) =>
+                worker.OnTaskInit += (obj, spider) =>
                 {
                     childSW.Start();
-                    PrintLog($"任务{taskId}开始==========", string.Empty);
+                    PrintLog($"任务{spider.TaskId}开始==========", string.Empty);
                     LoadTaskHistory();
                 };
-                worker.OnTaskStart += (obj, taskId) =>
+                worker.OnTaskStart += (obj, spider) =>
                 {
-                    PrintLog($"任务{taskId}将保存到", $"\"file://{worker.CurrentDir}\"");
+                    PrintLog($"任务{spider.TaskId}将保存到", $"\"file://{spider.CurrentDir}\"");
                 };
-                worker.OnTaskComplete += (obj, task) =>
+                worker.OnTaskComplete += (obj, spider) =>
                 {
                     childSW.Stop();
 
                     var cost = $"共耗时：{childSW.Elapsed.TotalSeconds.ToFixed(2)}秒";
-                    mainModalStatusLabel.Text = $"任务{task.TaskId}结束  {cost}";
-                    PrintLog($"任务{task.TaskId}结束==========", $"{cost} \"file:///{task.CurrentDir}\"");
+                    mainModalStatusLabel.Text = $"任务{spider.TaskId}结束  {cost}";
+                    PrintLog($"任务{spider.TaskId}结束==========", $"{cost} \"file:///{spider.CurrentDir}\"");
                 };
-                worker.OnTaskStatusChanged += (obj, taskId) =>
+                worker.OnTaskStatusChanged += (obj, task) =>
                 {
                     LoadTaskList();
                 };
@@ -241,7 +241,7 @@ namespace SpiderWin
         private void DataGridTasks_CellDoubleClick(object sender, DataGridViewCellEventArgs e)
         {
             var rows = ((DataGridView)sender).Rows;
-            if (e.RowIndex >= 0 && e.RowIndex < rows.Count - 1)
+            if (e.RowIndex >= 0 && e.RowIndex < rows.Count)
             {
                 var selectedRow = rows[e.RowIndex];
                 if (selectedRow != null)
