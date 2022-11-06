@@ -34,7 +34,6 @@ namespace SpiderTool
                 if (string.IsNullOrEmpty(_currentDir))
                 {
                     _currentDir = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "wwwroot", "download", $"{TaskId}_{GenarteDirName()}");
-                    _currentDir.GetDirectory();
                 }
                 return _currentDir;
             }
