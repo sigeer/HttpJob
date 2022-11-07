@@ -1,3 +1,5 @@
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using SpiderTool;
 using SpiderTool.Dto.Spider;
 using SpiderTool.Dto.Tasks;
@@ -16,6 +18,7 @@ namespace SpiderWin
     {
         ISpiderService _coreService;
         readonly ISpiderService localServiceBackup;
+        readonly IServiceProvider _serviceProvider;
 
         List<SpiderListItemViewModel> _spiderList = new List<SpiderListItemViewModel>();
         List<TaskSimpleViewModel> _taskHistoryList = new List<TaskSimpleViewModel>();
@@ -23,10 +26,11 @@ namespace SpiderWin
         readonly StringBuilder logSb = new StringBuilder();
 
         readonly CancellationTokenSource tokenSource = new CancellationTokenSource();
-        public Form1(ISpiderService coreService)
+        public Form1(ISpiderService coreService , IServiceProvider serviceProvider)
         {
             _coreService = coreService;
             localServiceBackup = _coreService;
+            _serviceProvider = serviceProvider;
 
             InitializeComponent();
         }
@@ -159,7 +163,7 @@ namespace SpiderWin
         {
             return new Task(() =>
             {
-                var worker = new SpiderWorker(spiderId, url, _coreService);
+                var worker = new SpiderWorker(_serviceProvider.GetService<ILogger<SpiderWorker>>()!, spiderId, url, _coreService);
                 Stopwatch childSW = new Stopwatch();
 
                 worker.OnTaskInit += (obj, spider) =>
