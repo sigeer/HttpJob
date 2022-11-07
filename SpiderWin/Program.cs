@@ -1,6 +1,9 @@
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using MongoDB.Driver;
+using Serilog;
+using Serilog.Events;
 using SpiderTool;
 using SpiderTool.IDomain;
 using SpiderTool.Injection;
@@ -16,10 +19,13 @@ namespace SpiderWin
 {
     internal static class Program
     {
+        static Serilog.ILogger _logger = null!;
         [DllImport("User32.dll")]
         private static extern bool ShowWindowAsync(IntPtr hWnd, int cmdShow);
         [DllImport("User32.dll")]
         private static extern bool SetForegroundWindow(IntPtr hWnd);
+
+
         /// <summary>
         ///  The main entry point for the application.
         /// </summary>
@@ -37,7 +43,6 @@ namespace SpiderWin
             // see https://aka.ms/applicationconfiguration.
             ApplicationConfiguration.Initialize();
 
-
             ServiceCollection services = new ServiceCollection();
 
             IConfigurationBuilder cfgBuilder = new ConfigurationBuilder()
@@ -45,6 +50,33 @@ namespace SpiderWin
                 .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true);
 
             IConfiguration configuration = cfgBuilder.Build();
+
+            _logger = new LoggerConfiguration()
+                    .MinimumLevel.Debug()
+                    .MinimumLevel.Override("System", LogEventLevel.Warning)
+                    .MinimumLevel.Override("Microsoft", LogEventLevel.Warning)
+                .WriteTo.Logger(lg => lg.Filter.ByIncludingOnly(p => p.Level == LogEventLevel.Debug).WriteTo.Async(
+                    a => a.File("logs/Debug-.txt", rollingInterval: RollingInterval.Day)
+                ))
+                .WriteTo.Logger(lg => lg.Filter.ByIncludingOnly(p => p.Level == LogEventLevel.Information).WriteTo.Async(
+                    a => a.File("logs/Info-.txt", rollingInterval: RollingInterval.Day)
+                ))
+                .WriteTo.Logger(lg => lg.Filter.ByIncludingOnly(p => p.Level == LogEventLevel.Warning).WriteTo.Async(
+                    a => a.File("logs/Warning-.txt", rollingInterval: RollingInterval.Day)
+                ))
+                .WriteTo.Logger(lg => lg.Filter.ByIncludingOnly(p => p.Level == LogEventLevel.Error).WriteTo.Async(
+                    a => a.File("logs/Error-.txt", rollingInterval: RollingInterval.Day)
+                ))
+                .WriteTo.Logger(lg => lg.Filter.ByIncludingOnly(p => p.Level == LogEventLevel.Fatal).WriteTo.Async(
+                    a => a.File("logs/Fatal-.txt", rollingInterval: RollingInterval.Day)
+                ))
+                .WriteTo.Logger(lg => lg.WriteTo.Async(
+                    a => a.File("logs/All-.txt", rollingInterval: RollingInterval.Day)
+                )).CreateLogger();
+            services.AddLogging(builder =>
+            {
+                builder.AddSerilog(logger: _logger, dispose: true);
+            });
             services.AddSingleton<IConfiguration>(configuration);
             services.AddSingleton<Form1>();
 
@@ -58,7 +90,7 @@ namespace SpiderWin
                 if (newlyService != null)
                     services.AddSingleton<ISpiderProcessor>(Activator.CreateInstance(newlyService) as ISpiderProcessor);
             }
-
+            var logger = serviceProvider.GetService<ILogger<Application>>()!;
             var remoteService = serviceProvider.GetService<ISpiderService>()!;
             if (!remoteService.CanConnect())
             {
@@ -71,7 +103,22 @@ namespace SpiderWin
                 serviceProvider = services.BuildServiceProvider();
             }
 
-            Application.Run(serviceProvider.GetService<Form1>()!);
+            Application.SetUnhandledExceptionMode(UnhandledExceptionMode.CatchException);
+            Application.ThreadException += new System.Threading.ThreadExceptionEventHandler(Application_ThreadException);
+            AppDomain.CurrentDomain.UnhandledException += new UnhandledExceptionEventHandler(CurrentDomain_UnhandledException);
+
+            var form = serviceProvider.GetService<Form1>()!;
+            Application.Run(form);
+        }
+
+        static void Application_ThreadException(object sender, System.Threading.ThreadExceptionEventArgs ex)
+        {
+            _logger.Error(ex.Exception.ToString());
+        }
+
+        static void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs ex)
+        {
+            _logger.Error(ex.ExceptionObject.ToString());
         }
 
         public static Process? GetRunningInstance()

@@ -160,11 +160,6 @@ namespace SpiderTool.MongoDB.Domain
                 if (!model.FormValid())
                     return StatusMessage.FormInvalid;
 
-                var selectedTemplates = _db.GetCollection<DB_Template>(nameof(DB_Template)).Find(x => model.Templates.Contains(x.Id) && x.LinkedSpiderId != null)
-                    .Project(x => x.LinkedSpiderId).ToList();
-                if (selectedTemplates.Contains(model.Id))
-                    return "可能出现递归调用";
-
                 var table = _db.GetCollection<DB_Spider>(nameof(DB_Spider));
 
                 var template = _db.GetCollection<DB_SpiderTemplate>(nameof(DB_SpiderTemplate));
@@ -225,11 +220,6 @@ namespace SpiderTool.MongoDB.Domain
             {
                 if (!model.FormValid())
                     return StatusMessage.FormInvalid;
-
-                var selectedTemplates = await _db.GetCollection<DB_Template>(nameof(DB_Template)).Find(x => model.Templates.Contains(x.Id) && x.LinkedSpiderId != null)
-                    .Project(x => x.LinkedSpiderId).ToListAsync();
-                if (selectedTemplates.Contains(model.Id))
-                    return "可能出现递归调用";
 
                 var table = _db.GetCollection<DB_Spider>(nameof(DB_Spider));
 

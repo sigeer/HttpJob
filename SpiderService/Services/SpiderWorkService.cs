@@ -12,16 +12,18 @@ namespace SpiderService.Services
     {
         readonly ISpiderService _service;
         readonly IMapper _mapper;
+        readonly ILogger<SpiderWorker> _spiderLogger;
 
-        public SpiderWorkService(ISpiderService service, IMapper mapper)
+        public SpiderWorkService(ISpiderService service, IMapper mapper, ILogger<SpiderWorker> spiderLogger)
         {
             _service = service;
             _mapper = mapper;
+            _spiderLogger = spiderLogger;
         }
 
         public override async Task<StringModel> Crawl(RequestModel request, ServerCallContext context)
         {
-            var worker = new SpiderWorker(request.SpiderId, request.Url, _service);
+            var worker = new SpiderWorker(_spiderLogger, request.SpiderId, request.Url, _service);
             await worker.Start(context.CancellationToken);
             return new StringModel { Data = "" };
         }
@@ -153,6 +155,12 @@ namespace SpiderService.Services
                 data.List.Add(_mapper.Map<TaskProtoSimpleViewModel>(x));
             });
             return data;
+        }
+
+        public override async Task<Empty> BulkUpdateTaskStatus(TaskProtoBulkEditDto request, ServerCallContext context)
+        {
+            await _service.BulkUpdateTaskStatusAsync(request.Tasks.AsEnumerable(), request.TaskStatus);
+            return new Empty();
         }
     }
 }

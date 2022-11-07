@@ -139,5 +139,25 @@ namespace SpiderTool.EntityFrameworkCore.Domain
                 SpiderId = x.SpiderId,
             }).ToListAsync();
         }
+
+        public void BulkUpdateTaskStatus(IEnumerable<int> tasks, int taskStatus)
+        {
+            var taskList = _dbContext.Tasks.Where(x => tasks.Contains(x.Id)).ToList();
+            foreach (var task in taskList)
+            {
+                task.Status = taskStatus;
+            }
+            _dbContext.SaveChanges();
+        }
+
+        public async Task BulkUpdateTaskStatusAsync(IEnumerable<int> tasks, int taskStatus)
+        {
+            var taskList = await _dbContext.Tasks.Where(x => tasks.Contains(x.Id)).ToListAsync();
+            foreach (var task in taskList)
+            {
+                task.Status = taskStatus;
+            }
+            await _dbContext.SaveChangesAsync();
+        }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using HtmlAgilityPack;
+using Microsoft.Extensions.Logging;
 using SpiderTool.Constants;
 using SpiderTool.Dto.Spider;
 using SpiderTool.Dto.Tasks;
@@ -79,11 +80,15 @@ namespace SpiderTool
         /// </summary>
         public event EventHandler<SpiderWorker>? OnTaskCanceled;
 
+        readonly ILogger<SpiderWorker> _logger;
 
-        public SpiderWorker(int spiderId, string url, ISpiderService service, ISpiderProcessor? processor = null)
+
+        public SpiderWorker(ILogger<SpiderWorker> logger, int spiderId, string url, ISpiderService service, ISpiderProcessor? processor = null)
         {
             _service = service ?? throw new Exception("ISpiderService不能为null");
             _processor = processor ?? new DefaultSpiderProcessor();
+            _logger = logger;
+
             _rootUrl = url;
 
             _spider = _service.GetSpider(spiderId);
@@ -104,8 +109,9 @@ namespace SpiderTool
         {
             _service = rootSpider._service;
             _processor = rootSpider._processor;
-            _rootUrl = url;
+            _logger = rootSpider._logger;
 
+            _rootUrl = url;
             _spider = spiderDetail;
             if (Spider == null)
                 throw new Exception($"spiderDetail not existed");
@@ -120,10 +126,12 @@ namespace SpiderTool
         /// <param name="service"></param>
         /// <param name="processor"></param>
         /// <exception cref="Exception"></exception>
-        public SpiderWorker(SpiderDetailViewModel spiderDetail, string url, ISpiderService? service = null, ISpiderProcessor? processor = null)
+        public SpiderWorker(ILogger<SpiderWorker> logger, SpiderDetailViewModel spiderDetail, string url, ISpiderService? service = null, ISpiderProcessor? processor = null)
         {
             _service = service;
             _processor = processor ?? new DefaultSpiderProcessor();
+            _logger = logger;
+
             _rootUrl = url;
 
             _spider = spiderDetail;
@@ -208,12 +216,14 @@ namespace SpiderTool
                     OnTaskComplete?.Invoke(this, this);
                     OnTaskStatusChanged?.Invoke(this, this);
                     OnLog?.Invoke(this, logStr);
+                    _logger.LogInformation($"task {TaskId} completed");
                     break;
                 case TaskType.Canceled:
                     _service?.SetTaskStatus(TaskId, (int)TaskType.Canceled);
                     OnTaskCanceled?.Invoke(this, this);
                     OnTaskStatusChanged?.Invoke(this, this);
                     OnLog?.Invoke(this, logStr);
+                    _logger.LogInformation($"task {TaskId} canceled");
                     break;
                 default:
                     break;

@@ -1,3 +1,5 @@
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using SpiderTool;
 using SpiderTool.Dto.Spider;
 using SpiderTool.Dto.Tasks;
@@ -16,17 +18,19 @@ namespace SpiderWin
     {
         ISpiderService _coreService;
         readonly ISpiderService localServiceBackup;
+        readonly IServiceProvider _serviceProvider;
+        readonly ILogger<Form1> _logger;
 
         List<SpiderListItemViewModel> _spiderList = new List<SpiderListItemViewModel>();
-        List<TaskSimpleViewModel> _taskHistoryList = new List<TaskSimpleViewModel>();
-
-        readonly StringBuilder logSb = new StringBuilder();
+        List<TaskListItemViewModel> _taskList = new List<TaskListItemViewModel>();
 
         readonly CancellationTokenSource tokenSource = new CancellationTokenSource();
-        public Form1(ISpiderService coreService)
+        public Form1(ISpiderService coreService , IServiceProvider serviceProvider, ILogger<Form1> logger)
         {
             _coreService = coreService;
             localServiceBackup = _coreService;
+            _serviceProvider = serviceProvider;
+            _logger = logger;
 
             InitializeComponent();
         }
@@ -89,13 +93,17 @@ namespace SpiderWin
             ComboxSpider.DataSource = (new List<SpiderListItemViewModel>() { new SpiderListItemViewModel() { Id = 0, Name = "--请选择--" } }.Concat(_spiderList)).ToList();
         }
 
-        private async void LoadTaskHistory()
+        private void LoadTaskHistory()
         {
-            await Task.Run(async () =>
+            Task.Run(async () =>
             {
-                _taskHistoryList = await _coreService.GetTaskHistoryListAsync();
+                var _taskHistoryList = await _coreService.GetTaskHistoryListAsync();
+                BeginInvoke(() =>
+                {
+                    ComboxUrl.DataSource = _taskHistoryList;
+                });
             });
-            ComboxUrl.DataSource = _taskHistoryList;
+
         }
 
         private void LoadDataGridData(List<TaskListItemViewModel> list, DataGridView grid)
@@ -127,11 +135,11 @@ namespace SpiderWin
         {
             Task.Run(async () =>
             {
-                var taskList = await _coreService.GetTaskListAsync();
+                _taskList = await _coreService.GetTaskListAsync();
                 BeginInvoke(() =>
                 {
-                    LoadDataGridData(taskList.Where(x => x.Status == (int)TaskType.InProgress || x.Status == (int)TaskType.NotEffective).ToList(), DataGrid_InProgressTasks);
-                    LoadDataGridData(taskList.Where(x => x.Status == (int)TaskType.Completed || x.Status == (int)TaskType.Canceled).ToList(), DataGrid_OtherTasks);
+                    LoadDataGridData(_taskList.Where(x => x.Status == (int)TaskType.InProgress || x.Status == (int)TaskType.NotEffective).ToList(), DataGrid_InProgressTasks);
+                    LoadDataGridData(_taskList.Where(x => x.Status == (int)TaskType.Completed || x.Status == (int)TaskType.Canceled).ToList(), DataGrid_OtherTasks);
                 });
             });
         }
@@ -159,7 +167,7 @@ namespace SpiderWin
         {
             return new Task(() =>
             {
-                var worker = new SpiderWorker(spiderId, url, _coreService);
+                var worker = new SpiderWorker(_serviceProvider.GetService<ILogger<SpiderWorker>>()!, spiderId, url, _coreService);
                 Stopwatch childSW = new Stopwatch();
 
                 worker.OnTaskInit += (obj, spider) =>
@@ -252,23 +260,6 @@ namespace SpiderWin
             }
         }
 
-        private void LinkExportLog_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
-        {
-            if (logSb.Length == 0)
-                return;
-
-            var saveLogDialog = new SaveFileDialog()
-            {
-                Title = "导出日志",
-                Filter = "*.txt|*.log",
-                FileName = DateTime.Now.ToString("yyyy-MM-dd-HH"),
-            };
-            saveLogDialog.ShowDialog();
-            using var fs = saveLogDialog.OpenFile();
-            var txtBytes = Encoding.UTF8.GetBytes(logSb.ToString());
-            fs.Write(txtBytes, 0, txtBytes.Length);
-            logSb.Clear();
-        }
 
         //private void DataGridTasks_CellMouseUp(object sender, DataGridViewCellMouseEventArgs e)
         //{
@@ -294,7 +285,7 @@ namespace SpiderWin
             BeginInvoke(() =>
             {
                 var msg = $"[{DateTime.Now:yyyy-MM-dd HH:mm:ss}] >>{type}：{str} \r\n";
-                logSb.Append(msg);
+                _logger.LogInformation($"{type}：{str}");
                 ResultTxtBox.AppendText(msg);
                 ResultTxtBox.Focus();
             });
@@ -308,6 +299,25 @@ namespace SpiderWin
         private void MenuItem_Dir_Click(object sender, EventArgs e)
         {
             Process.Start("explorer.exe", Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "wwwroot", "download"));
+        }
+
+        private void Form1_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            var inWorkingTasks = _taskList.Where(x => x.IsWorking).Select(x => x.Id).ToList();
+            if (inWorkingTasks.Count > 0)
+            {
+                var result = MessageBox.Show("尚有未完成的任务，是否取消任务并关闭？", "提示", MessageBoxButtons.YesNo);
+                if (result == DialogResult.Yes)
+                {
+                    _coreService.BulkUpdateTaskStatus(inWorkingTasks, (int)TaskType.Canceled);
+                    Dispose();
+                }
+                else
+                {
+                    e.Cancel = true;
+                }
+            }
+
         }
     }
 }

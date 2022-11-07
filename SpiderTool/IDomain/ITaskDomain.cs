@@ -14,5 +14,7 @@ namespace SpiderTool.IDomain
         Task UpdateTaskAsync(TaskEditDto model);
         void SetTaskStatus(int taskId, int taskStatus);
         Task SetTaskStatusAsync(int taskId, int taskStatus);
+        void BulkUpdateTaskStatus(IEnumerable<int> tasks, int taskStatus);
+        Task BulkUpdateTaskStatusAsync(IEnumerable<int> tasks, int taskStatus);
     }
 }

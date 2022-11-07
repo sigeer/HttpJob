@@ -39,12 +39,12 @@
             this.UseLocalMenu = new System.Windows.Forms.ToolStripMenuItem();
             this.UseServiceMenu = new System.Windows.Forms.ToolStripMenuItem();
             this.MenuNewSpider = new System.Windows.Forms.ToolStripMenuItem();
+            this.MenuItem_Dir = new System.Windows.Forms.ToolStripMenuItem();
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
             this.mainModalStatusLabel = new System.Windows.Forms.ToolStripStatusLabel();
             this.ResultTxtBox = new System.Windows.Forms.RichTextBox();
             this.ComboxUrl = new System.Windows.Forms.ComboBox();
             this.DataGrid_InProgressTasks = new System.Windows.Forms.DataGridView();
-            this.LinkExportLog = new System.Windows.Forms.LinkLabel();
             this.BtnCacel = new System.Windows.Forms.Button();
             this.LinkClearLog = new System.Windows.Forms.LinkLabel();
             this.tabControl1 = new System.Windows.Forms.TabControl();
@@ -52,7 +52,6 @@
             this.tabPage2 = new System.Windows.Forms.TabPage();
             this.DataGrid_OtherTasks = new System.Windows.Forms.DataGridView();
             this.panel1 = new System.Windows.Forms.Panel();
-            this.MenuItem_Dir = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1.SuspendLayout();
             this.statusStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.DataGrid_InProgressTasks)).BeginInit();
@@ -136,7 +135,7 @@
             this.UseLocalMenu,
             this.UseServiceMenu});
             this.工作设置ToolStripMenuItem.Name = "工作设置ToolStripMenuItem";
-            this.工作设置ToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.工作设置ToolStripMenuItem.Size = new System.Drawing.Size(148, 22);
             this.工作设置ToolStripMenuItem.Text = "工作设置";
             // 
             // UseLocalMenu
@@ -160,9 +159,16 @@
             // MenuNewSpider
             // 
             this.MenuNewSpider.Name = "MenuNewSpider";
-            this.MenuNewSpider.Size = new System.Drawing.Size(180, 22);
+            this.MenuNewSpider.Size = new System.Drawing.Size(148, 22);
             this.MenuNewSpider.Text = "新增爬虫";
             this.MenuNewSpider.Click += new System.EventHandler(this.MenuNewSpider_Click);
+            // 
+            // MenuItem_Dir
+            // 
+            this.MenuItem_Dir.Name = "MenuItem_Dir";
+            this.MenuItem_Dir.Size = new System.Drawing.Size(148, 22);
+            this.MenuItem_Dir.Text = "打开保存目录";
+            this.MenuItem_Dir.Click += new System.EventHandler(this.MenuItem_Dir_Click);
             // 
             // statusStrip1
             // 
@@ -210,17 +216,6 @@
             this.DataGrid_InProgressTasks.TabIndex = 13;
             this.DataGrid_InProgressTasks.CellDoubleClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.DataGridTasks_CellDoubleClick);
             // 
-            // LinkExportLog
-            // 
-            this.LinkExportLog.AutoSize = true;
-            this.LinkExportLog.Location = new System.Drawing.Point(569, 89);
-            this.LinkExportLog.Name = "LinkExportLog";
-            this.LinkExportLog.Size = new System.Drawing.Size(56, 17);
-            this.LinkExportLog.TabIndex = 16;
-            this.LinkExportLog.TabStop = true;
-            this.LinkExportLog.Text = "导出日志";
-            this.LinkExportLog.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.LinkExportLog_LinkClicked);
-            // 
             // BtnCacel
             // 
             this.BtnCacel.Location = new System.Drawing.Point(158, 86);
@@ -234,7 +229,7 @@
             // LinkClearLog
             // 
             this.LinkClearLog.AutoSize = true;
-            this.LinkClearLog.Location = new System.Drawing.Point(507, 89);
+            this.LinkClearLog.Location = new System.Drawing.Point(569, 92);
             this.LinkClearLog.Name = "LinkClearLog";
             this.LinkClearLog.Size = new System.Drawing.Size(56, 17);
             this.LinkClearLog.TabIndex = 18;
@@ -296,7 +291,6 @@
             this.panel1.Controls.Add(this.label1);
             this.panel1.Controls.Add(this.BtnCacel);
             this.panel1.Controls.Add(this.label2);
-            this.panel1.Controls.Add(this.LinkExportLog);
             this.panel1.Controls.Add(this.ComboxSpider);
             this.panel1.Controls.Add(this.btnRun);
             this.panel1.Controls.Add(this.ResultTxtBox);
@@ -304,13 +298,6 @@
             this.panel1.Name = "panel1";
             this.panel1.Size = new System.Drawing.Size(671, 399);
             this.panel1.TabIndex = 20;
-            // 
-            // MenuItem_Dir
-            // 
-            this.MenuItem_Dir.Name = "MenuItem_Dir";
-            this.MenuItem_Dir.Size = new System.Drawing.Size(180, 22);
-            this.MenuItem_Dir.Text = "打开保存目录";
-            this.MenuItem_Dir.Click += new System.EventHandler(this.MenuItem_Dir_Click);
             // 
             // Form1
             // 
@@ -325,6 +312,7 @@
             this.Name = "Form1";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "爬虫";
+            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.Form1_FormClosing);
             this.Load += new System.EventHandler(this.Form1_Load);
             this.menuStrip1.ResumeLayout(false);
             this.menuStrip1.PerformLayout();
@@ -360,7 +348,6 @@
         private RichTextBox ResultTxtBox;
         private ComboBox ComboxUrl;
         private DataGridView DataGrid_InProgressTasks;
-        private LinkLabel LinkExportLog;
         private Button BtnCacel;
         private LinkLabel LinkClearLog;
         private TabControl tabControl1;

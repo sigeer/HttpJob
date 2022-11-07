@@ -81,25 +81,34 @@ namespace SpiderTool.MongoDB.Domain
 
         public string Submit(TemplateEditDto model)
         {
+            if (!model.FormValid())
+                return StatusMessage.FormInvalid;
+
             var table = _db.GetCollection<DB_Template>(nameof(DB_Template));
 
             var template = _db.GetCollection<DB_ReplacementRule>(nameof(DB_ReplacementRule));
             if (model.Id == 0)
             {
-                var maxId = table.Find(x => x.Id > 0).SortByDescending(x => x.Id).Skip(0).Limit(1).FirstOrDefault()?.Id ?? 0;
+                var maxTemplateIdId = table.Find(x => x.Id > 0).SortByDescending(x => x.Id).Skip(0).Limit(1).FirstOrDefault()?.Id ?? 0;
+
                 var dbModel = _mapper.Map<DB_Template>(model);
-                dbModel.Id = maxId + 1;
+                dbModel.Id = maxTemplateIdId + 1;
                 dbModel.CreateTime = DateTime.Now;
                 dbModel.LastUpdatedTime = DateTime.Now;
                 table.InsertOne(dbModel);
 
                 if (model.ReplacementRules.Count > 0)
+                {
+                    var maxRuleId = template.Find(x => x.Id > 0).SortByDescending(x => x.Id).Skip(0).Limit(1).FirstOrDefault()?.Id ?? 0;
                     template.InsertMany(model.ReplacementRules.Select(x => new DB_ReplacementRule
                     {
+                        Id = ++maxRuleId,
                         TemplateId = dbModel.Id,
                         ReplacementNewlyStr = x.ReplacementNewlyStr,
                         ReplacementOldStr = x.ReplacementOldStr
                     }));
+                }
+
             }
             else
             {
@@ -117,12 +126,16 @@ namespace SpiderTool.MongoDB.Domain
                     template.DeleteMany(x => x.TemplateId == dbModel.Id);
 
                     if (model.ReplacementRules.Count > 0)
+                    {
+                        var maxRuleId = template.Find(x => x.Id > 0).SortByDescending(x => x.Id).Skip(0).Limit(1).FirstOrDefault()?.Id ?? 0;
                         template.InsertMany(model.ReplacementRules.Select(x => new DB_ReplacementRule
                         {
+                            Id = ++maxRuleId,
                             TemplateId = dbModel.Id,
                             ReplacementNewlyStr = x.ReplacementNewlyStr,
                             ReplacementOldStr = x.ReplacementOldStr
                         }));
+                    }
                 }
             }
             return StatusMessage.Success;
@@ -130,6 +143,9 @@ namespace SpiderTool.MongoDB.Domain
 
         public async Task<string> SubmitAsync(TemplateEditDto model)
         {
+            if (!model.FormValid())
+                return StatusMessage.FormInvalid;
+
             var table = _db.GetCollection<DB_Template>(nameof(DB_Template));
 
             var template = _db.GetCollection<DB_ReplacementRule>(nameof(DB_ReplacementRule));
@@ -143,12 +159,17 @@ namespace SpiderTool.MongoDB.Domain
                 await table.InsertOneAsync(dbModel);
 
                 if (model.ReplacementRules.Count > 0)
+                {
+                    var maxRuleId = template.Find(x => x.Id > 0).SortByDescending(x => x.Id).Skip(0).Limit(1).FirstOrDefault()?.Id ?? 0;
                     await template.InsertManyAsync(model.ReplacementRules.Select(x => new DB_ReplacementRule
                     {
+                        Id = ++maxRuleId,
                         TemplateId = dbModel.Id,
                         ReplacementNewlyStr = x.ReplacementNewlyStr,
                         ReplacementOldStr = x.ReplacementOldStr
                     }));
+                }
+
             }
             else
             {
@@ -166,12 +187,17 @@ namespace SpiderTool.MongoDB.Domain
                     await template.DeleteManyAsync(x => x.TemplateId == dbModel.Id);
 
                     if (model.ReplacementRules.Count > 0)
+                    {
+                        var maxRuleId = template.Find(x => x.Id > 0).SortByDescending(x => x.Id).Skip(0).Limit(1).FirstOrDefault()?.Id ?? 0;
                         await template.InsertManyAsync(model.ReplacementRules.Select(x => new DB_ReplacementRule
                         {
+                            Id = ++maxRuleId,
                             TemplateId = dbModel.Id,
                             ReplacementNewlyStr = x.ReplacementNewlyStr,
                             ReplacementOldStr = x.ReplacementOldStr
                         }));
+                    }
+
                 }
             }
             return StatusMessage.Success;
