@@ -21,7 +21,10 @@ namespace SpiderTool.Dto.Spider
 
         public bool FormValid()
         {
-            return !string.IsNullOrEmpty(Name) && !string.IsNullOrEmpty(TemplateStr) && Type > 0 && (Type != 4 || LinkedSpiderId.HasValue) && ReplacementRules.All(x => !string.IsNullOrEmpty(x.ReplacementOldStr));
+            return !string.IsNullOrEmpty(Name) && !string.IsNullOrEmpty(TemplateStr) 
+                && Type > 0 && (Type != 4 || LinkedSpiderId.HasValue) 
+                && ReplacementRules.All(x => !string.IsNullOrEmpty(x.ReplacementOldStr) 
+                && !ReplacementRules.GroupBy(x => new { x.ReplacementOldStr, x.ReplacementNewlyStr }).Any(x => x.Count() > 1));
         }
     }
 
