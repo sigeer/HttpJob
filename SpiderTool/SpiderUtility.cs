@@ -59,6 +59,7 @@ namespace SpiderTool
                 var client = httpRequestPool.GetHttpClient();
                 var uri = new Uri(url.Key);
                 var result = await client.HttpGetCore(uri.ToString(), cancellationToken: ct);
+                log?.Invoke($"BulkDownload 请求 {url}");
                 var fileName = uri.Segments.Last();
                 if (!TryGetExtension(fileName, out var extension))
                 {
@@ -74,7 +75,7 @@ namespace SpiderTool
                 if (fileBytes.Length > 0)
                     await File.WriteAllBytesAsync(path, fileBytes, cancellationToken);
                 else
-                    log?.Invoke($"for {url}, file bytes = 0");
+                    log?.Invoke($"BulkDownload for {url}, file bytes = 0");
                 httpRequestPool.Return(client);
             });
         }
@@ -130,36 +131,52 @@ namespace SpiderTool
             var finalText = HttpUtility.HtmlDecode(item.InnerHtml);
             foreach (var handle in rule.ReplacementRules)
             {
-                finalText = finalText.Replace(handle.ReplacementOldStr!, handle.ReplacementNewlyStr);
+                finalText = finalText.Replace(handle.ReplacementOldStr!, handle.ReplacementNewlyStr, handle.IgnoreCase, System.Globalization.CultureInfo.CurrentCulture);
             }
             var temp = new HtmlDocument();
             temp.LoadHtml(finalText);
             return temp.DocumentNode.InnerText;
         }
 
-        public static async Task MergeTextFileAsync(string dir)
+        public static async Task MergeTextFileAsync(string rootDir)
         {
-            var dirInfo = new DirectoryInfo(dir);
-            if (!dirInfo.Exists)
+            var rootDirInfo = new DirectoryInfo(rootDir);
+            if (!rootDirInfo.Exists)
                 return;
 
-            var dirs = dirInfo.GetDirectories();
-            foreach (var childDir in dirs)
+            var dirs = rootDirInfo.GetDirectories();
+            foreach (var currentDirInfo in dirs)
             {
-                await MergeTextFileAsync(childDir.FullName);
+                var files = currentDirInfo.GetFiles().Where(x => x.Extension.ToLower() == ".txt").OrderBy(x => x.CreationTime).Select(x => x.FullName).ToList();
+                if (files.Count == 0)
+                    return;
+
+                var fileName = GetDirToName(rootDirInfo, currentDirInfo) + ".txt";
+                var filePath = Path.Combine(rootDir, fileName);
+                foreach (var file in files)
+                {
+                    await File.AppendAllTextAsync(filePath, File.ReadAllText(file));
+                    File.Delete(file);
+                }
+
+                var allFiles = currentDirInfo.GetFiles().OrderBy(x => x.CreationTime).Select(x => x.FullName).ToList();
+                if (allFiles.Count == 0)
+                    Directory.Delete(currentDirInfo.FullName);
             }
+        }
 
-            var files = dirInfo.GetFiles().Where(x => x.Extension.ToLower() == ".txt").OrderBy(x => x.CreationTime).Select(x => x.FullName).ToList();
-            if (files.Count == 0)
-                return;
-
-            var fileName = dirInfo.Parent == null ? $"{dirInfo.Name}.txt" : $"{dirInfo.Parent.Name}_{dirInfo.Name}.txt";
-            var filePath = Path.Combine(dir, fileName);
-            foreach (var file in files)
+        private static string GetDirToName(DirectoryInfo rootDirInfo, DirectoryInfo currentDirInfo)
+        {
+            List<string> sb = new List<string>();
+            DirectoryInfo? point = new DirectoryInfo(currentDirInfo.FullName);
+            while (point != null && point.FullName != rootDirInfo.FullName)
             {
-                await File.AppendAllTextAsync(filePath, File.ReadAllText(file));
-                File.Delete(file);
+                sb.Add(point.Name);
+                point = point.Parent;
             }
+            sb.Add(rootDirInfo.Name);
+            sb.Reverse();
+            return string.Join('_', sb);
         }
 
     }

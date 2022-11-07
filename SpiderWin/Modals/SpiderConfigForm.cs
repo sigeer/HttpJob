@@ -10,8 +10,7 @@ namespace SpiderWin.Modals
         #region form variables
         SpiderEditDto _currentSpider = new SpiderEditDto();
         int _spiderId;
-        List<TemplateDetailViewModel> _templateList = new List<TemplateDetailViewModel>();
-
+        
         public event EventHandler<string>? OnSubmit;
         #endregion
 
@@ -52,10 +51,10 @@ namespace SpiderWin.Modals
         {
             Task.Run(async () =>
             {
-                _templateList = await _coreService.GetTemplateDtoListAsync();
+                var templateList = await _coreService.GetTemplateDtoListAsync();
                 BeginInvoke(() =>
                 {
-                    ComboBoxNextPage.DataSource = (new List<TemplateDetailViewModel>() { new TemplateDetailViewModel() { Id = 0, Name = "" } }.Concat(_templateList)).ToList();
+                    ComboBoxNextPage.DataSource = (new List<TemplateDetailViewModel>() { new TemplateDetailViewModel() { Id = 0, Name = "--请选择--" } }.Concat(templateList)).ToList();
                     if (_currentSpider.NextPageTemplateId != null)
                         ComboBoxNextPage.SelectedValue = _currentSpider.NextPageTemplateId;
                 });

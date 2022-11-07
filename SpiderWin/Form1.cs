@@ -9,7 +9,6 @@ using SpiderWin.Modals;
 using SpiderWin.Server;
 using SpiderWin.Services;
 using System.Diagnostics;
-using System.Text;
 using Utility.Extensions;
 
 namespace SpiderWin
@@ -25,7 +24,7 @@ namespace SpiderWin
         List<TaskListItemViewModel> _taskList = new List<TaskListItemViewModel>();
 
         readonly CancellationTokenSource tokenSource = new CancellationTokenSource();
-        public Form1(ISpiderService coreService , IServiceProvider serviceProvider, ILogger<Form1> logger)
+        public Form1(ISpiderService coreService, IServiceProvider serviceProvider, ILogger<Form1> logger)
         {
             _coreService = coreService;
             localServiceBackup = _coreService;
@@ -173,12 +172,12 @@ namespace SpiderWin
                 worker.OnTaskInit += (obj, spider) =>
                 {
                     childSW.Start();
-                    PrintLog($"任务{spider.TaskId}开始==========", string.Empty);
+                    PrintUILog($"任务{spider.TaskId} 开始==========", string.Empty);
                     LoadTaskHistory();
                 };
                 worker.OnTaskStart += (obj, spider) =>
                 {
-                    PrintLog($"任务{spider.TaskId}将保存到", $"\"file://{spider.CurrentDir}\"");
+                    PrintUILog($"任务{spider.TaskId} 将保存到", $"\"file://{spider.CurrentDir}\"");
                 };
                 worker.OnTaskComplete += (obj, spider) =>
                 {
@@ -186,7 +185,7 @@ namespace SpiderWin
 
                     var cost = $"共耗时：{childSW.Elapsed.TotalSeconds.ToFixed(2)}秒";
                     mainModalStatusLabel.Text = $"任务{spider.TaskId}结束  {cost}";
-                    PrintLog($"任务{spider.TaskId}结束==========", $"{cost} \"file:///{spider.CurrentDir}\"");
+                    PrintUILog($"任务{spider.TaskId} 结束==========", $"{cost} \"file://{spider.CurrentDir}\"");
                 };
                 worker.OnTaskStatusChanged += (obj, task) =>
                 {
@@ -194,7 +193,7 @@ namespace SpiderWin
                 };
                 worker.OnNewTask += (obj, spider) =>
                 {
-                    PrintLog("创建了子任务", string.Empty);
+                    PrintLog("创建子任务", string.Empty);
                 };
                 worker.OnLog += (obj, logStr) =>
                 {
@@ -280,15 +279,27 @@ namespace SpiderWin
             tokenSource.Cancel();
         }
 
+        private void PrintUILog(string type, string str)
+        {
+            if (!string.IsNullOrEmpty(str))
+                BeginInvoke(() =>
+                {
+                    var msg = $"[{DateTime.Now:yyyy-MM-dd HH:mm:ss}] >>{type}：{str} \r\n";
+                    _logger.LogInformation($"{type}：{str}");
+                    ResultTxtBox.AppendText(msg);
+                    ResultTxtBox.Focus();
+                });
+        }
+
         private void PrintLog(string type, string str)
         {
-            BeginInvoke(() =>
-            {
-                var msg = $"[{DateTime.Now:yyyy-MM-dd HH:mm:ss}] >>{type}：{str} \r\n";
-                _logger.LogInformation($"{type}：{str}");
-                ResultTxtBox.AppendText(msg);
-                ResultTxtBox.Focus();
-            });
+            if (!string.IsNullOrEmpty(str))
+                BeginInvoke(() =>
+                {
+                    var msg = $"[{DateTime.Now:yyyy-MM-dd HH:mm:ss}] >>{type}：{str} \r\n";
+                    ResultTxtBox.AppendText(msg);
+                    ResultTxtBox.Focus();
+                });
         }
 
         private void LinkClearLog_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
@@ -318,6 +329,11 @@ namespace SpiderWin
                 }
             }
 
+        }
+
+        private void MenuItem_LogDir_Click(object sender, EventArgs e)
+        {
+            Process.Start("explorer.exe", Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "logs"));
         }
     }
 }

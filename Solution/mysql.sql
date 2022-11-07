@@ -3,6 +3,7 @@ CREATE TABLE If Not Exists `db_replacementrule` (
   `ReplacementOldStr` varchar(100) DEFAULT NULL,
   `ReplacementNewlyStr` varchar(100) DEFAULT NULL,
   `TemplateId` int NOT NULL,
+  `IgnoreCase` bool not NULL default false
   PRIMARY KEY (`Id`)
 );
 

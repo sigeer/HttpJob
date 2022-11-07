@@ -54,7 +54,8 @@ namespace SpiderTool.SqlSugar.Domain
                         {
                             Id = x.Id,
                             ReplacementOldStr = x.ReplacementOldStr,
-                            ReplacementNewlyStr = x.ReplacementNewlyStr
+                            ReplacementNewlyStr = x.ReplacementNewlyStr,
+                            IgnoreCase = x.IgnoreCase
                         }).ToList()
                     }).ToList();
         }
@@ -78,7 +79,8 @@ namespace SpiderTool.SqlSugar.Domain
                         {
                             Id = x.Id,
                             ReplacementOldStr = x.ReplacementOldStr,
-                            ReplacementNewlyStr = x.ReplacementNewlyStr
+                            ReplacementNewlyStr = x.ReplacementNewlyStr,
+                            IgnoreCase = x.IgnoreCase
                         }).ToList()
                     }).ToList();
         }
@@ -115,7 +117,8 @@ namespace SpiderTool.SqlSugar.Domain
                 {
                     TemplateId = dbModel.Id,
                     ReplacementNewlyStr = x.ReplacementNewlyStr,
-                    ReplacementOldStr = x.ReplacementOldStr
+                    ReplacementOldStr = x.ReplacementOldStr,
+                    IgnoreCase = x.IgnoreCase
                 }).ToList();
                 _dbContext.Insertable<DB_ReplacementRule>(data).ExecuteCommand();
 
@@ -162,7 +165,8 @@ namespace SpiderTool.SqlSugar.Domain
                 {
                     TemplateId = dbModel.Id,
                     ReplacementNewlyStr = x.ReplacementNewlyStr,
-                    ReplacementOldStr = x.ReplacementOldStr
+                    ReplacementOldStr = x.ReplacementOldStr,
+                    IgnoreCase = x.IgnoreCase
                 }).ToList();
                 await _dbContext.Insertable<DB_ReplacementRule>(data).ExecuteCommandAsync();
 

@@ -4,6 +4,7 @@ CREATE TABLE db_replacementrule (
   ReplacementOldStr nvarchar(100) DEFAULT NULL,
   ReplacementNewlyStr nvarchar(100) DEFAULT NULL,
   TemplateId int NOT NULL,
+  IgnoreCase bool not NULL default false
   PRIMARY KEY (Id)
 );
 

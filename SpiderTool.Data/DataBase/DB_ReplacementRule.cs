@@ -13,6 +13,7 @@ namespace SpiderTool.DataBase
         public string? ReplacementOldStr { get; set; }
         [MaxLength(100)]
         public string? ReplacementNewlyStr { get; set; }
+        public bool IgnoreCase { get; set; }
 
     }
 }
