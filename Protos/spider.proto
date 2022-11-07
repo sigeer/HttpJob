@@ -14,6 +14,7 @@ service SpiderWorkerProtoService {
   rpc UpdateTask(TaskProtoEditDto) returns (google.protobuf.Empty);
   rpc GetTaskList(google.protobuf.Empty) returns (TaskListResult);
   rpc SetTaskStatus(TaskProtoEditDto) returns (StringModel);
+  rpc BulkUpdateTaskStatus(TaskProtoBulkEditDto) returns (google.protobuf.Empty);
   rpc GetTaskHistoryList(google.protobuf.Empty) returns(TaskProtoSimpleListResult);
 
   rpc SubmitSpider(SpiderProtoEditDto) returns(StringModel);
@@ -68,6 +69,11 @@ message TaskProtoSimpleViewModel {
 
 message TaskProtoSimpleListResult {
 	repeated TaskProtoSimpleViewModel list = 1;
+}
+
+message TaskProtoBulkEditDto {
+	repeated int32 tasks = 1;
+	int32 taskStatus = 2;
 }
 // *********** Task ***********
 

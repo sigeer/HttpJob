@@ -195,5 +195,25 @@ namespace SpiderRemoteServiceClient.Services
         {
             _client.SetLinkedSpider(Mapper.Map<SpiderProtoDetailViewModel>(detail));
         }
+
+        public void BulkUpdateTaskStatus(IEnumerable<int> tasks, int taskStatus)
+        {
+            var postModel = new TaskProtoBulkEditDto
+            { 
+                TaskStatus = taskStatus
+            };
+            postModel.Tasks.AddRange(tasks);
+            _client.BulkUpdateTaskStatus(postModel);
+        }
+
+        public async Task BulkUpdateTaskStatusAsync(IEnumerable<int> tasks, int taskStatus)
+        {
+            var postModel = new TaskProtoBulkEditDto
+            {
+                TaskStatus = taskStatus
+            };
+            postModel.Tasks.AddRange(tasks);
+            await _client.BulkUpdateTaskStatusAsync(postModel);
+        }
     }
 }

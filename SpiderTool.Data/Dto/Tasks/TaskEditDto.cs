@@ -27,6 +27,8 @@ namespace SpiderTool.Dto.Tasks
         public DateTime CreateTime { get; set; }
         public DateTime? CompleteTime { get; set; }
         public string StatusName => ((TaskType)Status).GetDescription();
+        public bool IsWorking => Status == (int)TaskType.InProgress || Status == (int)TaskType.NotEffective;
+        public bool IsFinished => Status == (int)TaskType.Completed || Status == (int)TaskType.Canceled;
     }
 
     public class TaskDetailViewModel : TaskListItemViewModel

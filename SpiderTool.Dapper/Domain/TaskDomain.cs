@@ -70,5 +70,15 @@ namespace SpiderTool.Dapper.Domain
             var sql = $"select * from {taskTable} order by createTime desc";
             return (await _dbConn.QueryAsync<TaskSimpleViewModel>(sql)).DistinctBy(x => x.RootUrl).ToList();
         }
+
+        public void BulkUpdateTaskStatus(IEnumerable<int> tasks, int taskStatus)
+        {
+            _dbConn.ExecuteScalar($"update {taskTable} set Status = @Status where id in @Id", new { Id = tasks, Status = taskStatus });
+        }
+
+        public async Task BulkUpdateTaskStatusAsync(IEnumerable<int> tasks, int taskStatus)
+        {
+            await _dbConn.ExecuteScalarAsync($"update {taskTable} set Status = @Status where id in @Id", new { Id = tasks, Status = taskStatus });
+        }
     }
 }

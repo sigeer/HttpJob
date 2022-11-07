@@ -132,5 +132,15 @@ namespace SpiderTool.SqlSugar.Domain
                 SpiderId = x.SpiderId,
             }).ToListAsync()).DistinctBy(x => x.RootUrl).ToList();
         }
+
+        public void BulkUpdateTaskStatus(IEnumerable<int> tasks, int taskStatus)
+        {
+            _dbContext.Updateable<DB_Task>().SetColumns(x => x.Status == taskStatus).Where(x => tasks.Contains(x.Id)).ExecuteCommand();
+        }
+
+        public async Task BulkUpdateTaskStatusAsync(IEnumerable<int> tasks, int taskStatus)
+        {
+            await _dbContext.Updateable<DB_Task>().SetColumns(x => x.Status == taskStatus).Where(x => tasks.Contains(x.Id)).ExecuteCommandAsync();
+        }
     }
 }

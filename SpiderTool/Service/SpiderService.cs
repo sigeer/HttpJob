@@ -157,5 +157,15 @@ namespace SpiderTool.Service
                 }
             }
         }
+
+        public void BulkUpdateTaskStatus(IEnumerable<int> tasks, int taskStatus)
+        {
+            _taskDomain.BulkUpdateTaskStatus(tasks, taskStatus);
+        }
+
+        public async Task BulkUpdateTaskStatusAsync(IEnumerable<int> tasks, int taskStatus)
+        {
+            await _taskDomain.BulkUpdateTaskStatusAsync(tasks, taskStatus);
+        }
     }
 }

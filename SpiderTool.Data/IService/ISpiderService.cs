@@ -34,6 +34,9 @@ namespace SpiderTool.IService
         void SetLinkedSpider(SpiderDetailViewModel detail);
         SpiderDetailViewModel? GetSpider(int id);
         Task<SpiderDetailViewModel?> GetSpiderAsync(int id);
+
+        void BulkUpdateTaskStatus(IEnumerable<int> tasks, int taskStatus);
+        Task BulkUpdateTaskStatusAsync(IEnumerable<int> tasks, int taskStatus);
     }
     public interface ISpiderService : ISpiderBaseService
     {

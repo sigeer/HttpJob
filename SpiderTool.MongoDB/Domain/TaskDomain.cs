@@ -109,5 +109,21 @@ namespace SpiderTool.MongoDB.Domain
                 .Set(x => x.Status, model.Status);
             await table.UpdateManyAsync(x => x.Id == model.Id, updateDifination);
         }
+
+        public void BulkUpdateTaskStatus(IEnumerable<int> tasks, int taskStatus)
+        {
+            var table = _db.GetCollection<DB_Task>(nameof(DB_Task));
+            var updateDifination = Builders<DB_Task>.Update
+                .Set(x => x.Status, taskStatus);
+            table.UpdateMany(x => tasks.Contains(x.Id), updateDifination);
+        }
+
+        public async Task BulkUpdateTaskStatusAsync(IEnumerable<int> tasks, int taskStatus)
+        {
+            var table = _db.GetCollection<DB_Task>(nameof(DB_Task));
+            var updateDifination = Builders<DB_Task>.Update
+                .Set(x => x.Status, taskStatus);
+            await table.UpdateManyAsync(x => tasks.Contains(x.Id), updateDifination);
+        }
     }
 }
