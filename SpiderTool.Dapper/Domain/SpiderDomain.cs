@@ -120,10 +120,6 @@ namespace SpiderTool.Dapper.Domain
             if (!model.FormValid())
                 return StatusMessage.FormInvalid;
 
-            var selectedTemplates = _dbConn.Query<int>($"select LinkedSpiderId from {templateTable} where {model.Id} in @ids and LinkedSpiderId is not null", model.Templates).ToList();
-            if (selectedTemplates.Contains(model.Id))
-                return "可能出现递归调用";
-
             using var dbTrans = _dbConn.BeginTransaction();
             var dbModel = _dbConn.QueryFirstOrDefault<DB_Spider>($"select id, createtime, lastUpdatedTime from {spiderTable} where id = @id", model);
             if (dbModel == null)
@@ -152,10 +148,6 @@ namespace SpiderTool.Dapper.Domain
         {
             if (!model.FormValid())
                 return StatusMessage.FormInvalid;
-
-            var selectedTemplates = (await _dbConn.QueryAsync<int>($"select LinkedSpiderId from {templateTable} where {model.Id} in @ids and LinkedSpiderId is not null", model.Templates)).ToList();
-            if (selectedTemplates.Contains(model.Id))
-                return "可能出现递归调用";
 
             using var dbTrans = _dbConn.BeginTransaction();
             var dbModel = await _dbConn.QueryFirstOrDefaultAsync<DB_Spider>($"select id, createtime, lastUpdatedTime from {spiderTable} where id = @id", model);
