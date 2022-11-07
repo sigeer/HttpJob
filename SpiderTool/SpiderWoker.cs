@@ -144,10 +144,12 @@ namespace SpiderTool
         public void CallLog(string logStr)
         {
             OnLog?.Invoke(this, logStr);
+            _logger.LogInformation(logStr);
         }
 
         public void MountChildTaskEvent(SpiderWorker childTask)
         {
+            CallLog("创建子任务");
             OnNewTask?.Invoke(this, childTask);
             childTask.OnLog += (obj, evt) =>
             {
@@ -216,14 +218,14 @@ namespace SpiderTool
                     OnTaskComplete?.Invoke(this, this);
                     OnTaskStatusChanged?.Invoke(this, this);
                     OnLog?.Invoke(this, logStr);
-                    _logger.LogInformation($"task {TaskId} completed");
+                    CallLog($"task {TaskId} completed {logStr}");
                     break;
                 case TaskType.Canceled:
                     _service?.SetTaskStatus(TaskId, (int)TaskType.Canceled);
                     OnTaskCanceled?.Invoke(this, this);
                     OnTaskStatusChanged?.Invoke(this, this);
                     OnLog?.Invoke(this, logStr);
-                    _logger.LogInformation($"task {TaskId} canceled");
+                    CallLog($"task {TaskId} canceled {logStr}");
                     break;
                 default:
                     break;
@@ -246,6 +248,7 @@ namespace SpiderTool
         private async Task ProcessUrl(string currentUrl, bool isRootUrl = true, CancellationToken cancellationToken = default)
         {
             _currentUrl = currentUrl;
+            CallLog($"即将访问：{_currentUrl}");
 
             var documentContent = await LoadDocumentContent();
             _currentDoc.LoadHtml(documentContent);

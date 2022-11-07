@@ -52,6 +52,7 @@
             this.tabPage2 = new System.Windows.Forms.TabPage();
             this.DataGrid_OtherTasks = new System.Windows.Forms.DataGridView();
             this.panel1 = new System.Windows.Forms.Panel();
+            this.MenuItem_LogDir = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1.SuspendLayout();
             this.statusStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.DataGrid_InProgressTasks)).BeginInit();
@@ -124,7 +125,8 @@
             this.设置ToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.工作设置ToolStripMenuItem,
             this.MenuNewSpider,
-            this.MenuItem_Dir});
+            this.MenuItem_Dir,
+            this.MenuItem_LogDir});
             this.设置ToolStripMenuItem.Name = "设置ToolStripMenuItem";
             this.设置ToolStripMenuItem.Size = new System.Drawing.Size(44, 21);
             this.设置ToolStripMenuItem.Text = "设置";
@@ -135,7 +137,7 @@
             this.UseLocalMenu,
             this.UseServiceMenu});
             this.工作设置ToolStripMenuItem.Name = "工作设置ToolStripMenuItem";
-            this.工作设置ToolStripMenuItem.Size = new System.Drawing.Size(148, 22);
+            this.工作设置ToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.工作设置ToolStripMenuItem.Text = "工作设置";
             // 
             // UseLocalMenu
@@ -159,14 +161,14 @@
             // MenuNewSpider
             // 
             this.MenuNewSpider.Name = "MenuNewSpider";
-            this.MenuNewSpider.Size = new System.Drawing.Size(148, 22);
+            this.MenuNewSpider.Size = new System.Drawing.Size(180, 22);
             this.MenuNewSpider.Text = "新增爬虫";
             this.MenuNewSpider.Click += new System.EventHandler(this.MenuNewSpider_Click);
             // 
             // MenuItem_Dir
             // 
             this.MenuItem_Dir.Name = "MenuItem_Dir";
-            this.MenuItem_Dir.Size = new System.Drawing.Size(148, 22);
+            this.MenuItem_Dir.Size = new System.Drawing.Size(180, 22);
             this.MenuItem_Dir.Text = "打开保存目录";
             this.MenuItem_Dir.Click += new System.EventHandler(this.MenuItem_Dir_Click);
             // 
@@ -299,6 +301,13 @@
             this.panel1.Size = new System.Drawing.Size(671, 399);
             this.panel1.TabIndex = 20;
             // 
+            // MenuItem_LogDir
+            // 
+            this.MenuItem_LogDir.Name = "MenuItem_LogDir";
+            this.MenuItem_LogDir.Size = new System.Drawing.Size(180, 22);
+            this.MenuItem_LogDir.Text = "打开日志目录";
+            this.MenuItem_LogDir.Click += new System.EventHandler(this.MenuItem_LogDir_Click);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 17F);
@@ -356,5 +365,6 @@
         private DataGridView DataGrid_OtherTasks;
         private Panel panel1;
         private ToolStripMenuItem MenuItem_Dir;
+        private ToolStripMenuItem MenuItem_LogDir;
     }
 }
