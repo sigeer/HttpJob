@@ -5,7 +5,8 @@ CREATE TABLE If Not Exists "DB_ReplacementRule" (
   "Id" integer NOT NULL PRIMARY KEY AUTOINCREMENT,
   "TemplateId" integer NOT NULL,
   "ReplacementOldStr" varchar(100),
-  "ReplacementNewlyStr" varchar(100)
+  "ReplacementNewlyStr" varchar(100),
+  "IgnoreCase" bool not NULL default false
 );
 
 -- ----------------------------

@@ -51,7 +51,8 @@ namespace SpiderTool.MongoDB.Domain
                 {
                     Id = x.Id,
                     ReplacementOldStr = x.ReplacementOldStr,
-                    ReplacementNewlyStr = x.ReplacementNewlyStr
+                    ReplacementNewlyStr = x.ReplacementNewlyStr,
+                    IgnoreCase = x.IgnoreCase
                 }).ToList()
             }).ToList();
         }
@@ -74,7 +75,8 @@ namespace SpiderTool.MongoDB.Domain
                 {
                     Id = x.Id,
                     ReplacementOldStr = x.ReplacementOldStr,
-                    ReplacementNewlyStr = x.ReplacementNewlyStr
+                    ReplacementNewlyStr = x.ReplacementNewlyStr,
+                    IgnoreCase = x.IgnoreCase
                 }).ToList()
             }).ToList();
         }
@@ -105,7 +107,8 @@ namespace SpiderTool.MongoDB.Domain
                         Id = ++maxRuleId,
                         TemplateId = dbModel.Id,
                         ReplacementNewlyStr = x.ReplacementNewlyStr,
-                        ReplacementOldStr = x.ReplacementOldStr
+                        ReplacementOldStr = x.ReplacementOldStr,
+                        IgnoreCase = x.IgnoreCase
                     }));
                 }
 
@@ -133,7 +136,8 @@ namespace SpiderTool.MongoDB.Domain
                             Id = ++maxRuleId,
                             TemplateId = dbModel.Id,
                             ReplacementNewlyStr = x.ReplacementNewlyStr,
-                            ReplacementOldStr = x.ReplacementOldStr
+                            ReplacementOldStr = x.ReplacementOldStr,
+                            IgnoreCase = x.IgnoreCase
                         }));
                     }
                 }
@@ -166,7 +170,8 @@ namespace SpiderTool.MongoDB.Domain
                         Id = ++maxRuleId,
                         TemplateId = dbModel.Id,
                         ReplacementNewlyStr = x.ReplacementNewlyStr,
-                        ReplacementOldStr = x.ReplacementOldStr
+                        ReplacementOldStr = x.ReplacementOldStr,
+                        IgnoreCase = x.IgnoreCase
                     }));
                 }
 
@@ -194,7 +199,8 @@ namespace SpiderTool.MongoDB.Domain
                             Id = ++maxRuleId,
                             TemplateId = dbModel.Id,
                             ReplacementNewlyStr = x.ReplacementNewlyStr,
-                            ReplacementOldStr = x.ReplacementOldStr
+                            ReplacementOldStr = x.ReplacementOldStr,
+                            IgnoreCase = x.IgnoreCase
                         }));
                     }
 

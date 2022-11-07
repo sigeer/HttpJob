@@ -131,7 +131,7 @@ namespace SpiderTool
             var finalText = HttpUtility.HtmlDecode(item.InnerHtml);
             foreach (var handle in rule.ReplacementRules)
             {
-                finalText = finalText.Replace(handle.ReplacementOldStr!, handle.ReplacementNewlyStr);
+                finalText = finalText.Replace(handle.ReplacementOldStr!, handle.ReplacementNewlyStr, handle.IgnoreCase, System.Globalization.CultureInfo.CurrentCulture);
             }
             var temp = new HtmlDocument();
             temp.LoadHtml(finalText);
