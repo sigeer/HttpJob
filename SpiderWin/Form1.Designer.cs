@@ -58,6 +58,7 @@
             this.tabPage2 = new System.Windows.Forms.TabPage();
             this.DataGrid_OtherTasks = new System.Windows.Forms.DataGridView();
             this.panel1 = new System.Windows.Forms.Panel();
+            this.MenuItem_Remove = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1.SuspendLayout();
             this.statusStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.DataGrid_InProgressTasks)).BeginInit();
@@ -237,28 +238,29 @@
             this.DataGridMenu.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.MenuItem_UseTask,
             this.MenuItem_OpenSaveDir,
-            this.MenuItem_Cancel});
+            this.MenuItem_Cancel,
+            this.MenuItem_Remove});
             this.DataGridMenu.Name = "DataGridMenu";
-            this.DataGridMenu.Size = new System.Drawing.Size(149, 70);
+            this.DataGridMenu.Size = new System.Drawing.Size(181, 114);
             // 
             // MenuItem_UseTask
             // 
             this.MenuItem_UseTask.Name = "MenuItem_UseTask";
-            this.MenuItem_UseTask.Size = new System.Drawing.Size(148, 22);
+            this.MenuItem_UseTask.Size = new System.Drawing.Size(180, 22);
             this.MenuItem_UseTask.Text = "使用";
             this.MenuItem_UseTask.Click += new System.EventHandler(this.MenuItem_UseTask_Click);
             // 
             // MenuItem_OpenSaveDir
             // 
             this.MenuItem_OpenSaveDir.Name = "MenuItem_OpenSaveDir";
-            this.MenuItem_OpenSaveDir.Size = new System.Drawing.Size(148, 22);
+            this.MenuItem_OpenSaveDir.Size = new System.Drawing.Size(180, 22);
             this.MenuItem_OpenSaveDir.Text = "打开保存目录";
             this.MenuItem_OpenSaveDir.Click += new System.EventHandler(this.MenuItem_OpenSaveDir_Click);
             // 
             // MenuItem_Cancel
             // 
             this.MenuItem_Cancel.Name = "MenuItem_Cancel";
-            this.MenuItem_Cancel.Size = new System.Drawing.Size(148, 22);
+            this.MenuItem_Cancel.Size = new System.Drawing.Size(180, 22);
             this.MenuItem_Cancel.Text = "取消任务";
             this.MenuItem_Cancel.Click += new System.EventHandler(this.MenuItem_Cancel_Click);
             // 
@@ -346,6 +348,13 @@
             this.panel1.Size = new System.Drawing.Size(671, 399);
             this.panel1.TabIndex = 20;
             // 
+            // MenuItem_Remove
+            // 
+            this.MenuItem_Remove.Name = "MenuItem_Remove";
+            this.MenuItem_Remove.Size = new System.Drawing.Size(180, 22);
+            this.MenuItem_Remove.Text = "移除";
+            this.MenuItem_Remove.Click += new System.EventHandler(this.MenuItem_Remove_Click);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 17F);
@@ -409,5 +418,6 @@
         private ToolStripMenuItem MenuItem_UseTask;
         private ToolStripMenuItem MenuItem_OpenSaveDir;
         private ToolStripMenuItem MenuItem_Cancel;
+        private ToolStripMenuItem MenuItem_Remove;
     }
 }

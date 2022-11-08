@@ -167,5 +167,15 @@ namespace SpiderTool.Service
         {
             await _taskDomain.BulkUpdateTaskStatusAsync(tasks, taskStatus);
         }
+
+        public void RemoveTask(int taskId)
+        {
+            _taskDomain.RemoveTask(taskId);
+        }
+
+        public async Task RemoveTaskAsync(int taskId)
+        {
+            await _taskDomain.RemoveTaskAsync(taskId);
+        }
     }
 }

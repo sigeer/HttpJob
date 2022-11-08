@@ -72,7 +72,7 @@ namespace SpiderWin
             }
             var logger = serviceProvider.GetService<ILogger<Application>>()!;
             var remoteService = serviceProvider.GetService<ISpiderService>()!;
-            if (!remoteService.CanConnect())
+            if (remoteService.CanConnect())
             {
                 services.AddSpiderService(new SqlSugarScope(new ConnectionConfig
                 {

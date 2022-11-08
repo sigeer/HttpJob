@@ -340,7 +340,7 @@ namespace SpiderWin
 
         private void MenuItem_OpenSaveDir_Click(object sender, EventArgs e)
         {
-            var grid = tabControl1.TabIndex == 0 ? DataGrid_InProgressTasks : DataGrid_OtherTasks;
+            var grid = tabControl1.SelectedIndex == 0 ? DataGrid_InProgressTasks : DataGrid_OtherTasks;
             var row = grid.SelectedRows[0];
             if (row == null)
                 return;
@@ -351,6 +351,21 @@ namespace SpiderWin
                 var description = row.Cells[2].Value?.ToString();
                 if (!string.IsNullOrEmpty(taskId))
                     Process.Start("explorer.exe", Path.Combine(Configs.BaseDir, $"{taskId}_{description?.RenameFolder()}"));
+            }
+        }
+
+        private void MenuItem_Remove_Click(object sender, EventArgs e)
+        {
+            var grid = tabControl1.SelectedIndex == 0 ? DataGrid_InProgressTasks : DataGrid_OtherTasks;
+            var row = grid.SelectedRows[0];
+            if (row == null)
+                return;
+
+            if (row.Index >= 0 && !row.IsNewRow)
+            {
+                var taskId = (int)row.Cells[1].Value;
+                _coreService.RemoveTask(taskId);
+                LoadTaskList();
             }
         }
 
