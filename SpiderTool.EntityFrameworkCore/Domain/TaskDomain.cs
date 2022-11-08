@@ -159,5 +159,25 @@ namespace SpiderTool.EntityFrameworkCore.Domain
             }
             await _dbContext.SaveChangesAsync();
         }
+
+        public void RemoveTask(int taskId)
+        {
+            var dbModel = _dbContext.Tasks.Find(taskId);
+            if (dbModel != null)
+            {
+                _dbContext.Tasks.Remove(dbModel);
+                _dbContext.SaveChanges();
+            }
+        }
+
+        public async Task RemoveTaskAsync(int taskId)
+        {
+            var dbModel = await _dbContext.Tasks.FindAsync(taskId);
+            if (dbModel != null)
+            {
+                _dbContext.Tasks.Remove(dbModel);
+                await _dbContext.SaveChangesAsync();
+            }
+        }
     }
 }

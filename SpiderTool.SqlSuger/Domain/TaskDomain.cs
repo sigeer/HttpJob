@@ -142,5 +142,15 @@ namespace SpiderTool.SqlSugar.Domain
         {
             await _dbContext.Updateable<DB_Task>().SetColumns(x => x.Status == taskStatus).Where(x => tasks.Contains(x.Id)).ExecuteCommandAsync();
         }
+
+        public void RemoveTask(int taskId)
+        {
+            _dbContext.Deleteable<DB_Task>(taskId).ExecuteCommand();
+        }
+
+        public async Task RemoveTaskAsync(int taskId)
+        {
+            await _dbContext.Deleteable<DB_Task>(taskId).ExecuteCommandAsync();
+        }
     }
 }

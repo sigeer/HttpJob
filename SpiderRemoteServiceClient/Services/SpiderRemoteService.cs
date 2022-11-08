@@ -215,5 +215,15 @@ namespace SpiderRemoteServiceClient.Services
             postModel.Tasks.AddRange(tasks);
             await _client.BulkUpdateTaskStatusAsync(postModel);
         }
+
+        public void RemoveTask(int taskId)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task RemoveTaskAsync(int taskId)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

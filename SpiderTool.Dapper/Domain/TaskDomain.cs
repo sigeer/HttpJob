@@ -80,5 +80,15 @@ namespace SpiderTool.Dapper.Domain
         {
             await _dbConn.ExecuteScalarAsync($"update {taskTable} set Status = @Status where id in @Id", new { Id = tasks, Status = taskStatus });
         }
+
+        public void RemoveTask(int taskId)
+        {
+            _dbConn.ExecuteScalar($"delete from {taskTable} where id = @id", new { id = taskId });
+        }
+
+        public async Task RemoveTaskAsync(int taskId)
+        {
+            await _dbConn.ExecuteScalarAsync($"delete from {taskTable} where id = @id", new { id = taskId });
+        }
     }
 }

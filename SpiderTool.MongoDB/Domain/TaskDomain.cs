@@ -125,5 +125,17 @@ namespace SpiderTool.MongoDB.Domain
                 .Set(x => x.Status, taskStatus);
             await table.UpdateManyAsync(x => tasks.Contains(x.Id), updateDifination);
         }
+
+        public void RemoveTask(int taskId)
+        {
+            var collection = _db.GetCollection<DB_Task>(nameof(DB_Task));
+            collection.DeleteMany(x => x.Id == taskId);
+        }
+
+        public async Task RemoveTaskAsync(int taskId)
+        {
+            var collection = _db.GetCollection<DB_Task>(nameof(DB_Task));
+            await collection.DeleteManyAsync(x => x.Id == taskId);
+        }
     }
 }
