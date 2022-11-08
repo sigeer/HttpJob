@@ -29,13 +29,13 @@ namespace SpiderTool.Dapper.Domain
 
         public List<TaskListItemViewModel> GetTaskList()
         {
-            var sql = $"select * from {taskTable} where status != ${(int)TaskType.Canceled} order by createTime desc";
+            var sql = $"select * from {taskTable} order by createTime desc";
             return _dbConn.Query<TaskListItemViewModel>(sql).ToList();
         }
 
         public async Task<List<TaskListItemViewModel>> GetTaskListAsync()
         {
-            var sql = $"select * from {taskTable} where status != ${(int)TaskType.Canceled} order by createTime desc";
+            var sql = $"select * from {taskTable} order by createTime desc";
             return (await _dbConn.QueryAsync<TaskListItemViewModel>(sql)).ToList();
         }
 

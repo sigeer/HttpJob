@@ -14,6 +14,8 @@ namespace SpiderTool
     {
         public SpiderWorker? ParentTask { get; private set; }
         public bool IsChildTask => ParentTask != null;
+        public List<SpiderWorker> ChildrenTask { get; } = new List<SpiderWorker>();
+        readonly WorkerHandler _handler = WorkerHandler.GetInstance();
         private string? _contextId;
         public string ContextId
         {
@@ -123,6 +125,7 @@ namespace SpiderTool
             _processor = rootSpider._processor;
             _logger = rootSpider._logger;
             ParentTask = rootSpider;
+            rootSpider.ChildrenTask.Add(this);
 
             _rootUrl = url;
             _spider = spiderDetail;
@@ -194,7 +197,7 @@ namespace SpiderTool
             };
         }
 
-        public async Task Start(CancellationToken cancellationToken = default)
+        public async Task Start()
         {
             _taskId = _service?.AddTask(new TaskEditDto
             {
@@ -202,9 +205,10 @@ namespace SpiderTool
                 SpiderId = Spider.Id,
                 Status = (int)TaskType.NotEffective
             }) ?? -1;
+            var tokenSource = _handler.GetOrAdd(TaskId);
             UpdateTaskStatus(TaskType.NotEffective);
 
-            await ProcessUrl(_rootUrl, true, cancellationToken);
+            await ProcessUrl(_rootUrl, true, tokenSource.Token);
             await CompleteTask();
         }
 
@@ -231,14 +235,15 @@ namespace SpiderTool
                     OnTaskComplete?.Invoke(this, this);
                     OnTaskStatusChanged?.Invoke(this, this);
                     OnLog?.Invoke(this, logStr);
-                    CallLog($"task {TaskId} completed {logStr}");
+                    CallLog($"任务 {TaskId} completed {logStr}");
                     break;
                 case TaskType.Canceled:
                     _service?.SetTaskStatus(TaskId, (int)TaskType.Canceled);
                     OnTaskCanceled?.Invoke(this, this);
                     OnTaskStatusChanged?.Invoke(this, this);
                     OnLog?.Invoke(this, logStr);
-                    CallLog($"task {TaskId} canceled {logStr}");
+                    CallLog($"任务 {TaskId} canceled {logStr}");
+                    _handler.Return(TaskId);
                     break;
                 default:
                     break;
@@ -295,7 +300,7 @@ namespace SpiderTool
             {
                 var nextUrl = (nextPageNode.Attributes["href"] ?? nextPageNode.Attributes["data-href"])?.Value;
                 if (!string.IsNullOrEmpty(nextUrl))
-                    await ProcessUrl(nextUrl, false, cancellationToken);
+                    await ProcessUrl(nextUrl, false);
             }
         }
 

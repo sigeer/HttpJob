@@ -23,14 +23,8 @@ namespace SpiderWin
         List<SpiderListItemViewModel> _spiderList = new List<SpiderListItemViewModel>();
         List<TaskListItemViewModel> _taskList = new List<TaskListItemViewModel>();
 
-        /// <summary>
-        /// 通过contextid找到对应的CancellationTokenSource
-        /// </summary>
-        readonly Dictionary<string, CancellationTokenSource> workStatusSource = new Dictionary<string, CancellationTokenSource>();
-        /// <summary>
-        /// 通过taskid找到对应spideworker(从datagrid)
-        /// </summary>
-        readonly Dictionary<int, SpiderWorker> workerIdMappingContext = new Dictionary<int, SpiderWorker>();
+
+        readonly WorkerHandler _handler = WorkerHandler.GetInstance();
         public Form1(ISpiderService coreService, IServiceProvider serviceProvider, ILogger<Form1> logger)
         {
             _coreService = coreService;
@@ -178,8 +172,6 @@ namespace SpiderWin
 
                 worker.OnTaskInit += (obj, spider) =>
                 {
-                    workerIdMappingContext.Add(spider.TaskId, spider);
-
                     childSW.Start();
                     PrintUILog($"任务{spider.TaskId} 正在初始化==========", string.Empty);
                     LoadTaskHistory();
@@ -191,17 +183,10 @@ namespace SpiderWin
                 worker.OnTaskComplete += (obj, spider) =>
                 {
                     childSW.Stop();
-                    if (!spider.IsChildTask)
-                        RemoveTokenSource(spider.TaskId);
 
                     var cost = $"共耗时：{childSW.Elapsed.TotalSeconds.ToFixed(2)}秒";
                     mainModalStatusLabel.Text = $"任务{spider.TaskId}结束 {cost}";
                     PrintUILog($"任务{spider.TaskId} 结束==========", $"{cost} \"file://{spider.CurrentDir}\"");
-                };
-                worker.OnTaskCanceled +=  (obj, spider) =>
-                {
-                    if (!spider.IsChildTask)
-                        RemoveTokenSource(spider.TaskId);
                 };
                 worker.OnTaskStatusChanged += (obj, task) =>
                 {
@@ -218,9 +203,7 @@ namespace SpiderWin
 
                 BeginInvoke(new MethodInvoker(async () =>
                 {
-                    var tokenSource = new CancellationTokenSource();
-                    workStatusSource.Add(worker.ContextId, tokenSource);
-                    await worker.Start(tokenSource.Token);
+                    await worker.Start();
                 }));
             });
         }
@@ -279,12 +262,7 @@ namespace SpiderWin
 
         private void BtnCacel_Click(object sender, EventArgs e)
         {
-            var allKeys = workStatusSource.Keys.ToList();
-            foreach (var item in allKeys)
-            {
-                var tokenSource = workStatusSource[item];
-                tokenSource.Cancel();
-            }
+            _handler.CancelAll();
         }
 
         private void PrintUILog(string type, string str)
@@ -392,12 +370,7 @@ namespace SpiderWin
             if (row.Index >= 0 && !row.IsNewRow)
             {
                 var taskId = (int)row.Cells[1].Value;
-                var worker = workerIdMappingContext[taskId];
-                if (worker.IsChildTask)
-                    return;
-
-                var tokenSource = workStatusSource[worker.ContextId];
-                tokenSource.Cancel();
+                _handler.Cancel(taskId);
             }
         }
 
@@ -415,18 +388,6 @@ namespace SpiderWin
                     DataGridMenu.Show(MousePosition.X, MousePosition.Y);
                 }
             }
-        }
-
-        private void RemoveTokenSource(int taskId)
-        {
-            var spider = workerIdMappingContext[taskId];
-            var tokenSource = workStatusSource[spider.ContextId];
-            //释放tokenSource
-            tokenSource.Dispose();
-            //移除tokenSource
-            workStatusSource.Remove(spider.ContextId);
-            //移除spiderworker
-            workerIdMappingContext.Remove(taskId);
         }
     }
 }

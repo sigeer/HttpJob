@@ -40,27 +40,58 @@ namespace SpiderTool
 
         protected virtual async Task ProcessJumpLink(SpiderWorker rootSpider, HtmlNodeCollection nodes, TemplateDetailViewModel rule, CancellationToken cancellationToken = default)
         {
-            foreach (var item in nodes)
+            try
             {
-                if (IsCanceled(rootSpider, cancellationToken))
-                    return;
-
-                var resource = (item.Attributes["href"] ?? item.Attributes["data-href"])?.Value;
-                if (resource == null)
-                    continue;
-
-                if (resource.StartsWith("javascript:"))
-                    continue;
-
-                var url = resource.GetTotalUrl(rootSpider.HostUrl);
-
-                if (rule.LinkedSpiderDetail != null)
+                await Parallel.ForEachAsync(nodes, cancellationToken, async (item, ctx) =>
                 {
-                    var spider = new SpiderWorker(rule.LinkedSpiderDetail, url, rootSpider);
-                    rootSpider.MountChildTaskEvent(spider);
-                    await spider.Start(cancellationToken);
-                }
+                    if (IsCanceled(rootSpider, ctx))
+                        ctx.ThrowIfCancellationRequested();
+
+                    var resource = (item.Attributes["href"] ?? item.Attributes["data-href"])?.Value;
+                    if (resource == null)
+                        ctx.ThrowIfCancellationRequested();
+
+                    else if (resource.StartsWith("javascript:"))
+                        ctx.ThrowIfCancellationRequested();
+
+                    else
+                    {
+                        var url = resource.GetTotalUrl(rootSpider.HostUrl);
+
+                        if (rule.LinkedSpiderDetail != null)
+                        {
+                            var spider = new SpiderWorker(rule.LinkedSpiderDetail, url, rootSpider);
+                            rootSpider.MountChildTaskEvent(spider);
+                            await spider.Start();
+                        }
+                    }
+                });
             }
+            catch (OperationCanceledException ex)
+            {
+                return;
+            }
+            //foreach (var item in nodes)
+            //{
+            //    if (IsCanceled(rootSpider, cancellationToken))
+            //        return;
+
+            //    var resource = (item.Attributes["href"] ?? item.Attributes["data-href"])?.Value;
+            //    if (resource == null)
+            //        continue;
+
+            //    if (resource.StartsWith("javascript:"))
+            //        continue;
+
+            //    var url = resource.GetTotalUrl(rootSpider.HostUrl);
+
+            //    if (rule.LinkedSpiderDetail != null)
+            //    {
+            //        var spider = new SpiderWorker(rule.LinkedSpiderDetail, url, rootSpider);
+            //        rootSpider.MountChildTaskEvent(spider);
+            //        await spider.Start();
+            //    }
+            //}
         }
 
         protected virtual async Task ProcessHtml(SpiderWorker rootSpider, HtmlNodeCollection nodes, TemplateDetailViewModel rule, CancellationToken cancellationToken = default)
