@@ -12,6 +12,16 @@ namespace SpiderTool
 {
     public class SpiderWorker
     {
+        private string? _contextId;
+        public string ContextId
+        {
+            get
+            {
+                if (string.IsNullOrEmpty(_contextId))
+                    _contextId = Guid.NewGuid().ToString();
+                return _contextId;
+            }
+        }
         private readonly SpiderDetailViewModel? _spider;
         protected SpiderDetailViewModel Spider
         {
@@ -34,7 +44,7 @@ namespace SpiderTool
             {
                 if (string.IsNullOrEmpty(_currentDir))
                 {
-                    _currentDir = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "wwwroot", "download", $"{TaskId}_{GenarteDirName()}");
+                    _currentDir = Path.Combine(Configs.BaseDir, $"{TaskId}_{GenarteDirName()}");
                 }
                 return _currentDir;
             }
