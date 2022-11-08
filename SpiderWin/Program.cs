@@ -14,6 +14,7 @@ using SqlSugar;
 using System.Diagnostics;
 using System.Reflection;
 using System.Runtime.InteropServices;
+using Utility.Serilog.Extension;
 
 namespace SpiderWin
 {
@@ -51,28 +52,7 @@ namespace SpiderWin
 
             IConfiguration configuration = cfgBuilder.Build();
 
-            _logger = new LoggerConfiguration()
-                    .MinimumLevel.Debug()
-                    .MinimumLevel.Override("System", LogEventLevel.Warning)
-                    .MinimumLevel.Override("Microsoft", LogEventLevel.Warning)
-                .WriteTo.Logger(lg => lg.Filter.ByIncludingOnly(p => p.Level == LogEventLevel.Debug).WriteTo.Async(
-                    a => a.File("logs/Debug-.txt", rollingInterval: RollingInterval.Day)
-                ))
-                .WriteTo.Logger(lg => lg.Filter.ByIncludingOnly(p => p.Level == LogEventLevel.Information).WriteTo.Async(
-                    a => a.File("logs/Info-.txt", rollingInterval: RollingInterval.Day)
-                ))
-                .WriteTo.Logger(lg => lg.Filter.ByIncludingOnly(p => p.Level == LogEventLevel.Warning).WriteTo.Async(
-                    a => a.File("logs/Warning-.txt", rollingInterval: RollingInterval.Day)
-                ))
-                .WriteTo.Logger(lg => lg.Filter.ByIncludingOnly(p => p.Level == LogEventLevel.Error).WriteTo.Async(
-                    a => a.File("logs/Error-.txt", rollingInterval: RollingInterval.Day)
-                ))
-                .WriteTo.Logger(lg => lg.Filter.ByIncludingOnly(p => p.Level == LogEventLevel.Fatal).WriteTo.Async(
-                    a => a.File("logs/Fatal-.txt", rollingInterval: RollingInterval.Day)
-                ))
-                .WriteTo.Logger(lg => lg.WriteTo.Async(
-                    a => a.File("logs/All-.txt", rollingInterval: RollingInterval.Day)
-                )).CreateLogger();
+            _logger = new LoggerConfiguration().CustomWriteTo().CreateLogger();
             services.AddLogging(builder =>
             {
                 builder.AddSerilog(logger: _logger, dispose: true);
@@ -86,7 +66,7 @@ namespace SpiderWin
             if (File.Exists("scripts.dll"))
             {
                 var processorAssembly = Assembly.LoadFile("scripts.dll");
-                var newlyService = processorAssembly.GetTypes().FirstOrDefault(x => x.GetInterfaces().Any(y => y.BaseType == typeof(ISpiderProcessor)));
+                var newlyService = processorAssembly.GetTypes().FirstOrDefault(x => x.GetInterfaces().Contains(typeof(ISpiderProcessor)));
                 if (newlyService != null)
                     services.AddSingleton<ISpiderProcessor>(Activator.CreateInstance(newlyService) as ISpiderProcessor);
             }

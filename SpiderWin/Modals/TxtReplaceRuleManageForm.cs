@@ -1,4 +1,5 @@
 ﻿using SpiderTool.Dto.Spider;
+using Utility.Extensions;
 
 namespace SpiderWin.Modals
 {
@@ -41,7 +42,6 @@ namespace SpiderWin.Modals
                 if (DataGridViewMain.Rows[e.RowIndex].IsNewRow)
                     return;
             };
-            DataGridViewMain.ContextMenuStrip = DataGridMenu;
 
             _rules?.ForEach(x =>
             {
@@ -51,7 +51,7 @@ namespace SpiderWin.Modals
                 row.Cells.Add(chkCell);
                 row.Cells.Add(new DataGridViewTextBoxCell() { Value = x.ReplacementOldStr, ValueType = typeof(string) });
                 row.Cells.Add(new DataGridViewTextBoxCell() { Value = x.ReplacementNewlyStr, ValueType = typeof(string) });
-
+                row.ContextMenuStrip = DataGridMenu;
                 DataGridViewMain.Rows.Add(row);
             });
         }
@@ -83,6 +83,22 @@ namespace SpiderWin.Modals
             if (selectedRow != null && !selectedRow.IsNewRow)
             {
                 DataGridViewMain.Rows.Remove(selectedRow);
+            }
+        }
+
+        private void DataGridViewMain_CellMouseUp(object sender, DataGridViewCellMouseEventArgs e)
+        {
+            ///右键菜单
+            if (e.Button == MouseButtons.Right)
+            {
+                var ctrl = sender as DataGridView;
+                if (ctrl != null && e.RowIndex >= 0)
+                {
+                    ctrl.ClearSelection();
+                    ctrl.Rows[e.RowIndex].Selected = true;
+                    ctrl.CurrentCell = ctrl.Rows[e.RowIndex].Cells[e.ColumnIndex.ToMax(0)];
+                    DataGridMenu.Show(MousePosition.X, MousePosition.Y);
+                }
             }
         }
     }

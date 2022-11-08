@@ -23,7 +23,14 @@ namespace SpiderWin
         List<SpiderListItemViewModel> _spiderList = new List<SpiderListItemViewModel>();
         List<TaskListItemViewModel> _taskList = new List<TaskListItemViewModel>();
 
-        readonly CancellationTokenSource tokenSource = new CancellationTokenSource();
+        /// <summary>
+        /// 通过contextid找到对应的CancellationTokenSource
+        /// </summary>
+        readonly Dictionary<string, CancellationTokenSource> workStatusSource = new Dictionary<string, CancellationTokenSource>();
+        /// <summary>
+        /// 通过taskid找到对应spideworker
+        /// </summary>
+        readonly Dictionary<int, SpiderWorker> workerIdMappingContext = new Dictionary<int, SpiderWorker>();
         public Form1(ISpiderService coreService, IServiceProvider serviceProvider, ILogger<Form1> logger)
         {
             _coreService = coreService;
@@ -125,7 +132,7 @@ namespace SpiderWin
                 row.Cells.Add(new DataGridViewTextBoxCell() { Value = x.CreateTime.ToString("yyyy-MM-dd HH:mm:ss"), Style = rowStyle });
 
                 row.Cells.Add(new DataGridViewTextBoxCell() { Value = x.CompleteTime == null ? "-" : x.CompleteTime.Value.ToString("yyyy-MM-dd HH:mm:ss"), Style = rowStyle });
-
+                row.ContextMenuStrip = DataGridMenu;
                 grid.Rows.Add(row);
             });
         }
@@ -172,20 +179,26 @@ namespace SpiderWin
                 worker.OnTaskInit += (obj, spider) =>
                 {
                     childSW.Start();
-                    PrintUILog($"任务{spider.TaskId} 开始==========", string.Empty);
+                    PrintUILog($"任务{spider.TaskId} 正在初始化==========", string.Empty);
                     LoadTaskHistory();
                 };
                 worker.OnTaskStart += (obj, spider) =>
                 {
-                    PrintUILog($"任务{spider.TaskId} 将保存到", $"\"file://{spider.CurrentDir}\"");
+                    workerIdMappingContext.Add(spider.TaskId, spider);
+                    PrintUILog($"任务{spider.TaskId} 开始==========", string.Empty);
                 };
                 worker.OnTaskComplete += (obj, spider) =>
                 {
                     childSW.Stop();
+                    RemoveTokenSource(spider.TaskId);
 
                     var cost = $"共耗时：{childSW.Elapsed.TotalSeconds.ToFixed(2)}秒";
-                    mainModalStatusLabel.Text = $"任务{spider.TaskId}结束  {cost}";
+                    mainModalStatusLabel.Text = $"任务{spider.TaskId}结束 {cost}";
                     PrintUILog($"任务{spider.TaskId} 结束==========", $"{cost} \"file://{spider.CurrentDir}\"");
+                };
+                worker.OnTaskCanceled +=  (obj, spider) =>
+                {
+                    RemoveTokenSource(spider.TaskId);
                 };
                 worker.OnTaskStatusChanged += (obj, task) =>
                 {
@@ -202,6 +215,8 @@ namespace SpiderWin
 
                 BeginInvoke(new MethodInvoker(async () =>
                 {
+                    var tokenSource = new CancellationTokenSource();
+                    workStatusSource.Add(worker.ContextId, tokenSource);
                     await worker.Start(tokenSource.Token);
                 }));
             });
@@ -245,7 +260,7 @@ namespace SpiderWin
                 Process.Start("explorer.exe", e.LinkText);
         }
 
-        private void DataGridTasks_CellDoubleClick(object sender, DataGridViewCellEventArgs e)
+        private void DataGrid_CellDoubleClick(object sender, DataGridViewCellEventArgs e)
         {
             var rows = ((DataGridView)sender).Rows;
             if (e.RowIndex >= 0 && e.RowIndex < rows.Count)
@@ -259,24 +274,14 @@ namespace SpiderWin
             }
         }
 
-
-        //private void DataGridTasks_CellMouseUp(object sender, DataGridViewCellMouseEventArgs e)
-        //{
-        //    if (e.Button == MouseButtons.Right)
-        //    {
-        //        if (e.RowIndex >= 0)
-        //        {
-        //            DataGridTasks.ClearSelection();
-        //            DataGridTasks.Rows[e.RowIndex].Selected = true;
-        //            DataGridTasks.CurrentCell = DataGridTasks.Rows[e.RowIndex].Cells[e.ColumnIndex];
-        //            DataGridMenu.Show(MousePosition.X, MousePosition.Y);
-        //        }
-        //    }
-        //}
-
         private void BtnCacel_Click(object sender, EventArgs e)
         {
-            tokenSource.Cancel();
+            foreach (var item in workStatusSource)
+            {
+                workStatusSource[item.Key].Cancel();
+                workStatusSource[item.Key].Dispose();
+                workStatusSource.Remove(item.Key);
+            }
         }
 
         private void PrintUILog(string type, string str)
@@ -284,8 +289,9 @@ namespace SpiderWin
             if (!string.IsNullOrEmpty(str))
                 BeginInvoke(() =>
                 {
-                    var msg = $"[{DateTime.Now:yyyy-MM-dd HH:mm:ss}] >>{type}：{str} \r\n";
-                    _logger.LogInformation($"{type}：{str}");
+                    var logContent = $"{type}：{str}";
+                    var msg = $"[{DateTime.Now:yyyy-MM-dd HH:mm:ss}] >> {logContent} \r\n";
+                    _logger.LogInformation(logContent);
                     ResultTxtBox.AppendText(msg);
                     ResultTxtBox.Focus();
                 });
@@ -296,7 +302,7 @@ namespace SpiderWin
             if (!string.IsNullOrEmpty(str))
                 BeginInvoke(() =>
                 {
-                    var msg = $"[{DateTime.Now:yyyy-MM-dd HH:mm:ss}] >>{type}：{str} \r\n";
+                    var msg = $"[{DateTime.Now:yyyy-MM-dd HH:mm:ss}] >> {type}：{str} \r\n";
                     ResultTxtBox.AppendText(msg);
                     ResultTxtBox.Focus();
                 });
@@ -309,7 +315,7 @@ namespace SpiderWin
 
         private void MenuItem_Dir_Click(object sender, EventArgs e)
         {
-            Process.Start("explorer.exe", Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "wwwroot", "download"));
+            Process.Start("explorer.exe", Configs.BaseDir);
         }
 
         private void Form1_FormClosing(object sender, FormClosingEventArgs e)
@@ -334,6 +340,86 @@ namespace SpiderWin
         private void MenuItem_LogDir_Click(object sender, EventArgs e)
         {
             Process.Start("explorer.exe", Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "logs"));
+        }
+
+        private void MenuItem_UseTask_Click(object sender, EventArgs e)
+        {
+            var grid = tabControl1.TabIndex == 0 ? DataGrid_InProgressTasks : DataGrid_OtherTasks;
+            var row = grid.SelectedRows[0];
+            if (row == null)
+                return;
+
+            if (row.Index >= 0 && !row.IsNewRow)
+            {
+                ComboxUrl.SelectedValue = row.Cells[3].Value;
+                ComboxSpider.SelectedValue = row.Cells[4].Value;
+            }
+
+        }
+
+        private void MenuItem_OpenSaveDir_Click(object sender, EventArgs e)
+        {
+            var grid = tabControl1.TabIndex == 0 ? DataGrid_InProgressTasks : DataGrid_OtherTasks;
+            var row = grid.SelectedRows[0];
+            if (row == null)
+                return;
+
+            if (row.Index >= 0 && !row.IsNewRow)
+            {
+                var taskId = row.Cells[1].Value?.ToString();
+                var description = row.Cells[2].Value?.ToString();
+                if (!string.IsNullOrEmpty(taskId))
+                    Process.Start("explorer.exe", Path.Combine(Configs.BaseDir, $"{taskId}_{description?.RenameFolder()}"));
+            }
+        }
+
+        private void MenuItem_Cancel_Click(object sender, EventArgs e)
+        {
+            if (tabControl1.TabIndex != 0)
+            {
+                MessageBox.Show("已完成的任务无法再取消。");
+                return;
+            }
+
+            var grid = DataGrid_InProgressTasks;
+            var row = grid.SelectedRows[0];
+            if (row == null)
+                return;
+
+            if (row.Index >= 0 && !row.IsNewRow)
+            {
+                var taskId = (int)row.Cells[1].Value;
+                var tokenSource = workStatusSource[workerIdMappingContext[taskId].ContextId];
+                tokenSource.Cancel();
+            }
+        }
+
+        private void DataGrid_CellMouseUp(object sender, DataGridViewCellMouseEventArgs e)
+        {
+            ///右键菜单
+            if (e.Button == MouseButtons.Right)
+            {
+                var ctrl = sender as DataGridView;
+                if (ctrl != null && e.RowIndex >= 0)
+                {
+                    ctrl.ClearSelection();
+                    ctrl.Rows[e.RowIndex].Selected = true;
+                    ctrl.CurrentCell = ctrl.Rows[e.RowIndex].Cells[e.ColumnIndex.ToMax(0)];
+                    DataGridMenu.Show(MousePosition.X, MousePosition.Y);
+                }
+            }
+        }
+
+        private void RemoveTokenSource(int taskId)
+        {
+            var spider = workerIdMappingContext[taskId];
+            var tokenSource = workStatusSource[spider.ContextId];
+            //释放tokenSource
+            tokenSource.Dispose();
+            //移除tokenSource
+            workStatusSource.Remove(spider.ContextId);
+            //移除spiderworker
+            workerIdMappingContext.Remove(taskId);
         }
     }
 }

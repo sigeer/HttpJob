@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             this.btnShowConfig = new System.Windows.Forms.Button();
             this.label1 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
@@ -40,11 +41,16 @@
             this.UseServiceMenu = new System.Windows.Forms.ToolStripMenuItem();
             this.MenuNewSpider = new System.Windows.Forms.ToolStripMenuItem();
             this.MenuItem_Dir = new System.Windows.Forms.ToolStripMenuItem();
+            this.MenuItem_LogDir = new System.Windows.Forms.ToolStripMenuItem();
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
             this.mainModalStatusLabel = new System.Windows.Forms.ToolStripStatusLabel();
             this.ResultTxtBox = new System.Windows.Forms.RichTextBox();
             this.ComboxUrl = new System.Windows.Forms.ComboBox();
             this.DataGrid_InProgressTasks = new System.Windows.Forms.DataGridView();
+            this.DataGridMenu = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.MenuItem_UseTask = new System.Windows.Forms.ToolStripMenuItem();
+            this.MenuItem_OpenSaveDir = new System.Windows.Forms.ToolStripMenuItem();
+            this.MenuItem_Cancel = new System.Windows.Forms.ToolStripMenuItem();
             this.BtnCacel = new System.Windows.Forms.Button();
             this.LinkClearLog = new System.Windows.Forms.LinkLabel();
             this.tabControl1 = new System.Windows.Forms.TabControl();
@@ -52,10 +58,10 @@
             this.tabPage2 = new System.Windows.Forms.TabPage();
             this.DataGrid_OtherTasks = new System.Windows.Forms.DataGridView();
             this.panel1 = new System.Windows.Forms.Panel();
-            this.MenuItem_LogDir = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1.SuspendLayout();
             this.statusStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.DataGrid_InProgressTasks)).BeginInit();
+            this.DataGridMenu.SuspendLayout();
             this.tabControl1.SuspendLayout();
             this.tabPage1.SuspendLayout();
             this.tabPage2.SuspendLayout();
@@ -137,7 +143,7 @@
             this.UseLocalMenu,
             this.UseServiceMenu});
             this.工作设置ToolStripMenuItem.Name = "工作设置ToolStripMenuItem";
-            this.工作设置ToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.工作设置ToolStripMenuItem.Size = new System.Drawing.Size(148, 22);
             this.工作设置ToolStripMenuItem.Text = "工作设置";
             // 
             // UseLocalMenu
@@ -161,16 +167,23 @@
             // MenuNewSpider
             // 
             this.MenuNewSpider.Name = "MenuNewSpider";
-            this.MenuNewSpider.Size = new System.Drawing.Size(180, 22);
+            this.MenuNewSpider.Size = new System.Drawing.Size(148, 22);
             this.MenuNewSpider.Text = "新增爬虫";
             this.MenuNewSpider.Click += new System.EventHandler(this.MenuNewSpider_Click);
             // 
             // MenuItem_Dir
             // 
             this.MenuItem_Dir.Name = "MenuItem_Dir";
-            this.MenuItem_Dir.Size = new System.Drawing.Size(180, 22);
+            this.MenuItem_Dir.Size = new System.Drawing.Size(148, 22);
             this.MenuItem_Dir.Text = "打开保存目录";
             this.MenuItem_Dir.Click += new System.EventHandler(this.MenuItem_Dir_Click);
+            // 
+            // MenuItem_LogDir
+            // 
+            this.MenuItem_LogDir.Name = "MenuItem_LogDir";
+            this.MenuItem_LogDir.Size = new System.Drawing.Size(148, 22);
+            this.MenuItem_LogDir.Text = "打开日志目录";
+            this.MenuItem_LogDir.Click += new System.EventHandler(this.MenuItem_LogDir_Click);
             // 
             // statusStrip1
             // 
@@ -214,9 +227,40 @@
             this.DataGrid_InProgressTasks.Name = "DataGrid_InProgressTasks";
             this.DataGrid_InProgressTasks.ReadOnly = true;
             this.DataGrid_InProgressTasks.RowTemplate.Height = 25;
-            this.DataGrid_InProgressTasks.Size = new System.Drawing.Size(527, 149);
+            this.DataGrid_InProgressTasks.Size = new System.Drawing.Size(527, 152);
             this.DataGrid_InProgressTasks.TabIndex = 13;
-            this.DataGrid_InProgressTasks.CellDoubleClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.DataGridTasks_CellDoubleClick);
+            this.DataGrid_InProgressTasks.CellDoubleClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.DataGrid_CellDoubleClick);
+            this.DataGrid_InProgressTasks.CellMouseUp += new System.Windows.Forms.DataGridViewCellMouseEventHandler(this.DataGrid_CellMouseUp);
+            // 
+            // DataGridMenu
+            // 
+            this.DataGridMenu.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.MenuItem_UseTask,
+            this.MenuItem_OpenSaveDir,
+            this.MenuItem_Cancel});
+            this.DataGridMenu.Name = "DataGridMenu";
+            this.DataGridMenu.Size = new System.Drawing.Size(149, 70);
+            // 
+            // MenuItem_UseTask
+            // 
+            this.MenuItem_UseTask.Name = "MenuItem_UseTask";
+            this.MenuItem_UseTask.Size = new System.Drawing.Size(148, 22);
+            this.MenuItem_UseTask.Text = "使用";
+            this.MenuItem_UseTask.Click += new System.EventHandler(this.MenuItem_UseTask_Click);
+            // 
+            // MenuItem_OpenSaveDir
+            // 
+            this.MenuItem_OpenSaveDir.Name = "MenuItem_OpenSaveDir";
+            this.MenuItem_OpenSaveDir.Size = new System.Drawing.Size(148, 22);
+            this.MenuItem_OpenSaveDir.Text = "打开保存目录";
+            this.MenuItem_OpenSaveDir.Click += new System.EventHandler(this.MenuItem_OpenSaveDir_Click);
+            // 
+            // MenuItem_Cancel
+            // 
+            this.MenuItem_Cancel.Name = "MenuItem_Cancel";
+            this.MenuItem_Cancel.Size = new System.Drawing.Size(148, 22);
+            this.MenuItem_Cancel.Text = "取消任务";
+            this.MenuItem_Cancel.Click += new System.EventHandler(this.MenuItem_Cancel_Click);
             // 
             // BtnCacel
             // 
@@ -280,9 +324,10 @@
             this.DataGrid_OtherTasks.Name = "DataGrid_OtherTasks";
             this.DataGrid_OtherTasks.ReadOnly = true;
             this.DataGrid_OtherTasks.RowTemplate.Height = 25;
-            this.DataGrid_OtherTasks.Size = new System.Drawing.Size(527, 150);
+            this.DataGrid_OtherTasks.Size = new System.Drawing.Size(527, 152);
             this.DataGrid_OtherTasks.TabIndex = 0;
-            this.DataGrid_OtherTasks.CellDoubleClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.DataGridTasks_CellDoubleClick);
+            this.DataGrid_OtherTasks.CellDoubleClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.DataGrid_CellDoubleClick);
+            this.DataGrid_OtherTasks.CellMouseUp += new System.Windows.Forms.DataGridViewCellMouseEventHandler(this.DataGrid_CellMouseUp);
             // 
             // panel1
             // 
@@ -300,13 +345,6 @@
             this.panel1.Name = "panel1";
             this.panel1.Size = new System.Drawing.Size(671, 399);
             this.panel1.TabIndex = 20;
-            // 
-            // MenuItem_LogDir
-            // 
-            this.MenuItem_LogDir.Name = "MenuItem_LogDir";
-            this.MenuItem_LogDir.Size = new System.Drawing.Size(180, 22);
-            this.MenuItem_LogDir.Text = "打开日志目录";
-            this.MenuItem_LogDir.Click += new System.EventHandler(this.MenuItem_LogDir_Click);
             // 
             // Form1
             // 
@@ -328,6 +366,7 @@
             this.statusStrip1.ResumeLayout(false);
             this.statusStrip1.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.DataGrid_InProgressTasks)).EndInit();
+            this.DataGridMenu.ResumeLayout(false);
             this.tabControl1.ResumeLayout(false);
             this.tabPage1.ResumeLayout(false);
             this.tabPage2.ResumeLayout(false);
@@ -366,5 +405,9 @@
         private Panel panel1;
         private ToolStripMenuItem MenuItem_Dir;
         private ToolStripMenuItem MenuItem_LogDir;
+        private ContextMenuStrip DataGridMenu;
+        private ToolStripMenuItem MenuItem_UseTask;
+        private ToolStripMenuItem MenuItem_OpenSaveDir;
+        private ToolStripMenuItem MenuItem_Cancel;
     }
 }

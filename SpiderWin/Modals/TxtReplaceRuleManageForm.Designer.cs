@@ -30,9 +30,9 @@
         {
             this.components = new System.ComponentModel.Container();
             this.DataGridViewMain = new System.Windows.Forms.DataGridView();
-            this.BtnSave = new System.Windows.Forms.Button();
             this.DataGridMenu = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.DataGridMenu_Item_Delete = new System.Windows.Forms.ToolStripMenuItem();
+            this.BtnSave = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.DataGridViewMain)).BeginInit();
             this.DataGridMenu.SuspendLayout();
             this.SuspendLayout();
@@ -45,16 +45,7 @@
             this.DataGridViewMain.RowTemplate.Height = 25;
             this.DataGridViewMain.Size = new System.Drawing.Size(425, 298);
             this.DataGridViewMain.TabIndex = 0;
-            // 
-            // BtnSave
-            // 
-            this.BtnSave.Location = new System.Drawing.Point(362, 318);
-            this.BtnSave.Name = "BtnSave";
-            this.BtnSave.Size = new System.Drawing.Size(75, 23);
-            this.BtnSave.TabIndex = 2;
-            this.BtnSave.Text = "保存";
-            this.BtnSave.UseVisualStyleBackColor = true;
-            this.BtnSave.Click += new System.EventHandler(this.BtnSave_Click);
+            this.DataGridViewMain.CellMouseUp += new System.Windows.Forms.DataGridViewCellMouseEventHandler(this.DataGridViewMain_CellMouseUp);
             // 
             // DataGridMenu
             // 
@@ -69,6 +60,16 @@
             this.DataGridMenu_Item_Delete.Size = new System.Drawing.Size(100, 22);
             this.DataGridMenu_Item_Delete.Text = "删除";
             this.DataGridMenu_Item_Delete.Click += new System.EventHandler(this.DataGridMenu_Item_Delete_Click);
+            // 
+            // BtnSave
+            // 
+            this.BtnSave.Location = new System.Drawing.Point(362, 318);
+            this.BtnSave.Name = "BtnSave";
+            this.BtnSave.Size = new System.Drawing.Size(75, 23);
+            this.BtnSave.TabIndex = 2;
+            this.BtnSave.Text = "保存";
+            this.BtnSave.UseVisualStyleBackColor = true;
+            this.BtnSave.Click += new System.EventHandler(this.BtnSave_Click);
             // 
             // TxtReplaceRuleManageForm
             // 
