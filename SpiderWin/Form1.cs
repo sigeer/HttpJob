@@ -191,7 +191,8 @@ namespace SpiderWin
                 worker.OnTaskComplete += (obj, spider) =>
                 {
                     childSW.Stop();
-                    RemoveTokenSource(spider.TaskId);
+                    if (!spider.IsChildTask)
+                        RemoveTokenSource(spider.TaskId);
 
                     var cost = $"共耗时：{childSW.Elapsed.TotalSeconds.ToFixed(2)}秒";
                     mainModalStatusLabel.Text = $"任务{spider.TaskId}结束 {cost}";
@@ -199,7 +200,8 @@ namespace SpiderWin
                 };
                 worker.OnTaskCanceled +=  (obj, spider) =>
                 {
-                    RemoveTokenSource(spider.TaskId);
+                    if (!spider.IsChildTask)
+                        RemoveTokenSource(spider.TaskId);
                 };
                 worker.OnTaskStatusChanged += (obj, task) =>
                 {
@@ -376,7 +378,7 @@ namespace SpiderWin
 
         private void MenuItem_Cancel_Click(object sender, EventArgs e)
         {
-            if (tabControl1.TabIndex != 0)
+            if (tabControl1.SelectedIndex != 0)
             {
                 MessageBox.Show("已完成的任务无法再取消。");
                 return;
@@ -390,7 +392,11 @@ namespace SpiderWin
             if (row.Index >= 0 && !row.IsNewRow)
             {
                 var taskId = (int)row.Cells[1].Value;
-                var tokenSource = workStatusSource[workerIdMappingContext[taskId].ContextId];
+                var worker = workerIdMappingContext[taskId];
+                if (worker.IsChildTask)
+                    return;
+
+                var tokenSource = workStatusSource[worker.ContextId];
                 tokenSource.Cancel();
             }
         }

@@ -12,6 +12,8 @@ namespace SpiderTool
 {
     public class SpiderWorker
     {
+        public SpiderWorker? ParentTask { get; private set; }
+        public bool IsChildTask => ParentTask != null;
         private string? _contextId;
         public string ContextId
         {
@@ -120,6 +122,7 @@ namespace SpiderTool
             _service = rootSpider._service;
             _processor = rootSpider._processor;
             _logger = rootSpider._logger;
+            ParentTask = rootSpider;
 
             _rootUrl = url;
             _spider = spiderDetail;
