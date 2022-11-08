@@ -28,7 +28,7 @@ namespace SpiderWin
         /// </summary>
         readonly Dictionary<string, CancellationTokenSource> workStatusSource = new Dictionary<string, CancellationTokenSource>();
         /// <summary>
-        /// 通过taskid找到对应spideworker
+        /// 通过taskid找到对应spideworker(从datagrid)
         /// </summary>
         readonly Dictionary<int, SpiderWorker> workerIdMappingContext = new Dictionary<int, SpiderWorker>();
         public Form1(ISpiderService coreService, IServiceProvider serviceProvider, ILogger<Form1> logger)
@@ -178,13 +178,14 @@ namespace SpiderWin
 
                 worker.OnTaskInit += (obj, spider) =>
                 {
+                    workerIdMappingContext.Add(spider.TaskId, spider);
+
                     childSW.Start();
                     PrintUILog($"任务{spider.TaskId} 正在初始化==========", string.Empty);
                     LoadTaskHistory();
                 };
                 worker.OnTaskStart += (obj, spider) =>
                 {
-                    workerIdMappingContext.Add(spider.TaskId, spider);
                     PrintUILog($"任务{spider.TaskId} 开始==========", string.Empty);
                 };
                 worker.OnTaskComplete += (obj, spider) =>
@@ -276,11 +277,11 @@ namespace SpiderWin
 
         private void BtnCacel_Click(object sender, EventArgs e)
         {
-            foreach (var item in workStatusSource)
+            var allKeys = workStatusSource.Keys.ToList();
+            foreach (var item in allKeys)
             {
-                workStatusSource[item.Key].Cancel();
-                workStatusSource[item.Key].Dispose();
-                workStatusSource.Remove(item.Key);
+                var tokenSource = workStatusSource[item];
+                tokenSource.Cancel();
             }
         }
 
