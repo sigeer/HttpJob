@@ -1,9 +1,11 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using ICSharpCode.SharpZipLib.Zip;
+using Microsoft.EntityFrameworkCore;
 using SpiderTool.Data.Constants;
 using SpiderTool.DataBase;
 using SpiderTool.Dto.Tasks;
 using SpiderTool.EntityFrameworkCore.ContextModel;
 using SpiderTool.IDomain;
+using System.Threading.Tasks;
 
 namespace SpiderTool.EntityFrameworkCore.Domain
 {
@@ -61,48 +63,36 @@ namespace SpiderTool.EntityFrameworkCore.Domain
 
         public void UpdateTask(TaskEditDto model)
         {
-            var taskDbModel = _dbContext.Tasks.FirstOrDefault(x => x.Id == model.Id);
-            if (taskDbModel != null)
-            {
-                taskDbModel.Status = model.Status;
-                taskDbModel.Description = model.Description;
-                _dbContext.SaveChanges();
-            }
+            _dbContext.Tasks.Where(x => x.Id == model.Id)
+                .ExecuteUpdate(x =>
+                    x.SetProperty(x => x.Status, model.Status)
+                    .SetProperty(x => x.Description, model.Description));
         }
 
         public async Task UpdateTaskAsync(TaskEditDto model)
         {
-            var taskDbModel = await _dbContext.Tasks.FirstOrDefaultAsync(x => x.Id == model.Id);
-            if (taskDbModel != null)
-            {
-                taskDbModel.Status = model.Status;
-                taskDbModel.Description = model.Description;
-                await _dbContext.SaveChangesAsync();
-            }
+            await _dbContext.Tasks.Where(x => x.Id == model.Id)
+                 .ExecuteUpdateAsync(x =>
+                     x.SetProperty(x => x.Status, model.Status)
+                     .SetProperty(x => x.Description, model.Description));
         }
 
         public void SetTaskStatus(int taskId, int taskStatus)
         {
-            var taskDbModel = _dbContext.Tasks.FirstOrDefault(x => x.Id == taskId);
-            if (taskDbModel != null)
-            {
-                taskDbModel.Status = taskStatus;
-                if (taskStatus == (int)TaskType.Completed)
-                    taskDbModel.CompleteTime = DateTime.Now;
-                _dbContext.SaveChanges();
-            }
+            var set = _dbContext.Tasks.Where(x => x.Id == taskId);
+            if (taskStatus == (int)TaskType.Completed)
+                set.ExecuteUpdate(x => x.SetProperty(x => x.Status, taskStatus).SetProperty(x => x.CompleteTime, DateTime.Now));
+            else
+                set.ExecuteUpdate(x => x.SetProperty(x => x.Status, taskStatus));
         }
 
         public async Task SetTaskStatusAsync(int taskId, int taskStatus)
         {
-            var taskDbModel = await _dbContext.Tasks.FirstOrDefaultAsync(x => x.Id == taskId);
-            if (taskDbModel != null)
-            {
-                taskDbModel.Status = taskStatus;
-                if (taskStatus == (int)TaskType.Completed)
-                    taskDbModel.CompleteTime = DateTime.Now;
-                await _dbContext.SaveChangesAsync();
-            }
+            var set = _dbContext.Tasks.Where(x => x.Id == taskId);
+            if (taskStatus == (int)TaskType.Completed)
+                await set.ExecuteUpdateAsync(x => x.SetProperty(x => x.Status, taskStatus).SetProperty(x => x.CompleteTime, DateTime.Now));
+            else
+                await set.ExecuteUpdateAsync(x => x.SetProperty(x => x.Status, taskStatus));
         }
 
         public async Task<List<TaskListItemViewModel>> GetTaskListAsync()
@@ -152,22 +142,12 @@ namespace SpiderTool.EntityFrameworkCore.Domain
 
         public void RemoveTask(int taskId)
         {
-            var dbModel = _dbContext.Tasks.Find(taskId);
-            if (dbModel != null)
-            {
-                _dbContext.Tasks.Remove(dbModel);
-                _dbContext.SaveChanges();
-            }
+            _dbContext.Tasks.Where(x => x.Id == taskId).ExecuteDelete();
         }
 
         public async Task RemoveTaskAsync(int taskId)
         {
-            var dbModel = await _dbContext.Tasks.FindAsync(taskId);
-            if (dbModel != null)
-            {
-                _dbContext.Tasks.Remove(dbModel);
-                await _dbContext.SaveChangesAsync();
-            }
+            await _dbContext.Tasks.Where(x => x.Id == taskId).ExecuteDeleteAsync();
         }
     }
 }

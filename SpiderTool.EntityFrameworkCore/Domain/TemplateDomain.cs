@@ -18,17 +18,13 @@ namespace SpiderTool.EntityFrameworkCore.Domain
 
         public string Delete(TemplateEditDto model)
         {
-            var dbModel = new DB_Template() { Id = model.Id };
-            _dbContext.Templates.Attach(dbModel).State = EntityState.Deleted;
-            _dbContext.SaveChanges();
+            _dbContext.Templates.Where(x => x.Id == model.Id).ExecuteDelete();
             return StatusMessage.Success;
         }
 
         public async Task<string> DeleteAsync(TemplateEditDto model)
         {
-            var dbModel = new DB_Template() { Id = model.Id };
-            _dbContext.Templates.Attach(dbModel).State = EntityState.Deleted;
-            await _dbContext.SaveChangesAsync();
+            await _dbContext.Templates.Where(x => x.Id == model.Id).ExecuteDeleteAsync();
             return StatusMessage.Success;
         }
 
