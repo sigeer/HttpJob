@@ -68,11 +68,11 @@ namespace SpiderWin
                 var processorAssembly = Assembly.LoadFile("scripts.dll");
                 var newlyService = processorAssembly.GetTypes().FirstOrDefault(x => x.GetInterfaces().Contains(typeof(ISpiderProcessor)));
                 if (newlyService != null)
-                    services.AddSingleton<ISpiderProcessor>(Activator.CreateInstance(newlyService) as ISpiderProcessor);
+                    services.AddSingleton<ISpiderProcessor>((Activator.CreateInstance(newlyService) as ISpiderProcessor)!);
             }
             var logger = serviceProvider.GetService<ILogger<Application>>()!;
             var remoteService = serviceProvider.GetService<ISpiderService>()!;
-            if (remoteService.CanConnect())
+            if (bool.Parse(configuration["DirectUseSqlite"]) || !remoteService.CanConnect())
             {
                 services.AddSpiderService(new SqlSugarScope(new ConnectionConfig
                 {

@@ -73,15 +73,7 @@ namespace SpiderWin
         private void LoadForm()
         {
             LoadTaskList();
-            LoadTaskHistory();
             LoadSpiderList();
-        }
-
-        private void LoadData()
-        {
-            PreLoadForm();
-
-            LoadForm();
         }
 
         private async void LoadSpiderList()
@@ -91,19 +83,6 @@ namespace SpiderWin
                 _spiderList = _coreService.GetSpiderDtoList();
             });
             ComboxSpider.DataSource = (new List<SpiderListItemViewModel>() { new SpiderListItemViewModel() { Id = 0, Name = "--请选择--" } }.Concat(_spiderList)).ToList();
-        }
-
-        private void LoadTaskHistory()
-        {
-            Task.Run(async () =>
-            {
-                var _taskHistoryList = await _coreService.GetTaskHistoryListAsync();
-                BeginInvoke(() =>
-                {
-                    ComboxUrl.DataSource = _taskHistoryList;
-                });
-            });
-
         }
 
         private void LoadDataGridData(List<TaskListItemViewModel> list, DataGridView grid)
@@ -138,6 +117,8 @@ namespace SpiderWin
                 _taskList = await _coreService.GetTaskListAsync();
                 BeginInvoke(() =>
                 {
+                    ComboxUrl.DataSource = _taskList.Select(x => new TaskSimpleViewModel() { Id = x.Id, RootUrl = x.RootUrl, SpiderId = x.SpiderId }).ToList();
+
                     LoadDataGridData(_taskList.Where(x => x.Status == (int)TaskType.InProgress || x.Status == (int)TaskType.NotEffective).ToList(), DataGrid_InProgressTasks);
                     LoadDataGridData(_taskList.Where(x => x.Status == (int)TaskType.Completed || x.Status == (int)TaskType.Canceled).ToList(), DataGrid_OtherTasks);
                 });
@@ -146,7 +127,9 @@ namespace SpiderWin
 
         private void Form1_Load(object sender, EventArgs e)
         {
-            LoadData();
+            PreLoadForm();
+
+            LoadForm();
         }
 
         private void btnRun_Click(object sender, EventArgs e)
@@ -156,10 +139,16 @@ namespace SpiderWin
                 MessageBox.Show("请输入URL");
                 return;
             }
-            mainModalStatusLabel.Text = "运行中...";
+
             var spiderId = (int)ComboxSpider.SelectedValue;
+            if (_taskList.Any(x => x.IsWorking && x.RootUrl == ComboxUrl.Text && x.SpiderId == spiderId))
+            {
+                MessageBox.Show("已有一个相同的任务在运行。");
+                return;
+            }
 
             var currentTask = NewWorkTask(spiderId, ComboxUrl.Text);
+            mainModalStatusLabel.Text = "运行中...";
             currentTask.Start();
         }
 
@@ -174,7 +163,6 @@ namespace SpiderWin
                 {
                     childSW.Start();
                     PrintUILog($"任务{spider.TaskId} 正在初始化==========", string.Empty);
-                    LoadTaskHistory();
                 };
                 worker.OnTaskStart += (obj, spider) =>
                 {
