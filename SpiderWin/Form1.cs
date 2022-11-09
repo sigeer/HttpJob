@@ -25,6 +25,7 @@ namespace SpiderWin
 
 
         readonly WorkerHandler _handler = WorkerHandler.GetInstance();
+        readonly DelayedTaskHandler _delayedTaskHandler = DelayedTaskHandler.GetInstance();
         public Form1(ISpiderService coreService, IServiceProvider serviceProvider, ILogger<Form1> logger)
         {
             _coreService = coreService;
@@ -177,7 +178,7 @@ namespace SpiderWin
                 };
                 worker.OnTaskStatusChanged += (obj, task) =>
                 {
-                    LoadTaskList();
+                    _delayedTaskHandler.AddTask(nameof(LoadTaskList), LoadTaskList);
                 };
                 worker.OnNewTask += (obj, spider) =>
                 {

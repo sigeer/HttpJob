@@ -18,25 +18,16 @@ namespace SpiderTool.EntityFrameworkCore.Domain
 
         public string Delete(SpiderEditDto model)
         {
-            var dbModel = _dbContext.Spiders.FirstOrDefault(x => x.Id == model.Id);
-            if (dbModel == null)
-                return StatusMessage.Error;
+            _dbContext.SpiderTemplates.Where(x => x.SpiderId == model.Id).ExecuteDelete();
+            _dbContext.Spiders.Where(x => x.Id == model.Id).ExecuteDelete();
 
-            _dbContext.Spiders.Remove(dbModel);
-            _dbContext.RemoveRange(_dbContext.SpiderTemplates.Where(x => x.SpiderId == dbModel.Id));
-            _dbContext.SaveChanges();
             return StatusMessage.Success;
         }
 
         public async Task<string> DeleteAsync(SpiderEditDto model)
         {
-            var dbModel = await _dbContext.Spiders.FirstOrDefaultAsync(x => x.Id == model.Id);
-            if (dbModel == null)
-                return StatusMessage.Error;
-
-            _dbContext.Spiders.Remove(dbModel);
-            _dbContext.RemoveRange(_dbContext.SpiderTemplates.Where(x => x.SpiderId == dbModel.Id));
-            await _dbContext.SaveChangesAsync();
+            await _dbContext.SpiderTemplates.Where(x => x.SpiderId == model.Id).ExecuteDeleteAsync();
+            await _dbContext.Spiders.Where(x => x.Id == model.Id).ExecuteDeleteAsync();
             return StatusMessage.Success;
         }
         public SpiderDetailViewModel? GetSpiderDto(int id)
