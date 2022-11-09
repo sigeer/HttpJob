@@ -173,7 +173,6 @@ namespace SpiderWin
                     childSW.Stop();
 
                     var cost = $"共耗时：{childSW.Elapsed.TotalSeconds.ToFixed(2)}秒";
-                    mainModalStatusLabel.Text = $"任务{spider.TaskId}结束 {cost}";
                     PrintUILog($"任务{spider.TaskId} 结束==========", $"{cost} \"file://{spider.CurrentDir}\"");
                 };
                 worker.OnTaskStatusChanged += (obj, task) =>
