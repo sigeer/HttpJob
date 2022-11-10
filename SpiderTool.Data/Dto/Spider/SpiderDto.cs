@@ -56,7 +56,7 @@ namespace SpiderTool.Dto.Spider
         public Dictionary<string, string> GetHeaders()
         {
             Dictionary<string, string> dic = new Dictionary<string, string>();
-            var headerObj = JsonSerializer.Deserialize<List<SpiderHeaderDto>>(HeaderStr ?? "") ?? new List<SpiderHeaderDto>();
+            var headerObj = JsonSerializer.Deserialize<List<SpiderHeaderDto>>(HeaderStr ?? "[]") ?? new List<SpiderHeaderDto>();
             headerObj.ForEach(x =>
             {
                 dic.Add(x.Key, x.Value);

@@ -184,7 +184,10 @@ namespace SpiderTool.Service
 
         public void StopTask(int taskId)
         {
-            _controller.Cancel(taskId);
+            if (_controller.Contains(taskId))
+                _controller.Cancel(taskId);
+            else
+                _taskDomain.SetTaskStatus(taskId, (int)TaskType.Canceled);
         }
 
         public void StopAllTask()

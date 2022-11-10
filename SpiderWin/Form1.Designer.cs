@@ -51,6 +51,7 @@
             this.MenuItem_UseTask = new System.Windows.Forms.ToolStripMenuItem();
             this.MenuItem_OpenSaveDir = new System.Windows.Forms.ToolStripMenuItem();
             this.MenuItem_Cancel = new System.Windows.Forms.ToolStripMenuItem();
+            this.MenuItem_Remove = new System.Windows.Forms.ToolStripMenuItem();
             this.BtnCacel = new System.Windows.Forms.Button();
             this.LinkClearLog = new System.Windows.Forms.LinkLabel();
             this.tabControl1 = new System.Windows.Forms.TabControl();
@@ -58,7 +59,7 @@
             this.tabPage2 = new System.Windows.Forms.TabPage();
             this.DataGrid_OtherTasks = new System.Windows.Forms.DataGridView();
             this.panel1 = new System.Windows.Forms.Panel();
-            this.MenuItem_Remove = new System.Windows.Forms.ToolStripMenuItem();
+            this.Link_Refresh = new System.Windows.Forms.LinkLabel();
             this.menuStrip1.SuspendLayout();
             this.statusStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.DataGrid_InProgressTasks)).BeginInit();
@@ -241,28 +242,35 @@
             this.MenuItem_Cancel,
             this.MenuItem_Remove});
             this.DataGridMenu.Name = "DataGridMenu";
-            this.DataGridMenu.Size = new System.Drawing.Size(181, 114);
+            this.DataGridMenu.Size = new System.Drawing.Size(149, 92);
             // 
             // MenuItem_UseTask
             // 
             this.MenuItem_UseTask.Name = "MenuItem_UseTask";
-            this.MenuItem_UseTask.Size = new System.Drawing.Size(180, 22);
+            this.MenuItem_UseTask.Size = new System.Drawing.Size(148, 22);
             this.MenuItem_UseTask.Text = "使用";
             this.MenuItem_UseTask.Click += new System.EventHandler(this.MenuItem_UseTask_Click);
             // 
             // MenuItem_OpenSaveDir
             // 
             this.MenuItem_OpenSaveDir.Name = "MenuItem_OpenSaveDir";
-            this.MenuItem_OpenSaveDir.Size = new System.Drawing.Size(180, 22);
+            this.MenuItem_OpenSaveDir.Size = new System.Drawing.Size(148, 22);
             this.MenuItem_OpenSaveDir.Text = "打开保存目录";
             this.MenuItem_OpenSaveDir.Click += new System.EventHandler(this.MenuItem_OpenSaveDir_Click);
             // 
             // MenuItem_Cancel
             // 
             this.MenuItem_Cancel.Name = "MenuItem_Cancel";
-            this.MenuItem_Cancel.Size = new System.Drawing.Size(180, 22);
+            this.MenuItem_Cancel.Size = new System.Drawing.Size(148, 22);
             this.MenuItem_Cancel.Text = "取消任务";
             this.MenuItem_Cancel.Click += new System.EventHandler(this.MenuItem_Cancel_Click);
+            // 
+            // MenuItem_Remove
+            // 
+            this.MenuItem_Remove.Name = "MenuItem_Remove";
+            this.MenuItem_Remove.Size = new System.Drawing.Size(148, 22);
+            this.MenuItem_Remove.Text = "移除";
+            this.MenuItem_Remove.Click += new System.EventHandler(this.MenuItem_Remove_Click);
             // 
             // BtnCacel
             // 
@@ -333,6 +341,7 @@
             // 
             // panel1
             // 
+            this.panel1.Controls.Add(this.Link_Refresh);
             this.panel1.Controls.Add(this.ComboxUrl);
             this.panel1.Controls.Add(this.tabControl1);
             this.panel1.Controls.Add(this.btnShowConfig);
@@ -348,12 +357,16 @@
             this.panel1.Size = new System.Drawing.Size(671, 399);
             this.panel1.TabIndex = 20;
             // 
-            // MenuItem_Remove
+            // Link_Refresh
             // 
-            this.MenuItem_Remove.Name = "MenuItem_Remove";
-            this.MenuItem_Remove.Size = new System.Drawing.Size(180, 22);
-            this.MenuItem_Remove.Text = "移除";
-            this.MenuItem_Remove.Click += new System.EventHandler(this.MenuItem_Remove_Click);
+            this.Link_Refresh.AutoSize = true;
+            this.Link_Refresh.Location = new System.Drawing.Point(531, 92);
+            this.Link_Refresh.Name = "Link_Refresh";
+            this.Link_Refresh.Size = new System.Drawing.Size(32, 17);
+            this.Link_Refresh.TabIndex = 20;
+            this.Link_Refresh.TabStop = true;
+            this.Link_Refresh.Text = "刷新";
+            this.Link_Refresh.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.Link_Refresh_LinkClicked);
             // 
             // Form1
             // 
@@ -419,5 +432,6 @@
         private ToolStripMenuItem MenuItem_OpenSaveDir;
         private ToolStripMenuItem MenuItem_Cancel;
         private ToolStripMenuItem MenuItem_Remove;
+        private LinkLabel Link_Refresh;
     }
 }

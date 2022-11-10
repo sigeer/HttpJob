@@ -9,6 +9,7 @@ using SpiderWin.Modals;
 using SpiderWin.Server;
 using SpiderWin.Services;
 using System.Diagnostics;
+using Utility.Common;
 using Utility.Extensions;
 
 namespace SpiderWin
@@ -23,7 +24,7 @@ namespace SpiderWin
         List<SpiderListItemViewModel> _spiderList = new List<SpiderListItemViewModel>();
         List<TaskListItemViewModel> _taskList = new List<TaskListItemViewModel>();
 
-        readonly DelayedTaskHandler _delayedTaskHandler = DelayedTaskHandler.GetInstance();
+        readonly DelayedTaskPool _delayedTaskPool = DelayedTaskPool.GetInstance();
         public Form1(ISpiderService coreService, IServiceProvider serviceProvider, ILogger<Form1> logger)
         {
             _coreService = coreService;
@@ -172,7 +173,7 @@ namespace SpiderWin
                 };
                 worker.OnTaskStatusChanged += (obj, task) =>
                 {
-                    _delayedTaskHandler.AddTask(nameof(LoadTaskList), LoadTaskList);
+                    _delayedTaskPool.AddTask(nameof(LoadTaskList), LoadTaskList);
                 };
                 worker.OnNewTask += (obj, spider) =>
                 {
@@ -234,11 +235,26 @@ namespace SpiderWin
             if (e.RowIndex >= 0 && e.RowIndex < rows.Count)
             {
                 var selectedRow = rows[e.RowIndex];
-                if (selectedRow != null)
-                {
-                    ComboxUrl.SelectedValue = selectedRow.Cells[3].Value;
-                    ComboxSpider.SelectedValue = selectedRow.Cells[4].Value;
-                }
+                SelectTask(selectedRow);
+            }
+        }
+
+        private void SelectTask(DataGridViewRow? selectedRow)
+        {
+            if (selectedRow != null && selectedRow.Index >= 0 && !selectedRow.IsNewRow)
+            {
+                ComboxUrl.Text = selectedRow.Cells[3].Value.ToString();
+                ComboxSpider.SelectedValue = selectedRow.Cells[4].Value;
+            }
+        }
+
+        private void RemoveTask(DataGridViewRow? selectedRow)
+        {
+            if (selectedRow != null && selectedRow.Index >= 0 && !selectedRow.IsNewRow)
+            {
+                var taskId = (int)selectedRow.Cells[1].Value;
+                _coreService.RemoveTask(taskId);
+                LoadTaskList();
             }
         }
 
@@ -308,15 +324,7 @@ namespace SpiderWin
         private void MenuItem_UseTask_Click(object sender, EventArgs e)
         {
             var grid = tabControl1.TabIndex == 0 ? DataGrid_InProgressTasks : DataGrid_OtherTasks;
-            var row = grid.SelectedRows[0];
-            if (row == null)
-                return;
-
-            if (row.Index >= 0 && !row.IsNewRow)
-            {
-                ComboxUrl.SelectedValue = row.Cells[3].Value;
-                ComboxSpider.SelectedValue = row.Cells[4].Value;
-            }
+            SelectTask(grid.SelectedRows[0]);
 
         }
 
@@ -343,12 +351,7 @@ namespace SpiderWin
             if (row == null)
                 return;
 
-            if (row.Index >= 0 && !row.IsNewRow)
-            {
-                var taskId = (int)row.Cells[1].Value;
-                _coreService.RemoveTask(taskId);
-                LoadTaskList();
-            }
+            RemoveTask(row);
         }
 
         private void MenuItem_Cancel_Click(object sender, EventArgs e)
@@ -361,13 +364,11 @@ namespace SpiderWin
 
             var grid = DataGrid_InProgressTasks;
             var row = grid.SelectedRows[0];
-            if (row == null)
-                return;
-
-            if (row.Index >= 0 && !row.IsNewRow)
+            if (row != null && row.Index >= 0 && !row.IsNewRow)
             {
                 var taskId = (int)row.Cells[1].Value;
                 _coreService.StopTask(taskId);
+                LoadTaskList();
             }
         }
 
@@ -385,6 +386,11 @@ namespace SpiderWin
                     DataGridMenu.Show(MousePosition.X, MousePosition.Y);
                 }
             }
+        }
+
+        private void Link_Refresh_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        {
+            LoadTaskList();
         }
     }
 }

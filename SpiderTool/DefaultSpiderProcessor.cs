@@ -16,9 +16,9 @@ namespace SpiderTool
             return false;
         }
 
-        protected virtual async Task ProcessObject(SpiderWorker rootSpider, HtmlNodeCollection nodes, TemplateDetailViewModel rule, CancellationToken cancellationToken = default)
+        protected virtual async Task ProcessObject(string savePath, SpiderWorker rootSpider, HtmlNodeCollection nodes, TemplateDetailViewModel rule, CancellationToken cancellationToken = default)
         {
-            var savePath = Path.Combine(rootSpider.CurrentDir, $"Rule{rule.Id.ToString()}");
+
             var urlList = nodes.Select(item => (item.Attributes["src"] ?? item.Attributes["data-src"]).Value.GetTotalUrl(rootSpider.HostUrl)).ToList();
             await SpiderUtility.BulkDownload(savePath, urlList, (log) =>
             {
@@ -26,9 +26,8 @@ namespace SpiderTool
             }, cancellationToken);
         }
 
-        protected virtual async Task ProcessText(SpiderWorker rootSpider, HtmlNodeCollection nodes, TemplateDetailViewModel rule, CancellationToken cancellationToken = default)
+        protected virtual async Task ProcessText(string savePath, SpiderWorker rootSpider, HtmlNodeCollection nodes, TemplateDetailViewModel rule, CancellationToken cancellationToken = default)
         {
-            var savePath = Path.Combine(rootSpider.CurrentDir, $"Rule{rule.Id.ToString()}");
             foreach (var item in nodes)
             {
                 if (IsCanceled(rootSpider, cancellationToken))
@@ -94,9 +93,8 @@ namespace SpiderTool
             //}
         }
 
-        protected virtual async Task ProcessHtml(SpiderWorker rootSpider, HtmlNodeCollection nodes, TemplateDetailViewModel rule, CancellationToken cancellationToken = default)
+        protected virtual async Task ProcessHtml(string savePath, SpiderWorker rootSpider, HtmlNodeCollection nodes, TemplateDetailViewModel rule, CancellationToken cancellationToken = default)
         {
-            var savePath = Path.Combine(rootSpider.CurrentDir, $"Rule{rule.Id.ToString()}");
             foreach (var item in nodes)
             {
                 if (IsCanceled(rootSpider, cancellationToken))
@@ -113,6 +111,8 @@ namespace SpiderTool
 
             var currentDoc = new HtmlDocument();
             currentDoc.LoadHtml(documentContent);
+
+            var savePath = rootSpider.CurrentDir;
             for (int i = 0; i < templateRules.Count; i++)
             {
                 var rule = templateRules[i];
@@ -126,17 +126,20 @@ namespace SpiderTool
                 if (nodes == null)
                     continue;
 
+                if (templateRules.Count > 1)
+                    savePath = Path.Combine(rootSpider.CurrentDir, $"Rule{rule.Id.ToString()}");
+
                 if (rule.Type == (int)TemplateTypeEnum.Object)
                 {
-                    await ProcessObject(rootSpider, nodes, rule, cancellationToken);
+                    await ProcessObject(savePath, rootSpider, nodes, rule, cancellationToken);
                 }
                 if (rule.Type == (int)TemplateTypeEnum.Text)
                 {
-                    await ProcessText(rootSpider, nodes, rule, cancellationToken);
+                    await ProcessText(savePath, rootSpider, nodes, rule, cancellationToken);
                 }
                 if (rule.Type == (int)TemplateTypeEnum.Html)
                 {
-                    await ProcessHtml(rootSpider, nodes, rule, cancellationToken);
+                    await ProcessHtml(savePath, rootSpider, nodes, rule, cancellationToken);
                 }
                 if (rule.Type == (int)TemplateTypeEnum.JumpLink)
                 {
