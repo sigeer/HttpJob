@@ -1,6 +1,7 @@
 ﻿using HtmlAgilityPack;
 using SpiderTool.Dto.Spider;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Web;
 using Utility.Extensions;
 using Utility.Http;
@@ -131,7 +132,8 @@ namespace SpiderTool
             var finalText = HttpUtility.HtmlDecode(item.InnerHtml);
             foreach (var handle in rule.ReplacementRules)
             {
-                finalText = finalText.Replace(handle.ReplacementOldStr!, handle.ReplacementNewlyStr, handle.IgnoreCase, System.Globalization.CultureInfo.CurrentCulture);
+                finalText = Regex.Replace(finalText, handle.ReplacementOldStr!, handle.ReplacementNewlyStr ?? "", RegexOptions.IgnoreCase);
+                // finalText = finalText.Replace(handle.ReplacementOldStr!, handle.ReplacementNewlyStr, handle.IgnoreCase, System.Globalization.CultureInfo.CurrentCulture);
             }
             var temp = new HtmlDocument();
             temp.LoadHtml(finalText);

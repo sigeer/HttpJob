@@ -24,7 +24,7 @@ namespace SpiderService.Services
         public override async Task<StringModel> Crawl(RequestModel request, ServerCallContext context)
         {
             var worker = new SpiderWorker(_spiderLogger, request.SpiderId, request.Url, _service);
-            await worker.Start(context.CancellationToken);
+            await worker.Start();
             return new StringModel { Data = "" };
         }
 
@@ -160,6 +160,12 @@ namespace SpiderService.Services
         public override async Task<Empty> BulkUpdateTaskStatus(TaskProtoBulkEditDto request, ServerCallContext context)
         {
             await _service.BulkUpdateTaskStatusAsync(request.Tasks.AsEnumerable(), request.TaskStatus);
+            return new Empty();
+        }
+
+        public override async Task<Empty> RemoveTask(IntModel request, ServerCallContext context)
+        {
+            await _service.RemoveTaskAsync(request.Data);
             return new Empty();
         }
     }
