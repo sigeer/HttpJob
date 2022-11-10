@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using SpiderService;
 using SpiderTool.Constants;
+using SpiderTool.Data;
 using SpiderTool.Dto.Spider;
 using SpiderTool.Dto.Tasks;
 using System.Threading.Tasks;
@@ -11,14 +12,17 @@ namespace SpiderRemoteServiceClient.Services
     {
         readonly SpiderWorkerProtoService.SpiderWorkerProtoServiceClient _client;
         readonly IMapper Mapper;
+        readonly WorkerController _controller;
+        public WorkerController Controller => _controller;
 
         public bool CanConnect() => PingSync();
         public async Task<bool> CanConnectAsync() => await Ping();
 
-        public SpiderRemoteService(SpiderWorkerProtoService.SpiderWorkerProtoServiceClient client, IMapper mapper)
+        public SpiderRemoteService(SpiderWorkerProtoService.SpiderWorkerProtoServiceClient client, IMapper mapper, WorkerController controller)
         {
             _client = client;
             Mapper = mapper;
+            _controller = controller;
         }
 
         public async Task<List<TaskListItemViewModel>> GetTaskListAsync()

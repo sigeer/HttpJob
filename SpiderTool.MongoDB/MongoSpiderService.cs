@@ -1,4 +1,5 @@
 ﻿using MongoDB.Driver;
+using SpiderTool.Data;
 using SpiderTool.IDomain;
 using SpiderTool.IService;
 using SpiderTool.Service;
@@ -9,7 +10,7 @@ namespace SpiderTool.MongoDB
     {
         readonly IMongoClient _db;
         readonly CancellationTokenSource _tokenSource = new CancellationTokenSource();
-        public MongoSpiderService(IMongoClient db, ISpiderDomain spiderDomain, ITemplateDomain templateDomain, ITaskDomain taskDomain) : base(spiderDomain, templateDomain, taskDomain)
+        public MongoSpiderService(IMongoClient db, ISpiderDomain spiderDomain, ITemplateDomain templateDomain, ITaskDomain taskDomain, WorkerController controller) : base(spiderDomain, templateDomain, taskDomain, controller)
         {
             _db = db;
         }

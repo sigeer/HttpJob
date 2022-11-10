@@ -1,10 +1,12 @@
-﻿using SpiderTool.Dto.Spider;
+﻿using SpiderTool.Data;
+using SpiderTool.Dto.Spider;
 using SpiderTool.Dto.Tasks;
 
 namespace SpiderTool.IService
 {
     public interface ISpiderBaseService
     {
+        WorkerController Controller { get; }
         List<TaskSimpleViewModel> GetTaskHistoryList();
         Task<List<TaskSimpleViewModel>> GetTaskHistoryListAsync();
 

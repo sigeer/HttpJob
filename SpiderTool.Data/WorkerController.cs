@@ -1,10 +1,11 @@
 ﻿using System.Collections.Concurrent;
 
-namespace SpiderTool
+namespace SpiderTool.Data
 {
     public class WorkerController
     {
         private object lockObj = new object();
+        private bool locked = false;
         private static Lazy<WorkerController> lazy = new Lazy<WorkerController>(() => new WorkerController());
         private WorkerController()
         {
@@ -21,15 +22,25 @@ namespace SpiderTool
         public CancellationTokenSource this[int taskId] => workStatusSource[taskId];
         public CancellationTokenSource GetOrAdd(int taskId)
         {
-            lock (lockObj)
+            if (!locked)
             {
-                if (workStatusSource.ContainsKey(taskId))
-                    return workStatusSource[taskId];
+                lock (lockObj)
+                {
+                    if (workStatusSource.ContainsKey(taskId))
+                        return workStatusSource[taskId];
 
-                var tokenSource = new CancellationTokenSource();
-                workStatusSource.TryAdd(taskId, tokenSource);
-                return tokenSource;
+                    var tokenSource = new CancellationTokenSource();
+                    workStatusSource.TryAdd(taskId, tokenSource);
+                    return tokenSource;
+                }
             }
+
+            return GetOrAdd(taskId);
+        }
+
+        public bool Contains(int taskId)
+        {
+            return workStatusSource.ContainsKey(taskId);
         }
 
         public void Cancel(int taskId)
@@ -37,6 +48,10 @@ namespace SpiderTool
             if (workStatusSource.ContainsKey(taskId))
             {
                 workStatusSource[taskId].Cancel();
+                Task.Delay(3000).ContinueWith((t) =>
+                {
+                    Return(taskId);
+                });
             }
         }
         /// <summary>
@@ -56,6 +71,7 @@ namespace SpiderTool
 
         public void CancelAll()
         {
+            locked = true;
             lock (lockObj)
             {
                 var allItems = workStatusSource.Keys.ToList();
@@ -63,7 +79,15 @@ namespace SpiderTool
                 {
                     workStatusSource[item].Cancel();
                 }
+                Task.Delay(3000).ContinueWith((t) =>
+                {
+                    foreach (var item in allItems)
+                    {
+                        Return(item);
+                    }
+                });
             }
+            locked = false;
         }
     }
 }
