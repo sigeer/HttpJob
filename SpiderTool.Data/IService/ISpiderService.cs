@@ -39,6 +39,9 @@ namespace SpiderTool.IService
         Task BulkUpdateTaskStatusAsync(IEnumerable<int> tasks, int taskStatus);
         void RemoveTask(int taskId);
         Task RemoveTaskAsync(int taskId);
+
+        void StopTask(int taskId);
+        void StopAllTask();
     }
     public interface ISpiderService : ISpiderBaseService
     {

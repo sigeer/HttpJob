@@ -168,5 +168,17 @@ namespace SpiderService.Services
             await _service.RemoveTaskAsync(request.Data);
             return new Empty();
         }
+
+        public override Task<Empty> StopTask(IntModel request, ServerCallContext context)
+        {
+            _service.StopTask(request.Data);
+            return Task.FromResult(new Empty());
+        }
+
+        public override async Task<Empty> StopAllTask(Empty request, ServerCallContext context)
+        {
+            _service.StopAllTask();
+            return Task.FromResult(new Empty());
+        }
     }
 }

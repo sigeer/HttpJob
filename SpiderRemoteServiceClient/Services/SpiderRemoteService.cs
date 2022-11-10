@@ -3,6 +3,7 @@ using SpiderService;
 using SpiderTool.Constants;
 using SpiderTool.Dto.Spider;
 using SpiderTool.Dto.Tasks;
+using System.Threading.Tasks;
 
 namespace SpiderRemoteServiceClient.Services
 {
@@ -226,6 +227,17 @@ namespace SpiderRemoteServiceClient.Services
         {
             var postModel = new IntModel { Data = taskId };
             await _client.RemoveTaskAsync(postModel);
+        }
+
+        public void StopTask(int taskId)
+        {
+            var postModel = new IntModel { Data = taskId };
+            _client.StopTask(postModel);
+        }
+
+        public void StopAllTask()
+        {
+            _client.StopAllTask(new Google.Protobuf.WellKnownTypes.Empty());
         }
     }
 }

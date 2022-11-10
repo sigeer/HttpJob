@@ -24,7 +24,7 @@ namespace SpiderWin
         List<TaskListItemViewModel> _taskList = new List<TaskListItemViewModel>();
 
 
-        readonly WorkerHandler _handler = WorkerHandler.GetInstance();
+        readonly WorkerController _handler = WorkerController.GetInstance();
         readonly DelayedTaskHandler _delayedTaskHandler = DelayedTaskHandler.GetInstance();
         public Form1(ISpiderService coreService, IServiceProvider serviceProvider, ILogger<Form1> logger)
         {
@@ -246,7 +246,7 @@ namespace SpiderWin
 
         private void BtnCacel_Click(object sender, EventArgs e)
         {
-            _handler.CancelAll();
+            _coreService.StopAllTask();
         }
 
         private void PrintUILog(string type, string str)
@@ -369,7 +369,7 @@ namespace SpiderWin
             if (row.Index >= 0 && !row.IsNewRow)
             {
                 var taskId = (int)row.Cells[1].Value;
-                _handler.Cancel(taskId);
+                _coreService.StopTask(taskId);
             }
         }
 

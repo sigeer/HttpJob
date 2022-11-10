@@ -2,16 +2,16 @@
 
 namespace SpiderTool
 {
-    public class WorkerHandler
+    public class WorkerController
     {
         private object lockObj = new object();
-        private static Lazy<WorkerHandler> lazy = new Lazy<WorkerHandler>(() => new WorkerHandler());
-        private WorkerHandler()
+        private static Lazy<WorkerController> lazy = new Lazy<WorkerController>(() => new WorkerController());
+        private WorkerController()
         {
 
         }
 
-        public static WorkerHandler GetInstance()
+        public static WorkerController GetInstance()
         {
             return lazy.Value;
         }

@@ -17,6 +17,8 @@ service SpiderWorkerProtoService {
   rpc BulkUpdateTaskStatus(TaskProtoBulkEditDto) returns (google.protobuf.Empty);
   rpc GetTaskHistoryList(google.protobuf.Empty) returns(TaskProtoSimpleListResult);
   rpc RemoveTask(IntModel) returns (google.protobuf.Empty);
+  rpc StopTask(IntModel) returns (google.protobuf.Empty);
+  rpc StopAllTask(google.protobuf.Empty) returns (google.protobuf.Empty);
 
   rpc SubmitSpider(SpiderProtoEditDto) returns(StringModel);
   rpc DeleteSpider(SpiderProtoEditDto) returns(StringModel);

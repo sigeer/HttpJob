@@ -2,6 +2,7 @@
 using SpiderTool.Dto.Tasks;
 using SpiderTool.IDomain;
 using SpiderTool.IService;
+using System.Threading.Tasks;
 
 namespace SpiderTool.Service
 {
@@ -176,6 +177,16 @@ namespace SpiderTool.Service
         public async Task RemoveTaskAsync(int taskId)
         {
             await _taskDomain.RemoveTaskAsync(taskId);
+        }
+
+        public void StopTask(int taskId)
+        {
+            WorkerController.GetInstance().Cancel(taskId);
+        }
+
+        public void StopAllTask()
+        {
+            WorkerController.GetInstance().CancelAll();
         }
     }
 }

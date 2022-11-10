@@ -12,10 +12,42 @@ namespace SpiderTool
 {
     public class SpiderWorker
     {
+        #region Event
+        /// <summary>
+        /// 初始化任务（插入数据，尚未执行）
+        /// </summary>
+        public event EventHandler<SpiderWorker>? OnTaskInit;
+        /// <summary>
+        /// 状态变更事件（Init,Start,Complete）
+        /// </summary>
+        public event EventHandler<SpiderWorker>? OnTaskStatusChanged;
+        /// <summary>
+        /// 任务开始 （发起请求并获取数据，未处理响应内容）
+        /// </summary>
+        public event EventHandler<SpiderWorker>? OnTaskStart;
+        /// <summary>
+        /// 任务完成
+        /// </summary>
+        public event EventHandler<SpiderWorker>? OnTaskComplete;
+        /// <summary>
+        /// 日志
+        /// </summary>
+        public event EventHandler<string>? OnLog;
+        /// <summary>
+        /// 创建子任务
+        /// </summary>
+        public event EventHandler<SpiderWorker>? OnNewTask;
+        /// <summary>
+        /// 任务取消
+        /// </summary>
+        public event EventHandler<SpiderWorker>? OnTaskCanceled;
+        #endregion
+
+        #region Property
         public SpiderWorker? ParentTask { get; private set; }
         public bool IsChildTask => ParentTask != null;
         public List<SpiderWorker> ChildrenTask { get; } = new List<SpiderWorker>();
-        readonly WorkerHandler _handler = WorkerHandler.GetInstance();
+        readonly WorkerController _control = WorkerController.GetInstance();
         private string? _contextId;
         public string ContextId
         {
@@ -61,41 +93,13 @@ namespace SpiderTool
         private int _taskId;
         public int TaskId => _taskId;
         public string HostUrl => _rootUrl.GetHostUrl();
+        #endregion Property
 
+        #region Dependency
         readonly ISpiderService? _service;
         readonly ISpiderProcessor _processor;
-
-        /// <summary>
-        /// 初始化任务（插入数据，尚未执行）
-        /// </summary>
-        public event EventHandler<SpiderWorker>? OnTaskInit;
-        /// <summary>
-        /// 状态变更事件（Init,Start,Complete）
-        /// </summary>
-        public event EventHandler<SpiderWorker>? OnTaskStatusChanged;
-        /// <summary>
-        /// 任务开始 （发起请求并获取数据，未处理响应内容）
-        /// </summary>
-        public event EventHandler<SpiderWorker>? OnTaskStart;
-        /// <summary>
-        /// 任务完成
-        /// </summary>
-        public event EventHandler<SpiderWorker>? OnTaskComplete;
-        /// <summary>
-        /// 日志
-        /// </summary>
-        public event EventHandler<string>? OnLog;
-        /// <summary>
-        /// 创建子任务
-        /// </summary>
-        public event EventHandler<SpiderWorker>? OnNewTask;
-        /// <summary>
-        /// 任务取消
-        /// </summary>
-        public event EventHandler<SpiderWorker>? OnTaskCanceled;
-
         readonly ILogger<SpiderWorker> _logger;
-
+        #endregion Dependency
 
         public SpiderWorker(ILogger<SpiderWorker> logger, int spiderId, string url, ISpiderService service, ISpiderProcessor? processor = null)
         {
@@ -205,7 +209,7 @@ namespace SpiderTool
                 SpiderId = Spider.Id,
                 Status = (int)TaskType.NotEffective
             }) ?? -1;
-            var tokenSource = _handler.GetOrAdd(TaskId);
+            var tokenSource = _control.GetOrAdd(TaskId);
             UpdateTaskStatus(TaskType.NotEffective);
 
             await ProcessUrl(_rootUrl, true, tokenSource.Token);
@@ -241,7 +245,7 @@ namespace SpiderTool
                     OnTaskCanceled?.Invoke(this, this);
                     OnTaskStatusChanged?.Invoke(this, this);
                     OnLog?.Invoke(this, logStr);
-                    _handler.Return(TaskId);
+                    _control.Return(TaskId);
                     break;
                 default:
                     break;
