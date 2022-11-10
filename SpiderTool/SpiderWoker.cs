@@ -235,14 +235,12 @@ namespace SpiderTool
                     OnTaskComplete?.Invoke(this, this);
                     OnTaskStatusChanged?.Invoke(this, this);
                     OnLog?.Invoke(this, logStr);
-                    CallLog($"任务 {TaskId} completed {logStr}");
                     break;
                 case TaskType.Canceled:
                     _service?.SetTaskStatus(TaskId, (int)TaskType.Canceled);
                     OnTaskCanceled?.Invoke(this, this);
                     OnTaskStatusChanged?.Invoke(this, this);
                     OnLog?.Invoke(this, logStr);
-                    CallLog($"任务 {TaskId} canceled {logStr}");
                     _handler.Return(TaskId);
                     break;
                 default:
@@ -255,9 +253,9 @@ namespace SpiderTool
             HttpResponseMessage res;
             var url = _currentUrl!.GetTotalUrl(HostUrl);
             if (Spider.Method == RequestMethod.POST)
-                res = await HttpRequest.PostRawAsync(url, Spider.PostObj, Spider.GetHeaders());
+                res = await HttpRequest.HttpPostCore(url, Spider.PostObj, Spider.GetHeaders());
             else
-                res = await HttpRequest.GetRawAsync(url, Spider.GetHeaders());
+                res = await HttpRequest.HttpGetCore(url, Spider.GetHeaders());
 
             var responseStream = await res.Content.ReadAsStreamAsync();
             return responseStream.DecodeData(res.Content.Headers.ContentType?.CharSet);

@@ -218,12 +218,14 @@ namespace SpiderRemoteServiceClient.Services
 
         public void RemoveTask(int taskId)
         {
-            throw new NotImplementedException();
+            var postModel = new IntModel { Data = taskId };
+            _client.RemoveTask(postModel);
         }
 
-        public Task RemoveTaskAsync(int taskId)
+        public async Task RemoveTaskAsync(int taskId)
         {
-            throw new NotImplementedException();
+            var postModel = new IntModel { Data = taskId };
+            await _client.RemoveTaskAsync(postModel);
         }
     }
 }

@@ -1,6 +1,7 @@
 ﻿using HtmlAgilityPack;
 using SpiderTool.Dto.Spider;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Web;
 using Utility.Extensions;
 using Utility.Http;
@@ -56,7 +57,7 @@ namespace SpiderTool
             using var httpRequestPool = new HttpClientPool();
             await Parallel.ForEachAsync(data, cancellationToken, async (url, ct) =>
             {
-                var client = httpRequestPool.GetHttpClient();
+                var client = httpRequestPool.GetInstance();
                 var uri = new Uri(url.Key);
                 var result = await client.HttpGetCore(uri.ToString(), cancellationToken: ct);
                 log?.Invoke($"BulkDownload 请求 {url}");
@@ -131,7 +132,8 @@ namespace SpiderTool
             var finalText = HttpUtility.HtmlDecode(item.InnerHtml);
             foreach (var handle in rule.ReplacementRules)
             {
-                finalText = finalText.Replace(handle.ReplacementOldStr!, handle.ReplacementNewlyStr, handle.IgnoreCase, System.Globalization.CultureInfo.CurrentCulture);
+                finalText = Regex.Replace(finalText, handle.ReplacementOldStr!, handle.ReplacementNewlyStr ?? "", RegexOptions.IgnoreCase);
+                // finalText = finalText.Replace(handle.ReplacementOldStr!, handle.ReplacementNewlyStr, handle.IgnoreCase, System.Globalization.CultureInfo.CurrentCulture);
             }
             var temp = new HtmlDocument();
             temp.LoadHtml(finalText);

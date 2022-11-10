@@ -14,6 +14,7 @@ using SqlSugar;
 using System.Diagnostics;
 using System.Reflection;
 using System.Runtime.InteropServices;
+using Utility.Extensions;
 using Utility.Serilog.Extension;
 
 namespace SpiderWin
@@ -72,7 +73,7 @@ namespace SpiderWin
             }
             var logger = serviceProvider.GetService<ILogger<Application>>()!;
             var remoteService = serviceProvider.GetService<ISpiderService>()!;
-            if (bool.Parse(configuration["DirectUseSqlite"]) || !remoteService.CanConnect())
+            if (configuration["DirectUseSqlite"].ToStrictBoolean() || !remoteService.CanConnect())
             {
                 services.AddSpiderService(new SqlSugarScope(new ConnectionConfig
                 {
