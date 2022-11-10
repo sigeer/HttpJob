@@ -1,6 +1,7 @@
 ﻿using HtmlAgilityPack;
 using Microsoft.Extensions.Logging;
 using SpiderTool.Constants;
+using SpiderTool.Data;
 using SpiderTool.Dto.Spider;
 using SpiderTool.Dto.Tasks;
 using SpiderTool.IService;
@@ -47,7 +48,6 @@ namespace SpiderTool
         public SpiderWorker? ParentTask { get; private set; }
         public bool IsChildTask => ParentTask != null;
         public List<SpiderWorker> ChildrenTask { get; } = new List<SpiderWorker>();
-        readonly WorkerController _control = WorkerController.GetInstance();
         private string? _contextId;
         public string ContextId
         {
@@ -99,6 +99,7 @@ namespace SpiderTool
         readonly ISpiderService? _service;
         readonly ISpiderProcessor _processor;
         readonly ILogger<SpiderWorker> _logger;
+        readonly WorkerController _control;
         #endregion Dependency
 
         public SpiderWorker(ILogger<SpiderWorker> logger, int spiderId, string url, ISpiderService service, ISpiderProcessor? processor = null)
@@ -106,6 +107,7 @@ namespace SpiderTool
             _service = service ?? throw new Exception("ISpiderService不能为null");
             _processor = processor ?? new DefaultSpiderProcessor();
             _logger = logger;
+            _control = _service.Controller;
 
             _rootUrl = url;
 
@@ -128,6 +130,7 @@ namespace SpiderTool
             _service = rootSpider._service;
             _processor = rootSpider._processor;
             _logger = rootSpider._logger;
+            _control = rootSpider._service!.Controller;
             ParentTask = rootSpider;
             rootSpider.ChildrenTask.Add(this);
 
@@ -146,14 +149,45 @@ namespace SpiderTool
         /// <param name="service"></param>
         /// <param name="processor"></param>
         /// <exception cref="Exception"></exception>
-        public SpiderWorker(ILogger<SpiderWorker> logger, SpiderDetailViewModel spiderDetail, string url, ISpiderService? service = null, ISpiderProcessor? processor = null)
+        public SpiderWorker(ILogger<SpiderWorker> logger, 
+            WorkerController controller, 
+            SpiderDetailViewModel spiderDetail, 
+            string url, 
+            ISpiderService? service = null, 
+            ISpiderProcessor? processor = null)
         {
             _service = service;
             _processor = processor ?? new DefaultSpiderProcessor();
             _logger = logger;
+            _control = controller;
 
             _rootUrl = url;
 
+            _spider = spiderDetail;
+            if (Spider == null)
+                throw new Exception($"spiderDetail not existed");
+
+            _service?.SetLinkedSpider(Spider);
+        }
+
+        /// <summary>
+        /// 临时子爬虫
+        /// </summary>
+        /// <param name="spiderDetail"></param>
+        /// <param name="url"></param>
+        /// <param name="service"></param>
+        /// <param name="processor"></param>
+        /// <exception cref="Exception"></exception>
+        public SpiderWorker(SpiderWorker rootSpider, SpiderDetailViewModel spiderDetail, string url)
+        {
+            _service = rootSpider._service;
+            _processor = rootSpider._processor;
+            _logger = rootSpider._logger;
+            _control = rootSpider._control;
+            ParentTask = rootSpider;
+            rootSpider.ChildrenTask.Add(this);
+
+            _rootUrl = url;
             _spider = spiderDetail;
             if (Spider == null)
                 throw new Exception($"spiderDetail not existed");

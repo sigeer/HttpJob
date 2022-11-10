@@ -3,6 +3,7 @@ using Grpc.Net.Client;
 using SpiderRemoteServiceClient.Mapper.Spiders;
 using SpiderRemoteServiceClient.Services;
 using SpiderService;
+using SpiderTool.Data;
 using SpiderTool.IService;
 using SpiderWin.Services;
 
@@ -54,7 +55,7 @@ namespace SpiderWin.Server
             _service = new SpiderRemoteService(client, new Mapper(new MapperConfiguration(opt =>
             {
                 opt.AddProfile<SpiderProfile>();
-            })));
+            })), WorkerController.GetInstance());
             try
             {
                 BtnOk.Enabled = false;

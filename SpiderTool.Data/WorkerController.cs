@@ -1,6 +1,6 @@
 ﻿using System.Collections.Concurrent;
 
-namespace SpiderTool
+namespace SpiderTool.Data
 {
     public class WorkerController
     {

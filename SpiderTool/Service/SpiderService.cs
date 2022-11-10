@@ -1,8 +1,8 @@
-﻿using SpiderTool.Dto.Spider;
+﻿using SpiderTool.Data;
+using SpiderTool.Dto.Spider;
 using SpiderTool.Dto.Tasks;
 using SpiderTool.IDomain;
 using SpiderTool.IService;
-using System.Threading.Tasks;
 
 namespace SpiderTool.Service
 {
@@ -11,12 +11,15 @@ namespace SpiderTool.Service
         readonly ISpiderDomain _spiderDomain;
         readonly ITemplateDomain _templateDomain;
         readonly ITaskDomain _taskDomain;
+        readonly WorkerController _controller;
+        public WorkerController Controller => _controller;
 
-        public SpiderBaseService(ISpiderDomain spiderDomain, ITemplateDomain templateDomain, ITaskDomain taskDomain)
+        public SpiderBaseService(ISpiderDomain spiderDomain, ITemplateDomain templateDomain, ITaskDomain taskDomain, WorkerController controller)
         {
             _spiderDomain = spiderDomain;
             _templateDomain = templateDomain;
             _taskDomain = taskDomain;
+            _controller = controller;
         }
 
         public int AddTask(TaskEditDto model)
@@ -181,12 +184,12 @@ namespace SpiderTool.Service
 
         public void StopTask(int taskId)
         {
-            WorkerController.GetInstance().Cancel(taskId);
+            _controller.Cancel(taskId);
         }
 
         public void StopAllTask()
         {
-            WorkerController.GetInstance().CancelAll();
+            _controller.CancelAll();
         }
     }
 }

@@ -23,8 +23,6 @@ namespace SpiderWin
         List<SpiderListItemViewModel> _spiderList = new List<SpiderListItemViewModel>();
         List<TaskListItemViewModel> _taskList = new List<TaskListItemViewModel>();
 
-
-        readonly WorkerController _handler = WorkerController.GetInstance();
         readonly DelayedTaskHandler _delayedTaskHandler = DelayedTaskHandler.GetInstance();
         public Form1(ISpiderService coreService, IServiceProvider serviceProvider, ILogger<Form1> logger)
         {

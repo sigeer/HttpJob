@@ -3,6 +3,7 @@ using SpiderTool.IDomain;
 using SpiderTool.IService;
 using AutoMapper;
 using SpiderTool.Data.Mapper;
+using SpiderTool.Data;
 
 namespace SpiderTool.Injection
 {
@@ -43,6 +44,7 @@ namespace SpiderTool.Injection
             where TImplemetation : class, ISpiderService
         {
             System.Text.Encoding.RegisterProvider(System.Text.CodePagesEncodingProvider.Instance);
+            services.AddSingleton<WorkerController>(WorkerController.GetInstance());
             return services.AddService<ISpiderService, TImplemetation>(serviceLifetime);
         }
 

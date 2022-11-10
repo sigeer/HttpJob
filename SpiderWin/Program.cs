@@ -89,6 +89,7 @@ namespace SpiderWin
             AppDomain.CurrentDomain.UnhandledException += new UnhandledExceptionEventHandler(CurrentDomain_UnhandledException);
 
             var form = serviceProvider.GetService<Form1>()!;
+            form.Show();
             Application.Run(form);
         }
 
