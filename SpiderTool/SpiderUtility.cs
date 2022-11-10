@@ -56,7 +56,7 @@ namespace SpiderTool
             using var httpRequestPool = new HttpClientPool();
             await Parallel.ForEachAsync(data, cancellationToken, async (url, ct) =>
             {
-                var client = httpRequestPool.GetHttpClient();
+                var client = httpRequestPool.GetInstance();
                 var uri = new Uri(url.Key);
                 var result = await client.HttpGetCore(uri.ToString(), cancellationToken: ct);
                 log?.Invoke($"BulkDownload 请求 {url}");

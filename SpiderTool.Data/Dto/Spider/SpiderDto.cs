@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using System.Text.Json;
+using Utility.Extensions;
 
 namespace SpiderTool.Dto.Spider
 {
@@ -51,11 +52,11 @@ namespace SpiderTool.Dto.Spider
         public string? HeaderStr { get; set; }
         public List<TemplateDetailViewModel> TemplateList { get; set; } = new List<TemplateDetailViewModel>();
         public TemplateDetailViewModel? NextPageTemplate { get; set; }
-        public object? PostObj => string.IsNullOrEmpty(PostObjStr) ? null : JsonConvert.DeserializeObject(PostObjStr);
+        public object? PostObj => string.IsNullOrEmpty(PostObjStr) ? null : PostObjStr.ToJson();
         public Dictionary<string, string> GetHeaders()
         {
             Dictionary<string, string> dic = new Dictionary<string, string>();
-            var headerObj = JsonConvert.DeserializeObject<List<SpiderHeaderDto>>(HeaderStr ?? "") ?? new List<SpiderHeaderDto>();
+            var headerObj = JsonSerializer.Deserialize<List<SpiderHeaderDto>>(HeaderStr ?? "") ?? new List<SpiderHeaderDto>();
             headerObj.ForEach(x =>
             {
                 dic.Add(x.Key, x.Value);

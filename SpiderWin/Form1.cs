@@ -63,10 +63,6 @@ namespace SpiderWin
             ComboxSpider.DisplayMember = nameof(SpiderListItemViewModel.Name);
             ComboxSpider.ValueMember = nameof(SpiderListItemViewModel.Id);
 
-
-            ComboxUrl.DisplayMember = nameof(TaskListItemViewModel.RootUrl);
-            ComboxUrl.ValueMember = nameof(TaskListItemViewModel.RootUrl);
-
             InitDataGrid(DataGrid_InProgressTasks);
             InitDataGrid(DataGrid_OtherTasks);
         }
@@ -118,7 +114,7 @@ namespace SpiderWin
                 _taskList = await _coreService.GetTaskListAsync();
                 BeginInvoke(() =>
                 {
-                    ComboxUrl.DataSource = _taskList.Select(x => new TaskSimpleViewModel() { Id = x.Id, RootUrl = x.RootUrl, SpiderId = x.SpiderId }).ToList();
+                    ComboxUrl.DataSource = _taskList.Select(x => x.RootUrl).Distinct().ToList();
 
                     LoadDataGridData(_taskList.Where(x => x.Status == (int)TaskType.InProgress || x.Status == (int)TaskType.NotEffective).ToList(), DataGrid_InProgressTasks);
                     LoadDataGridData(_taskList.Where(x => x.Status == (int)TaskType.Completed || x.Status == (int)TaskType.Canceled).ToList(), DataGrid_OtherTasks);
@@ -163,18 +159,18 @@ namespace SpiderWin
                 worker.OnTaskInit += (obj, spider) =>
                 {
                     childSW.Start();
-                    PrintUILog($"任务{spider.TaskId} 正在初始化==========", string.Empty);
+                    PrintUILog($"任务 {spider.TaskId} 正在初始化==========", string.Empty);
                 };
                 worker.OnTaskStart += (obj, spider) =>
                 {
-                    PrintUILog($"任务{spider.TaskId} 开始==========", string.Empty);
+                    PrintUILog($"任务 {spider.TaskId} 开始==========", string.Empty);
                 };
                 worker.OnTaskComplete += (obj, spider) =>
                 {
                     childSW.Stop();
 
                     var cost = $"共耗时：{childSW.Elapsed.TotalSeconds.ToFixed(2)}秒";
-                    PrintUILog($"任务{spider.TaskId} 结束==========", $"{cost} \"file://{spider.CurrentDir}\"");
+                    PrintUILog($"任务 {spider.TaskId} 结束==========", $"{cost} \"file://{spider.CurrentDir}\"");
                 };
                 worker.OnTaskStatusChanged += (obj, task) =>
                 {
