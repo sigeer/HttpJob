@@ -8,9 +8,9 @@ namespace SpiderRemoteServiceClient.Mapper.Spiders
     /// <summary>
     /// client to server: normal dto to proto dto, proto viewmodel to normal viewmodel
     /// </summary>
-    public class SpiderProfile : Profile
+    public class SpiderProtoProfile : Profile
     {
-        public SpiderProfile()
+        public SpiderProtoProfile()
         {
             CreateMap<TaskEditDto, TaskProtoEditDto>();
             CreateMap<TaskProtoViewModel, TaskListItemViewModel>();
@@ -20,7 +20,6 @@ namespace SpiderRemoteServiceClient.Mapper.Spiders
                 .ForMember(x => x.NextPageId, opt => opt.MapFrom(y => y.NextPageTemplateId));
             CreateMap<SpiderProtoListItemViewModel, SpiderListItemViewModel>();
             CreateMap<SpiderProtoDetailViewModel, SpiderDetailViewModel>()
-                .ForMember(y => y.NextPageTemplate == null ? 0 : y.NextPageTemplate.Id, opt => opt.MapFrom(x => x.NextPageId))
                 .ForMember(y => y.HeaderStr, opt => opt.MapFrom(x => x.Headers));
 
             CreateMap<TemplateEditDto, TemplateProtoDto>()

@@ -1,20 +1,14 @@
-using Microsoft.EntityFrameworkCore;
-using SpiderTool;
-using SpiderTool.EntityFrameworkCore;
+using Grpc.Net.Client;
+using SpiderRemoteServiceClient;
+using SpiderRemoteServiceClient.Services;
+using SpiderService;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
 builder.Services.AddLogging();
-builder.Services.AddSpiderService(options =>
-{
-    options.UseMySql(builder.Configuration.GetConnectionString("MySql"), new MySqlServerVersion("8.0.27"), o =>
-    {
-        o.MigrationsAssembly("MineServer");
-    });
-});
-
+builder.Services.AddSpiderService(builder.Configuration["gRPCServer"]);
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("cors", v =>
