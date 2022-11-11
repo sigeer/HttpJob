@@ -7,19 +7,19 @@ namespace SpiderTool.FreeSql.Domain
 {
     public class TemplateDomain : ITemplateDomain
     {
-        readonly IFreeSql _dbContext;
+        readonly IFreeSql _freeSql;
 
-        public TemplateDomain(IFreeSql dbContext)
+        public TemplateDomain(IFreeSql freeSql)
         {
-            _dbContext = dbContext;
+            _freeSql = freeSql;
         }
 
         public string Delete(TemplateEditDto model)
         {
-            _dbContext.Transaction(() =>
+            _freeSql.Transaction(() =>
             {
-                _dbContext.Delete<DB_ReplacementRule>().Where(x => x.TemplateId == model.Id).ExecuteAffrows();
-                _dbContext.Delete<DB_Template>().Where(x => x.Id == model.Id).ExecuteAffrows();
+                _freeSql.Delete<DB_ReplacementRule>().Where(x => x.TemplateId == model.Id).ExecuteAffrows();
+                _freeSql.Delete<DB_Template>().Where(x => x.Id == model.Id).ExecuteAffrows();
             });
             return StatusMessage.Success;
         }
@@ -31,9 +31,9 @@ namespace SpiderTool.FreeSql.Domain
 
         public List<TemplateDetailViewModel> GetTemplateDtoList()
         {
-            var allTemplates = _dbContext.Select<DB_Template>().ToList();
+            var allTemplates = _freeSql.Select<DB_Template>().ToList();
 
-            var templateRules = _dbContext.Select<DB_ReplacementRule>().ToList();
+            var templateRules = _freeSql.Select<DB_ReplacementRule>().ToList();
 
 
             return (from a in allTemplates
@@ -57,9 +57,9 @@ namespace SpiderTool.FreeSql.Domain
 
         public async Task<List<TemplateDetailViewModel>> GetTemplateDtoListAsync()
         {
-            var allTemplates = await _dbContext.Select<DB_Template>().ToListAsync();
+            var allTemplates = await _freeSql.Select<DB_Template>().ToListAsync();
 
-            var templateRules = await _dbContext.Select<DB_ReplacementRule>().ToListAsync();
+            var templateRules = await _freeSql.Select<DB_ReplacementRule>().ToListAsync();
 
             return (from a in allTemplates
                     let b = templateRules.Where(x => x.TemplateId == a.Id).ToList()
@@ -85,9 +85,9 @@ namespace SpiderTool.FreeSql.Domain
             if (!model.FormValid())
                 return StatusMessage.FormInvalid;
 
-            _dbContext.Transaction(() =>
+            _freeSql.Transaction(() =>
             {
-                var dbModel = _dbContext.Select<DB_Template>().Where(x => x.Id == model.Id).First();
+                var dbModel = _freeSql.Select<DB_Template>().Where(x => x.Id == model.Id).ToOne();
                 if (dbModel == null)
                 {
                     dbModel = new DB_Template
@@ -95,7 +95,7 @@ namespace SpiderTool.FreeSql.Domain
                         CreateTime = DateTime.Now,
                         LastUpdatedTime = DateTime.Now
                     };
-                    dbModel.Id = (int)_dbContext.Insert<DB_Template>(dbModel).ExecuteIdentity();
+                    dbModel.Id = (int)_freeSql.Insert<DB_Template>(dbModel).ExecuteIdentity();
                 }
 
                 dbModel.Name = model.Name;
@@ -103,9 +103,9 @@ namespace SpiderTool.FreeSql.Domain
                 dbModel.Type = model.Type;
                 dbModel.LastUpdatedTime = DateTime.Now;
                 dbModel.LinkedSpiderId = model.LinkedSpiderId;
-                _dbContext.Update<DB_Template>(dbModel).Where(x => x.Id == dbModel.Id).ExecuteAffrows();
+                _freeSql.Update<DB_Template>(dbModel).Where(x => x.Id == dbModel.Id).ExecuteAffrows();
 
-                _dbContext.Delete<DB_ReplacementRule>().Where(x => x.TemplateId == dbModel.Id).ExecuteAffrows();
+                _freeSql.Delete<DB_ReplacementRule>().Where(x => x.TemplateId == dbModel.Id).ExecuteAffrows();
                 var data = model.ReplacementRules.Select(x => new DB_ReplacementRule
                 {
                     TemplateId = dbModel.Id,
@@ -113,7 +113,7 @@ namespace SpiderTool.FreeSql.Domain
                     ReplacementOldStr = x.ReplacementOldStr,
                     IgnoreCase = x.IgnoreCase
                 }).ToList();
-                _dbContext.Insert<DB_ReplacementRule>(data).ExecuteAffrows();
+                _freeSql.Insert<DB_ReplacementRule>(data).ExecuteAffrows();
             });
             return StatusMessage.Success;
         }

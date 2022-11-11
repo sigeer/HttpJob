@@ -74,7 +74,7 @@ namespace SpiderTool
                 var path = Path.Combine(dirRoot, fileName);
                 var fileBytes = await result.Content.ReadAsByteArrayAsync(cancellationToken: ct);
                 if (fileBytes.Length > 0)
-                    await File.WriteAllBytesAsync(path, fileBytes, cancellationToken);
+                    await File.WriteAllBytesAsync(path, fileBytes, ct);
                 else
                     log?.Invoke($"BulkDownload for {url}, file bytes = 0");
                 httpRequestPool.Return(client);

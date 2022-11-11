@@ -7,16 +7,16 @@ namespace SpiderTool.FreeSql.Domain
 {
     public class TaskDomain : ITaskDomain
     {
-        readonly IFreeSql _dbContext;
+        readonly IFreeSql _freeSql;
 
-        public TaskDomain(IFreeSql dbContext)
+        public TaskDomain(IFreeSql freeSql)
         {
-            _dbContext = dbContext;
+            _freeSql = freeSql;
         }
 
         public int AddTask(TaskEditDto model)
         {
-            return (int)_dbContext.Insert<DB_Task>(new DB_Task()
+            return (int)_freeSql.Insert<DB_Task>(new DB_Task()
             {
                 Description = model.Description,
                 RootUrl = model.RootUrl,
@@ -27,7 +27,7 @@ namespace SpiderTool.FreeSql.Domain
 
         public async Task<int> AddTaskAsync(TaskEditDto model)
         {
-            return (int)await _dbContext.Insert<DB_Task>(new DB_Task()
+            return (int)await _freeSql.Insert<DB_Task>(new DB_Task()
             {
                 Description = model.Description,
                 RootUrl = model.RootUrl,
@@ -38,7 +38,7 @@ namespace SpiderTool.FreeSql.Domain
 
         public List<TaskListItemViewModel> GetTaskList()
         {
-            return _dbContext.Select<DB_Task>().OrderByDescending(x => x.CreateTime).Take(GlobalVariable.TaskListMaxCount).ToList(x => new TaskListItemViewModel()
+            return _freeSql.Select<DB_Task>().OrderByDescending(x => x.CreateTime).Take(GlobalVariable.TaskListMaxCount).ToList(x => new TaskListItemViewModel()
             {
                 Id = x.Id,
                 Status = x.Status,
@@ -53,53 +53,53 @@ namespace SpiderTool.FreeSql.Domain
 
         public void UpdateTask(TaskEditDto model)
         {
-            var taskDbModel = _dbContext.Select<DB_Task>().Where(x => x.Id == model.Id).First();
+            var taskDbModel = _freeSql.Select<DB_Task>().Where(x => x.Id == model.Id).ToOne();
             if (taskDbModel != null)
             {
                 taskDbModel.Description = model.Description;
                 taskDbModel.Status = model.Status;
-                _dbContext.Update<DB_Task>(taskDbModel).ExecuteAffrows();
+                _freeSql.Update<DB_Task>(taskDbModel).ExecuteAffrows();
             }
         }
 
         public async Task UpdateTaskAsync(TaskEditDto model)
         {
-            var taskDbModel = await _dbContext.Select<DB_Task>().Where(x => x.Id == model.Id).FirstAsync();
+            var taskDbModel = await _freeSql.Select<DB_Task>().Where(x => x.Id == model.Id).ToOneAsync();
             if (taskDbModel != null)
             {
                 taskDbModel.Description = model.Description;
                 taskDbModel.Status = model.Status;
-                await _dbContext.Update<DB_Task>(taskDbModel).ExecuteAffrowsAsync();
+                await _freeSql.Update<DB_Task>(taskDbModel).ExecuteAffrowsAsync();
             }
         }
 
         public void SetTaskStatus(int taskId, int taskStatus)
         {
-            var taskDbModel = _dbContext.Select<DB_Task>().Where(x => x.Id == taskId).First();
+            var taskDbModel = _freeSql.Select<DB_Task>().Where(x => x.Id == taskId).ToOne();
             if (taskDbModel != null)
             {
                 taskDbModel.Status = taskStatus;
                 if (taskStatus == (int)TaskType.Completed)
                     taskDbModel.CompleteTime = DateTime.Now;
-                _dbContext.Update<DB_Task>(taskDbModel).Where(x => x.Id == taskId).ExecuteAffrows();
+                _freeSql.Update<DB_Task>(taskDbModel).Where(x => x.Id == taskId).ExecuteAffrows();
             }
         }
 
         public async Task SetTaskStatusAsync(int taskId, int taskStatus)
         {
-            var taskDbModel = await _dbContext.Select<DB_Task>().Where(x => x.Id == taskId).FirstAsync();
+            var taskDbModel = await _freeSql.Select<DB_Task>().Where(x => x.Id == taskId).ToOneAsync();
             if (taskDbModel != null)
             {
                 taskDbModel.Status = taskStatus;
                 if (taskStatus == (int)TaskType.Completed)
                     taskDbModel.CompleteTime = DateTime.Now;
-                await _dbContext.Update<DB_Task>(taskDbModel).Where(x => x.Id == taskId).ExecuteAffrowsAsync();
+                await _freeSql.Update<DB_Task>(taskDbModel).Where(x => x.Id == taskId).ExecuteAffrowsAsync();
             }
         }
 
         public async Task<List<TaskListItemViewModel>> GetTaskListAsync()
         {
-            return await _dbContext.Select<DB_Task>().OrderByDescending(x => x.CreateTime).Take(GlobalVariable.TaskListMaxCount).ToListAsync(x => new TaskListItemViewModel()
+            return await _freeSql.Select<DB_Task>().OrderByDescending(x => x.CreateTime).Take(GlobalVariable.TaskListMaxCount).ToListAsync(x => new TaskListItemViewModel()
             {
                 Id = x.Id,
                 Status = x.Status,
@@ -114,7 +114,7 @@ namespace SpiderTool.FreeSql.Domain
 
         public List<TaskSimpleViewModel> GetTaskHistoryList()
         {
-            return _dbContext.Select<DB_Task>().OrderByDescending(x => x.CreateTime).ToList(x => new TaskSimpleViewModel()
+            return _freeSql.Select<DB_Task>().OrderByDescending(x => x.CreateTime).ToList(x => new TaskSimpleViewModel()
             {
                 Id = x.Id,
                 RootUrl = x.RootUrl,
@@ -124,7 +124,7 @@ namespace SpiderTool.FreeSql.Domain
 
         public async Task<List<TaskSimpleViewModel>> GetTaskHistoryListAsync()
         {
-            return (await _dbContext.Select<DB_Task>().OrderByDescending(x => x.CreateTime).ToListAsync(x => new TaskSimpleViewModel()
+            return (await _freeSql.Select<DB_Task>().OrderByDescending(x => x.CreateTime).ToListAsync(x => new TaskSimpleViewModel()
             {
                 Id = x.Id,
                 RootUrl = x.RootUrl,
@@ -134,22 +134,22 @@ namespace SpiderTool.FreeSql.Domain
 
         public void BulkUpdateTaskStatus(IEnumerable<int> tasks, int taskStatus)
         {
-            _dbContext.Update<DB_Task>().Set(x => x.Status == taskStatus).Where(x => tasks.Contains(x.Id)).ExecuteAffrows();
+            _freeSql.Update<DB_Task>().Set(x => x.Status == taskStatus).Where(x => tasks.Contains(x.Id)).ExecuteAffrows();
         }
 
         public async Task BulkUpdateTaskStatusAsync(IEnumerable<int> tasks, int taskStatus)
         {
-            await _dbContext.Update<DB_Task>().Set(x => x.Status == taskStatus).Where(x => tasks.Contains(x.Id)).ExecuteAffrowsAsync();
+            await _freeSql.Update<DB_Task>().Set(x => x.Status == taskStatus).Where(x => tasks.Contains(x.Id)).ExecuteAffrowsAsync();
         }
 
         public void RemoveTask(int taskId)
         {
-            _dbContext.Delete<DB_Task>(taskId).ExecuteAffrows();
+            _freeSql.Delete<DB_Task>(taskId).ExecuteAffrows();
         }
 
         public async Task RemoveTaskAsync(int taskId)
         {
-            await _dbContext.Delete<DB_Task>(taskId).ExecuteAffrowsAsync();
+            await _freeSql.Delete<DB_Task>(taskId).ExecuteAffrowsAsync();
         }
     }
 }
