@@ -5,6 +5,7 @@ using SpiderTool.Data;
 using SpiderTool.Dto.Spider;
 using SpiderTool.Dto.Tasks;
 using SpiderTool.IService;
+using System;
 using System.Web;
 using Utility.Extensions;
 using Utility.Http;
@@ -68,10 +69,6 @@ namespace SpiderTool
             }
         }
         private string DocumentTitle => HttpUtility.HtmlDecode(_currentDoc?.DocumentNode?.SelectSingleNode("//title")?.InnerText) ?? _rootUrl;
-        /// <summary>
-        /// 会经过下一页设置进行变换
-        /// </summary>
-        private string? _currentUrl;
 
         private string? _currentDir;
         public string CurrentDir
@@ -105,7 +102,9 @@ namespace SpiderTool
 
         public SpiderWorker(ILogger<SpiderWorker> logger, int spiderId, string url, ISpiderService service, ISpiderProcessor? processor = null)
         {
-            _service = service ?? throw new Exception("ISpiderService不能为null");
+            ArgumentNullException.ThrowIfNull(service);
+
+            _service = service;
             _processor = processor ?? new DefaultSpiderProcessor();
             _logger = logger;
             _control = _service.Controller;
@@ -288,14 +287,13 @@ namespace SpiderTool
             }
         }
 
-        private async Task<string> LoadDocumentContent()
+        public static async Task<string> RequestDocumentContent(string url, SpiderDetailViewModel spiderConfig)
         {
             HttpResponseMessage res;
-            var url = _currentUrl!.GetTotalUrl(HostUrl);
-            if (Spider.Method == RequestMethod.POST)
-                res = await HttpRequest.HttpPostCore(url, Spider.PostObj, Spider.GetHeaders());
+            if (spiderConfig.Method == RequestMethod.POST)
+                res = await HttpRequest.HttpPostCore(url, spiderConfig.PostObj, spiderConfig.GetHeaders());
             else
-                res = await HttpRequest.HttpGetCore(url, Spider.GetHeaders());
+                res = await HttpRequest.HttpGetCore(url, spiderConfig.GetHeaders());
 
             var responseStream = await res.Content.ReadAsStreamAsync();
             return responseStream.DecodeData(res.Content.Headers.ContentType?.CharSet);
@@ -303,10 +301,9 @@ namespace SpiderTool
 
         private async Task ProcessUrl(string currentUrl, bool isRootUrl = true, CancellationToken cancellationToken = default)
         {
-            _currentUrl = currentUrl;
-            CallLog($"即将访问：{_currentUrl}");
-
-            var documentContent = await LoadDocumentContent();
+            var url = currentUrl.GetTotalUrl(HostUrl);
+            CallLog($"即将访问：{url}");
+            var documentContent = await RequestDocumentContent(url, Spider);
             _currentDoc.LoadHtml(documentContent);
 
             if (isRootUrl)

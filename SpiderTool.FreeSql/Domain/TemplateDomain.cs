@@ -103,7 +103,7 @@ namespace SpiderTool.FreeSql.Domain
                 dbModel.Type = model.Type;
                 dbModel.LastUpdatedTime = DateTime.Now;
                 dbModel.LinkedSpiderId = model.LinkedSpiderId;
-                _freeSql.Update<DB_Template>(dbModel).Where(x => x.Id == dbModel.Id).ExecuteAffrows();
+                _freeSql.Update<DB_Template>().SetSource(dbModel).IgnoreColumns(x => x.CreateTime).Where(x => x.Id == dbModel.Id).ExecuteAffrows();
 
                 _freeSql.Delete<DB_ReplacementRule>().Where(x => x.TemplateId == dbModel.Id).ExecuteAffrows();
                 var data = model.ReplacementRules.Select(x => new DB_ReplacementRule

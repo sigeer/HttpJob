@@ -147,6 +147,7 @@ namespace SpiderTool
                 return;
 
             var dirs = rootDirInfo.GetDirectories();
+            var dirsCount = dirs.Count();
             foreach (var currentDirInfo in dirs)
             {
                 var files = currentDirInfo.GetFiles().Where(x => x.Extension.ToLower() == ".txt").OrderBy(x => x.CreationTime).Select(x => x.FullName).ToList();
@@ -161,9 +162,17 @@ namespace SpiderTool
                     File.Delete(file);
                 }
 
-                var allFiles = currentDirInfo.GetFiles().OrderBy(x => x.CreationTime).Select(x => x.FullName).ToList();
+                var allFiles = currentDirInfo.GetFiles().OrderBy(x => x.CreationTime).ToList();
                 if (allFiles.Count == 0)
                     Directory.Delete(currentDirInfo.FullName);
+
+                if (dirsCount == 1)
+                {
+                    allFiles.ForEach(file =>
+                    {
+                        File.Move(file.FullName, Path.Combine(rootDir, file.Name));
+                    });
+                }
             }
         }
 
