@@ -52,9 +52,9 @@ namespace SpiderWin.Server
             ServiceFactory.GrpcDisconnect();
             ServiceFactory.GrpcChannel = GrpcChannel.ForAddress($"http://{TxtServer.Text}:{TxtPort.Text}");
             var client = new SpiderWorkerProtoService.SpiderWorkerProtoServiceClient(ServiceFactory.GrpcChannel);
-            _service = new SpiderRemoteService(client, new Mapper(new MapperConfiguration(opt =>
+            _service = new SpiderRemoteService(ServiceFactory.GrpcChannel, client, new Mapper(new MapperConfiguration(opt =>
             {
-                opt.AddProfile<SpiderProfile>();
+                opt.AddProfile<SpiderProtoProfile>();
             })), WorkerController.GetInstance());
             try
             {

@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Grpc.Net.Client;
 using SpiderService;
 using SpiderTool.Constants;
 using SpiderTool.Data;
@@ -13,16 +14,18 @@ namespace SpiderRemoteServiceClient.Services
         readonly SpiderWorkerProtoService.SpiderWorkerProtoServiceClient _client;
         readonly IMapper Mapper;
         readonly WorkerController _controller;
+        readonly GrpcChannel _channel;
         public WorkerController Controller => _controller;
 
-        public bool CanConnect() => PingSync();
-        public async Task<bool> CanConnectAsync() => await Ping();
+        public bool CanConnect() => _channel.State == Grpc.Core.ConnectivityState.Connecting;
+        public Task<bool> CanConnectAsync() => Task.FromResult(_channel.State == Grpc.Core.ConnectivityState.Connecting);
 
-        public SpiderRemoteService(SpiderWorkerProtoService.SpiderWorkerProtoServiceClient client, IMapper mapper, WorkerController controller)
+        public SpiderRemoteService(GrpcChannel channel, SpiderWorkerProtoService.SpiderWorkerProtoServiceClient client, IMapper mapper, WorkerController controller) : this(client, mapper, controller)
         {
             _client = client;
             Mapper = mapper;
             _controller = controller;
+            _channel = channel;
         }
 
         public async Task<List<TaskListItemViewModel>> GetTaskListAsync()
@@ -91,6 +94,7 @@ namespace SpiderRemoteServiceClient.Services
 
         private bool PingSync()
         {
+            GrpcChannel.ForAddress().
             var data = _client.Ping(new Google.Protobuf.WellKnownTypes.Empty());
             return data.Data == "ok";
         }
