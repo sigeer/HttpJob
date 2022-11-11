@@ -19,7 +19,7 @@ namespace SpiderTool
         /// </summary>
         public event EventHandler<SpiderWorker>? OnTaskInit;
         /// <summary>
-        /// 状态变更事件（Init,Start,Complete）
+        /// 状态变更事件（Init,Start,Complete,Cancel）
         /// </summary>
         public event EventHandler<SpiderWorker>? OnTaskStatusChanged;
         /// <summary>
@@ -92,6 +92,7 @@ namespace SpiderTool
         private readonly string _rootUrl = string.Empty;
         private int _taskId;
         public int TaskId => _taskId;
+        public TaskType Status { get; set; }
         public string HostUrl => _rootUrl.GetHostUrl();
         #endregion Property
 
@@ -258,6 +259,7 @@ namespace SpiderTool
 
         public void UpdateTaskStatus(TaskType taskStatus, string logStr = "")
         {
+            Status = taskStatus;
             switch (taskStatus)
             {
                 case TaskType.NotEffective:

@@ -8,19 +8,19 @@ namespace SpiderTool.FreeSql.Domain
 {
     public class SpiderDomain : ISpiderDomain
     {
-        readonly IFreeSql _dbContext;
+        readonly IFreeSql _freeSql;
 
-        public SpiderDomain(IFreeSql dbContext)
+        public SpiderDomain(IFreeSql freeSql)
         {
-            _dbContext = dbContext;
+            _freeSql = freeSql;
         }
 
         public string Delete(SpiderEditDto model)
         {
-            _dbContext.Ado.Transaction(() =>
+            _freeSql.Ado.Transaction(() =>
             {
-                _dbContext.Delete<DB_SpiderTemplate>(new { SpiderId = model.Id });
-                _dbContext.Delete<DB_Spider>(model.Id);
+                _freeSql.Delete<DB_SpiderTemplate>(new { SpiderId = model.Id });
+                _freeSql.Delete<DB_Spider>(model.Id);
             });
             return StatusMessage.Success;
         }
@@ -32,10 +32,10 @@ namespace SpiderTool.FreeSql.Domain
 
         public SpiderDetailViewModel? GetSpiderDto(int id)
         {
-            var dbModel = _dbContext.Select<DB_Spider>().Where(x => x.Id == id).First();
+            var dbModel = _freeSql.Select<DB_Spider>().Where(x => x.Id == id).ToOne();
             if (dbModel == null)
                 return null;
-            var nextPage = _dbContext.Select<DB_Template>().Where(x => x.Id == dbModel.NextPageTemplateId).First();
+            var nextPage = _freeSql.Select<DB_Template>().Where(x => x.Id == dbModel.NextPageTemplateId).ToOne();
 
             var data = new SpiderDetailViewModel()
             {
@@ -55,9 +55,9 @@ namespace SpiderTool.FreeSql.Domain
                 }
             };
 
-            var templateIdList = _dbContext.Select<DB_SpiderTemplate>().Where(x => x.SpiderId == id).ToList(x => x.TemplateId);
-            var templateReplaceList = _dbContext.Select<DB_ReplacementRule>().Where(x => templateIdList.Contains(x.TemplateId)).ToList();
-            var templateList = _dbContext.Select<DB_Template>().Where(x => templateIdList.Contains(x.Id)).ToList().Select(b => new TemplateDetailViewModel()
+            var templateIdList = _freeSql.Select<DB_SpiderTemplate>().Where(x => x.SpiderId == id).ToList(x => x.TemplateId);
+            var templateReplaceList = _freeSql.Select<DB_ReplacementRule>().Where(x => templateIdList.Contains(x.TemplateId)).ToList();
+            var templateList = _freeSql.Select<DB_Template>().Where(x => templateIdList.Contains(x.Id)).ToList().Select(b => new TemplateDetailViewModel()
             {
                 Id = b.Id,
                 LinkedSpiderId = b.LinkedSpiderId,
@@ -78,11 +78,11 @@ namespace SpiderTool.FreeSql.Domain
 
         public async Task<SpiderDetailViewModel?> GetSpiderDtoAsync(int id)
         {
-            var dbModel = await _dbContext.Select<DB_Spider>().Where(x => x.Id == id).FirstAsync();
+            var dbModel = await _freeSql.Select<DB_Spider>().Where(x => x.Id == id).ToOneAsync();
             if (dbModel == null)
                 return null;
 
-            var nextPage = await _dbContext.Select<DB_Template>().Where(x => x.Id == dbModel.NextPageTemplateId).FirstAsync();
+            var nextPage = await _freeSql.Select<DB_Template>().Where(x => x.Id == dbModel.NextPageTemplateId).ToOneAsync();
 
             var data = new SpiderDetailViewModel()
             {
@@ -102,9 +102,9 @@ namespace SpiderTool.FreeSql.Domain
                 }
             };
 
-            var templateIdList = await _dbContext.Select<DB_SpiderTemplate>().Where(x => x.SpiderId == id).ToListAsync(x => x.TemplateId);
-            var templateReplaceList = await _dbContext.Select<DB_ReplacementRule>().Where(x => templateIdList.Contains(x.TemplateId)).ToListAsync();
-            var templateList = (await _dbContext.Select<DB_Template>().Where(x => templateIdList.Contains(x.Id)).ToListAsync()).Select(b => new TemplateDetailViewModel()
+            var templateIdList = await _freeSql.Select<DB_SpiderTemplate>().Where(x => x.SpiderId == id).ToListAsync(x => x.TemplateId);
+            var templateReplaceList = await _freeSql.Select<DB_ReplacementRule>().Where(x => templateIdList.Contains(x.TemplateId)).ToListAsync();
+            var templateList = (await _freeSql.Select<DB_Template>().Where(x => templateIdList.Contains(x.Id)).ToListAsync()).Select(b => new TemplateDetailViewModel()
             {
                 Id = b.Id,
                 LinkedSpiderId = b.LinkedSpiderId,
@@ -124,7 +124,7 @@ namespace SpiderTool.FreeSql.Domain
         }
         public List<SpiderListItemViewModel> GetSpiderDtoList()
         {
-            return _dbContext.Select<DB_Spider>().ToList(x => new SpiderListItemViewModel
+            return _freeSql.Select<DB_Spider>().ToList(x => new SpiderListItemViewModel
             {
                 Id = x.Id,
                 Name = x.Name
@@ -133,7 +133,7 @@ namespace SpiderTool.FreeSql.Domain
 
         public async Task<List<SpiderListItemViewModel>> GetSpiderDtoListAsync()
         {
-            return await _dbContext.Select<DB_Spider>().ToListAsync(x => new SpiderListItemViewModel
+            return await _freeSql.Select<DB_Spider>().ToListAsync(x => new SpiderListItemViewModel
             {
                 Id = x.Id,
                 Name = x.Name
@@ -145,9 +145,9 @@ namespace SpiderTool.FreeSql.Domain
             if (!model.FormValid())
                 return StatusMessage.FormInvalid;
 
-            _dbContext.Transaction(() =>
+            _freeSql.Transaction(() =>
             {
-                var dbModel = _dbContext.Select<DB_Spider>().Where(x => x.Id == model.Id).First();
+                var dbModel = _freeSql.Select<DB_Spider>().Where(x => x.Id == model.Id).ToOne();
                 if (dbModel == null)
                 {
                     dbModel = new DB_Spider
@@ -155,7 +155,7 @@ namespace SpiderTool.FreeSql.Domain
                         CreateTime = DateTime.Now,
                         LastUpdatedTime = DateTime.Now
                     };
-                    dbModel.Id = (int)_dbContext.Insert<DB_Spider>(dbModel).ExecuteIdentity();
+                    dbModel.Id = (int)_freeSql.Insert<DB_Spider>(dbModel).ExecuteIdentity();
                 }
 
                 dbModel.Name = model.Name;
@@ -165,11 +165,11 @@ namespace SpiderTool.FreeSql.Domain
                 dbModel.PostObjStr = model.PostObjStr;
                 dbModel.NextPageTemplateId = model.NextPageTemplateId;
                 dbModel.LastUpdatedTime = DateTime.Now;
-                _dbContext.Update<DB_Spider>(dbModel).Where(x => x.Id == dbModel.Id).ExecuteAffrows();
+                _freeSql.Update<DB_Spider>(dbModel).Where(x => x.Id == dbModel.Id).ExecuteAffrows();
 
-                _dbContext.Delete<DB_SpiderTemplate>().Where(x => x.SpiderId == dbModel.Id).ExecuteAffrows();
+                _freeSql.Delete<DB_SpiderTemplate>().Where(x => x.SpiderId == dbModel.Id).ExecuteAffrows();
                 var data = model.Templates.Select(x => new DB_SpiderTemplate { SpiderId = dbModel.Id, TemplateId = x }).ToList();
-                _dbContext.Insert<DB_SpiderTemplate>(data).ExecuteAffrows();
+                _freeSql.Insert<DB_SpiderTemplate>(data).ExecuteAffrows();
             });
             return StatusMessage.Success;
         }

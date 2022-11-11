@@ -1,16 +1,14 @@
+using FreeSql;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using MongoDB.Driver;
 using Serilog;
-using Serilog.Events;
 using SpiderTool;
-using SpiderTool.IDomain;
+using SpiderTool.FreeSql;
 using SpiderTool.Injection;
 using SpiderTool.IService;
 using SpiderTool.MongoDB;
-using SpiderTool.SqlSugar;
-using SqlSugar;
 using System.Diagnostics;
 using System.Reflection;
 using System.Runtime.InteropServices;
@@ -75,12 +73,7 @@ namespace SpiderWin
             var remoteService = serviceProvider.GetService<ISpiderService>()!;
             if (configuration["DirectUseSqlite"].ToStrictBoolean() || !remoteService.CanConnect())
             {
-                services.AddSpiderService(new SqlSugarScope(new ConnectionConfig
-                {
-                    ConnectionString = configuration.GetConnectionString("Sqlite"),
-                    DbType = DbType.Sqlite,
-                    ConfigureExternalServices = ExternalServiceDefaultBuilder.Build()
-                }), ServiceLifetime.Singleton);
+                services.AddSpiderService(configuration.GetConnectionString("Sqlite"), DataType.Sqlite , ServiceLifetime.Singleton);
                 serviceProvider = services.BuildServiceProvider();
             }
 
