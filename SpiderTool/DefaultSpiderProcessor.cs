@@ -115,19 +115,17 @@ namespace SpiderTool
             var savePath = rootSpider.CurrentDir;
             for (int i = 0; i < templateRules.Count; i++)
             {
-                var rule = templateRules[i];
-
                 if (IsCanceled(rootSpider, cancellationToken))
                     return;
 
+                var rule = templateRules[i];
                 var nodes = string.IsNullOrEmpty(rule.TemplateStr)
                     ? new HtmlNodeCollection(currentDoc.DocumentNode)
                     : currentDoc.DocumentNode.SelectNodes(rule.TemplateStr ?? "");
                 if (nodes == null)
                     continue;
 
-                if (templateRules.Count > 1)
-                    savePath = Path.Combine(rootSpider.CurrentDir, $"Rule{rule.Id.ToString()}");
+                savePath = Path.Combine(rootSpider.CurrentDir, $"Rule{rule.Id.ToString()}");
 
                 if (rule.Type == (int)TemplateTypeEnum.Object)
                 {

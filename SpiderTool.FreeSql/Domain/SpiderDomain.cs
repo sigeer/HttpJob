@@ -165,7 +165,7 @@ namespace SpiderTool.FreeSql.Domain
                 dbModel.PostObjStr = model.PostObjStr;
                 dbModel.NextPageTemplateId = model.NextPageTemplateId;
                 dbModel.LastUpdatedTime = DateTime.Now;
-                _freeSql.Update<DB_Spider>(dbModel).Where(x => x.Id == dbModel.Id).ExecuteAffrows();
+                _freeSql.Update<DB_Spider>().SetSource(dbModel).IgnoreColumns(x => x.CreateTime).Where(x => x.Id == dbModel.Id).ExecuteAffrows();
 
                 _freeSql.Delete<DB_SpiderTemplate>().Where(x => x.SpiderId == dbModel.Id).ExecuteAffrows();
                 var data = model.Templates.Select(x => new DB_SpiderTemplate { SpiderId = dbModel.Id, TemplateId = x }).ToList();

@@ -31,7 +31,7 @@ namespace SpiderWin
             localServiceBackup = _coreService;
             _serviceProvider = serviceProvider;
             _logger = logger;
-            _delayedTaskPool.ChangeDelayedDuration(1000);
+            _delayedTaskPool.ChangeDelayedDuration(200);
 
             InitializeComponent();
         }

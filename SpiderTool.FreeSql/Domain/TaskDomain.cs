@@ -58,7 +58,7 @@ namespace SpiderTool.FreeSql.Domain
             {
                 taskDbModel.Description = model.Description;
                 taskDbModel.Status = model.Status;
-                _freeSql.Update<DB_Task>(taskDbModel).ExecuteAffrows();
+                _freeSql.Update<DB_Task>().SetSource(taskDbModel).UpdateColumns(a => new { a.Description, a.Status }).ExecuteAffrows();
             }
         }
 
@@ -69,32 +69,24 @@ namespace SpiderTool.FreeSql.Domain
             {
                 taskDbModel.Description = model.Description;
                 taskDbModel.Status = model.Status;
-                await _freeSql.Update<DB_Task>(taskDbModel).ExecuteAffrowsAsync();
+                await _freeSql.Update<DB_Task>().SetSource(taskDbModel).UpdateColumns(a => new { a.Description, a.Status }).ExecuteAffrowsAsync();
             }
         }
 
         public void SetTaskStatus(int taskId, int taskStatus)
         {
-            var taskDbModel = _freeSql.Select<DB_Task>().Where(x => x.Id == taskId).ToOne();
-            if (taskDbModel != null)
-            {
-                taskDbModel.Status = taskStatus;
-                if (taskStatus == (int)TaskType.Completed)
-                    taskDbModel.CompleteTime = DateTime.Now;
-                _freeSql.Update<DB_Task>(taskDbModel).Where(x => x.Id == taskId).ExecuteAffrows();
-            }
+            var expression = _freeSql.Update<DB_Task>().Set(x => x.Status, taskStatus);
+            if (taskStatus == (int)TaskType.Completed)
+                expression = expression.Set(x => x.CompleteTime, DateTime.Now);
+            expression.Where(x => x.Id == taskId).ExecuteAffrows();
         }
 
         public async Task SetTaskStatusAsync(int taskId, int taskStatus)
         {
-            var taskDbModel = await _freeSql.Select<DB_Task>().Where(x => x.Id == taskId).ToOneAsync();
-            if (taskDbModel != null)
-            {
-                taskDbModel.Status = taskStatus;
-                if (taskStatus == (int)TaskType.Completed)
-                    taskDbModel.CompleteTime = DateTime.Now;
-                await _freeSql.Update<DB_Task>(taskDbModel).Where(x => x.Id == taskId).ExecuteAffrowsAsync();
-            }
+            var expression = _freeSql.Update<DB_Task>().Set(x => x.Status, taskStatus);
+            if (taskStatus == (int)TaskType.Completed)
+                expression = expression.Set(x => x.CompleteTime, DateTime.Now);
+            await expression.Where(x => x.Id == taskId).ExecuteAffrowsAsync();
         }
 
         public async Task<List<TaskListItemViewModel>> GetTaskListAsync()
