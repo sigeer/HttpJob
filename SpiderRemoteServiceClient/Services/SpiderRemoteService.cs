@@ -20,7 +20,7 @@ namespace SpiderRemoteServiceClient.Services
         public bool CanConnect() => _channel.State == Grpc.Core.ConnectivityState.Connecting;
         public Task<bool> CanConnectAsync() => Task.FromResult(_channel.State == Grpc.Core.ConnectivityState.Connecting);
 
-        public SpiderRemoteService(GrpcChannel channel, SpiderWorkerProtoService.SpiderWorkerProtoServiceClient client, IMapper mapper, WorkerController controller) : this(client, mapper, controller)
+        public SpiderRemoteService(GrpcChannel channel, SpiderWorkerProtoService.SpiderWorkerProtoServiceClient client, IMapper mapper, WorkerController controller)
         {
             _client = client;
             Mapper = mapper;
@@ -94,7 +94,6 @@ namespace SpiderRemoteServiceClient.Services
 
         private bool PingSync()
         {
-            GrpcChannel.ForAddress().
             var data = _client.Ping(new Google.Protobuf.WellKnownTypes.Empty());
             return data.Data == "ok";
         }
