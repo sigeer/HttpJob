@@ -150,28 +150,33 @@ namespace SpiderTool
             var dirsCount = dirs.Count();
             foreach (var currentDirInfo in dirs)
             {
-                var files = currentDirInfo.GetFiles().Where(x => x.Extension.ToLower() == ".txt").OrderBy(x => x.CreationTime).Select(x => x.FullName).ToList();
-                if (files.Count == 0)
-                    return;
-
-                var fileName = GetDirToName(rootDirInfo, currentDirInfo) + ".txt";
-                var filePath = Path.Combine(rootDir, fileName);
-                foreach (var file in files)
-                {
-                    await File.AppendAllTextAsync(filePath, File.ReadAllText(file));
-                    File.Delete(file);
-                }
-
                 var allFiles = currentDirInfo.GetFiles().OrderBy(x => x.CreationTime).ToList();
                 if (allFiles.Count == 0)
+                {
                     Directory.Delete(currentDirInfo.FullName);
+                    continue;
+                }
 
+                var files = allFiles.Where(x => x.Extension.ToLower() == ".txt").OrderBy(x => x.CreationTime).Select(x => x.FullName).ToList();
+                if (files.Count != 0)
+                {
+                    var fileName = GetDirToName(rootDirInfo, currentDirInfo) + ".txt";
+                    var filePath = Path.Combine(rootDir, fileName);
+                    foreach (var file in files)
+                    {
+                        await File.AppendAllTextAsync(filePath, File.ReadAllText(file));
+                        File.Delete(file);
+                    }
+                }
+
+                allFiles = currentDirInfo.GetFiles().OrderBy(x => x.CreationTime).ToList();
                 if (dirsCount == 1)
                 {
                     allFiles.ForEach(file =>
                     {
                         File.Move(file.FullName, Path.Combine(rootDir, file.Name));
                     });
+                    Directory.Delete(currentDirInfo.FullName);
                 }
             }
         }
