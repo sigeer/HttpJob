@@ -15,7 +15,10 @@ var sqlClient = new SqlSugarClient(new ConnectionConfig
 });
 builder.Services.AddSpiderService(sqlClient, ServiceLifetime.Scoped);
 // Add services to the container.
-builder.Services.AddGrpc();
+builder.Services.AddGrpc(o =>
+{
+    o.EnableDetailedErrors = true;
+});
 builder.Services.AddAutoMapper(x =>
 {
     x.AddProfile<SpiderProfile>();

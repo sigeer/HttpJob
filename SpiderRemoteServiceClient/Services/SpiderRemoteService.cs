@@ -22,10 +22,10 @@ namespace SpiderRemoteServiceClient.Services
 
         public SpiderRemoteService(GrpcChannel channel, IMapper mapper, WorkerController controller)
         {
-            _channel = channel;
             _client = new SpiderWorkerProtoService.SpiderWorkerProtoServiceClient(channel);
             Mapper = mapper;
             _controller = controller;
+            _channel = channel;
         }
 
         public async Task<List<TaskListItemViewModel>> GetTaskListAsync()

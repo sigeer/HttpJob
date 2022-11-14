@@ -175,7 +175,7 @@ namespace SpiderService.Services
             return Task.FromResult(new Empty());
         }
 
-        public override async Task<Empty> StopAllTask(Empty request, ServerCallContext context)
+        public override Task<Empty> StopAllTask(Empty request, ServerCallContext context)
         {
             _service.StopAllTask();
             return Task.FromResult(new Empty());
