@@ -18,7 +18,14 @@ namespace MineServer.Controllers
         [HttpGet]
         public string Index()
         {
-            return $"web health check, service canconnect {_service.CanConnect()}";
+            return $"web health check, service CanConnect={_service.CanConnect()}";
+        }
+
+        [Route("/Ping")]
+        [HttpGet]
+        public async Task<string> Ping()
+        {
+            return $"web health check, service Ping={await _service.Ping()}";
         }
     }
 }
