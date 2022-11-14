@@ -88,6 +88,7 @@ namespace SpiderTool
         /// 在同一个爬虫任务内始终一致
         /// </summary>
         private readonly string _rootUrl = string.Empty;
+        private string _currentUrl = string.Empty;
         private int _taskId;
         public int TaskId => _taskId;
         public TaskType Status { get; set; }
@@ -238,39 +239,55 @@ namespace SpiderTool
 
         public async Task Start()
         {
-            _taskId = _service?.AddTask(new TaskEditDto
+            try
             {
-                RootUrl = _rootUrl,
-                SpiderId = Spider.Id,
-                Status = (int)TaskType.NotEffective
-            }) ?? -1;
-            var tokenSource = _control.GetOrAdd(TaskId);
-            UpdateTaskStatus(TaskType.NotEffective);
+                _taskId = _service?.AddTask(new TaskEditDto
+                {
+                    RootUrl = _rootUrl,
+                    SpiderId = Spider.Id,
+                    Status = (int)TaskType.NotEffective
+                }) ?? -1;
+                var tokenSource = _control.GetOrAdd(TaskId);
+                UpdateTaskStatus(TaskType.NotEffective);
 
-            await ProcessUrl(_rootUrl, true, tokenSource.Token);
-            await CompleteTask();
+                await ProcessUrl(_rootUrl, true, tokenSource.Token);
+                await CompleteTask();
+            }
+            catch (OperationCanceledException cancelException)
+            {
+                UpdateTaskStatus(TaskType.Canceled, cancelException.Message);
+            }
         }
 
-        public async Task CompleteTask()
+        public async Task CompleteTask(CancellationToken cancellationToken = default)
         {
             UpdateTaskStatus(TaskType.Completed);
-            await SpiderUtility.MergeTextFileAsync(CurrentDir);
+            await SpiderUtility.MergeTextFileAsync(CurrentDir, cancellationToken);
         }
 
-        public void UpdateTaskStatus(TaskType taskStatus)
+        public void UpdateTaskStatus(TaskType taskStatus, string logStr = "")
         {
+            if (Status == taskStatus)
+                return;
+
             Status = taskStatus;
             switch (taskStatus)
             {
                 case TaskType.NotEffective:
                     OnTaskInit?.Invoke(this, this);
                     OnTaskStatusChanged?.Invoke(this, this);
-                    CallLog($"添加任务：{TaskId}");
+                    CallLog($"添加任务：{TaskId} {_rootUrl}");
                     break;
                 case TaskType.InProgress:
+                    _service?.UpdateTask(new TaskEditDto
+                    {
+                        Id = TaskId,
+                        Description = DocumentTitle,
+                        Status = (int)TaskType.InProgress
+                    });
                     OnTaskStart?.Invoke(this, this);
                     OnTaskStatusChanged?.Invoke(this, this);
-                    CallLog($"开始任务：{TaskId}");
+                    CallLog($"开始任务：{TaskId} {_currentUrl}");
                     break;
                 case TaskType.Completed:
                     _service?.SetTaskStatus(TaskId, (int)TaskType.Completed);
@@ -282,7 +299,7 @@ namespace SpiderTool
                     _service?.SetTaskStatus(TaskId, (int)TaskType.Canceled);
                     OnTaskCanceled?.Invoke(this, this);
                     OnTaskStatusChanged?.Invoke(this, this);
-                    CallLog($"取消任务：{TaskId} From {new StackTrace().GetFrame(1)?.GetMethod()?.Name}");
+                    CallLog($"取消任务：{TaskId} {logStr}");
                     _control.Return(TaskId);
                     break;
                 default:
@@ -290,35 +307,27 @@ namespace SpiderTool
             }
         }
 
-        public static async Task<string> RequestDocumentContent(string url, SpiderDetailViewModel spiderConfig)
+        public static async Task<string> RequestDocumentContent(string url, SpiderDetailViewModel spiderConfig, CancellationToken cancellationToken = default)
         {
             HttpResponseMessage res;
             if (spiderConfig.Method == RequestMethod.POST)
-                res = await HttpRequest.HttpPostCore(url, spiderConfig.PostObj, spiderConfig.GetHeaders());
+                res = await HttpRequest.HttpPostCore(url, spiderConfig.PostObj, spiderConfig.GetHeaders(), cancellationToken: cancellationToken);
             else
-                res = await HttpRequest.HttpGetCore(url, spiderConfig.GetHeaders());
+                res = await HttpRequest.HttpGetCore(url, spiderConfig.GetHeaders(), cancellationToken: cancellationToken);
 
-            var responseStream = await res.Content.ReadAsStreamAsync();
+            var responseStream = await res.Content.ReadAsStreamAsync(cancellationToken);
             return responseStream.DecodeData(res.Content.Headers.ContentType?.CharSet);
         }
 
         private async Task ProcessUrl(string currentUrl, bool isRootUrl = true, CancellationToken cancellationToken = default)
         {
-            var url = currentUrl.GetTotalUrl(HostUrl);
-            CallLog($"即将访问：{url}");
-            var documentContent = await RequestDocumentContent(url, Spider);
+            _currentUrl = currentUrl.GetTotalUrl(HostUrl);
+            CallLog($"即将访问：{_currentUrl}");
+            var documentContent = await RequestDocumentContent(_currentUrl, Spider, cancellationToken);
             _currentDoc.LoadHtml(documentContent);
 
             if (isRootUrl)
-            {
-                _service?.UpdateTask(new TaskEditDto
-                {
-                    Id = TaskId,
-                    Description = DocumentTitle,
-                    Status = (int)TaskType.InProgress
-                });
                 UpdateTaskStatus(TaskType.InProgress);
-            }
 
             await _processor.ProcessContentAsync(this, documentContent, Spider.TemplateList, cancellationToken);
             await MoveToNextPageAsync(cancellationToken);
@@ -326,11 +335,8 @@ namespace SpiderTool
 
         private async Task MoveToNextPageAsync(CancellationToken cancellationToken = default)
         {
-            if (cancellationToken.IsCancellationRequested)
-            {
-                UpdateTaskStatus(TaskType.Canceled);
-                return;
-            }
+            cancellationToken.ThrowIfCancellationRequested();
+
             if (Spider.NextPageTemplate == null || string.IsNullOrEmpty(Spider.NextPageTemplate.TemplateStr))
                 return;
             var nextPageNode = _currentDoc.DocumentNode.SelectSingleNode(Spider.NextPageTemplate.TemplateStr);

@@ -45,12 +45,24 @@ namespace SpiderTool.Dto.Tasks
 
     public enum TaskType
     {
+        /// <summary>
+        /// 加入记录，尚未请求
+        /// </summary>
         [Description("尚未开始")]
         NotEffective = 0,
+        /// <summary>
+        /// 请求完成，未处理返回结果
+        /// </summary>
         [Description("执行中")]
         InProgress = 1,
+        /// <summary>
+        /// 任务完成
+        /// </summary>
         [Description("已完成")]
         Completed = 2,
+        /// <summary>
+        /// 任务中断，取消
+        /// </summary>
         [Description("已取消")]
         Canceled = 3
     }
