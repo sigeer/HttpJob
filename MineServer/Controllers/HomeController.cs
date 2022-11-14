@@ -18,7 +18,7 @@ namespace MineServer.Controllers
         [HttpGet]
         public string Index()
         {
-            return $"web health check, service canconnect {_service.CanConnect()}";
+            return $"web health check, service CanConnect={_service.CanConnect()}";
         }
     }
 }

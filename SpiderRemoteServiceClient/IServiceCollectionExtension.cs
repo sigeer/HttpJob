@@ -15,8 +15,6 @@ namespace SpiderRemoteServiceClient
 
             var channel = GrpcChannel.ForAddress(serverUrl);
             services.AddSingleton<GrpcChannel>(channel);
-            var remoteClient = new SpiderWorkerProtoService.SpiderWorkerProtoServiceClient(channel);
-            services.AddSingleton<SpiderWorkerProtoService.SpiderWorkerProtoServiceClient>(remoteClient);
             services.AddAutoMapper(x =>
             {
                 x.AddProfile<SpiderProtoProfile>();

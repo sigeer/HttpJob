@@ -20,12 +20,12 @@ namespace SpiderRemoteServiceClient.Services
         public bool CanConnect() => _channel.State == Grpc.Core.ConnectivityState.Connecting;
         public Task<bool> CanConnectAsync() => Task.FromResult(_channel.State == Grpc.Core.ConnectivityState.Connecting);
 
-        public SpiderRemoteService(GrpcChannel channel, SpiderWorkerProtoService.SpiderWorkerProtoServiceClient client, IMapper mapper, WorkerController controller)
+        public SpiderRemoteService(GrpcChannel channel, IMapper mapper, WorkerController controller)
         {
-            _client = client;
+            _channel = channel;
+            _client = new SpiderWorkerProtoService.SpiderWorkerProtoServiceClient(channel);
             Mapper = mapper;
             _controller = controller;
-            _channel = channel;
         }
 
         public async Task<List<TaskListItemViewModel>> GetTaskListAsync()
