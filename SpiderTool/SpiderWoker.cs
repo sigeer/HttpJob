@@ -6,6 +6,7 @@ using SpiderTool.Dto.Spider;
 using SpiderTool.Dto.Tasks;
 using SpiderTool.IService;
 using System;
+using System.Diagnostics;
 using System.Web;
 using Utility.Extensions;
 using Utility.Http;
@@ -256,7 +257,7 @@ namespace SpiderTool
             await SpiderUtility.MergeTextFileAsync(CurrentDir);
         }
 
-        public void UpdateTaskStatus(TaskType taskStatus, string logStr = "")
+        public void UpdateTaskStatus(TaskType taskStatus)
         {
             Status = taskStatus;
             switch (taskStatus)
@@ -264,22 +265,24 @@ namespace SpiderTool
                 case TaskType.NotEffective:
                     OnTaskInit?.Invoke(this, this);
                     OnTaskStatusChanged?.Invoke(this, this);
+                    CallLog($"添加任务：{TaskId}");
                     break;
                 case TaskType.InProgress:
                     OnTaskStart?.Invoke(this, this);
                     OnTaskStatusChanged?.Invoke(this, this);
+                    CallLog($"开始任务：{TaskId}");
                     break;
                 case TaskType.Completed:
                     _service?.SetTaskStatus(TaskId, (int)TaskType.Completed);
                     OnTaskComplete?.Invoke(this, this);
                     OnTaskStatusChanged?.Invoke(this, this);
-                    OnLog?.Invoke(this, logStr);
+                    CallLog($"完成任务：{TaskId}");
                     break;
                 case TaskType.Canceled:
                     _service?.SetTaskStatus(TaskId, (int)TaskType.Canceled);
                     OnTaskCanceled?.Invoke(this, this);
                     OnTaskStatusChanged?.Invoke(this, this);
-                    OnLog?.Invoke(this, logStr);
+                    CallLog($"取消任务：{TaskId} From {new StackTrace().GetFrame(1)?.GetMethod()?.Name}");
                     _control.Return(TaskId);
                     break;
                 default:
@@ -325,7 +328,7 @@ namespace SpiderTool
         {
             if (cancellationToken.IsCancellationRequested)
             {
-                UpdateTaskStatus(TaskType.Canceled, $"task {TaskId} canceled | from method MoveToNextPage ");
+                UpdateTaskStatus(TaskType.Canceled);
                 return;
             }
             if (Spider.NextPageTemplate == null || string.IsNullOrEmpty(Spider.NextPageTemplate.TemplateStr))

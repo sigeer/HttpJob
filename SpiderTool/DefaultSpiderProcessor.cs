@@ -10,7 +10,7 @@ namespace SpiderTool
         {
             if (cancellationToken.IsCancellationRequested)
             {
-                rootSpider.UpdateTaskStatus(TaskType.Canceled, $"task {rootSpider.TaskId} canceled | from method ProcessContentAsync ");
+                rootSpider.UpdateTaskStatus(TaskType.Canceled);
                 return true;
             }
             return false;
