@@ -114,12 +114,12 @@ namespace SpiderTool
             return null;
         }
 
-        public static async Task SaveTextAsync(string dir, string str)
+        public static async Task SaveTextAsync(string dir, string str, CancellationToken cancellationToken = default)
         {
             try
             {
                 var path = Path.Combine(dir.GetDirectory(), DateTime.Now.Ticks + ".txt");
-                await File.WriteAllTextAsync(path, str);
+                await File.WriteAllTextAsync(path, str, cancellationToken);
             }
             catch (Exception ex)
             {
@@ -140,7 +140,7 @@ namespace SpiderTool
             return temp.DocumentNode.InnerText;
         }
 
-        public static async Task MergeTextFileAsync(string rootDir)
+        public static async Task MergeTextFileAsync(string rootDir, CancellationToken cancellationToken = default)
         {
             var rootDirInfo = new DirectoryInfo(rootDir);
             if (!rootDirInfo.Exists)
@@ -150,6 +150,8 @@ namespace SpiderTool
             var dirsCount = dirs.Count();
             foreach (var currentDirInfo in dirs)
             {
+                cancellationToken.ThrowIfCancellationRequested();
+
                 var allFiles = currentDirInfo.GetFiles().OrderBy(x => x.CreationTime).ToList();
                 if (allFiles.Count == 0)
                 {
@@ -164,7 +166,8 @@ namespace SpiderTool
                     var filePath = Path.Combine(rootDir, fileName);
                     foreach (var file in files)
                     {
-                        await File.AppendAllTextAsync(filePath, File.ReadAllText(file));
+                        var txt = await File.ReadAllTextAsync(file, cancellationToken);
+                        await File.AppendAllTextAsync(filePath, txt, cancellationToken);
                         File.Delete(file);
                     }
                 }

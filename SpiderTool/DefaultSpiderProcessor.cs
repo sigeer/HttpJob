@@ -6,16 +6,6 @@ namespace SpiderTool
 {
     public class DefaultSpiderProcessor : ISpiderProcessor
     {
-        protected bool IsCanceled(SpiderWorker rootSpider, CancellationToken cancellationToken = default)
-        {
-            if (cancellationToken.IsCancellationRequested)
-            {
-                rootSpider.UpdateTaskStatus(TaskType.Canceled, $"task {rootSpider.TaskId} canceled | from method ProcessContentAsync ");
-                return true;
-            }
-            return false;
-        }
-
         protected virtual async Task ProcessObject(string savePath, SpiderWorker rootSpider, HtmlNodeCollection nodes, TemplateDetailViewModel rule, CancellationToken cancellationToken = default)
         {
 
@@ -30,8 +20,7 @@ namespace SpiderTool
         {
             foreach (var item in nodes)
             {
-                if (IsCanceled(rootSpider, cancellationToken))
-                    return;
+                cancellationToken.ThrowIfCancellationRequested();
 
                 await SpiderUtility.SaveTextAsync(savePath, SpiderUtility.ReadHtmlNodeInnerHtml(item, rule));
             }
@@ -39,37 +28,29 @@ namespace SpiderTool
 
         protected virtual async Task ProcessJumpLink(SpiderWorker rootSpider, HtmlNodeCollection nodes, TemplateDetailViewModel rule, CancellationToken cancellationToken = default)
         {
-            try
+            await Parallel.ForEachAsync(nodes, cancellationToken, async (item, ctx) =>
             {
-                await Parallel.ForEachAsync(nodes, cancellationToken, async (item, ctx) =>
+                ctx.ThrowIfCancellationRequested();
+
+                var resource = (item.Attributes["href"] ?? item.Attributes["data-href"])?.Value;
+                if (resource == null)
+                    return;
+
+                else if (resource.StartsWith("javascript:"))
+                    return;
+
+                else
                 {
-                    if (IsCanceled(rootSpider, ctx))
-                        ctx.ThrowIfCancellationRequested();
+                    var url = resource.GetTotalUrl(rootSpider.HostUrl);
 
-                    var resource = (item.Attributes["href"] ?? item.Attributes["data-href"])?.Value;
-                    if (resource == null)
-                        ctx.ThrowIfCancellationRequested();
-
-                    else if (resource.StartsWith("javascript:"))
-                        ctx.ThrowIfCancellationRequested();
-
-                    else
+                    if (rule.LinkedSpiderDetail != null)
                     {
-                        var url = resource.GetTotalUrl(rootSpider.HostUrl);
-
-                        if (rule.LinkedSpiderDetail != null)
-                        {
-                            var spider = new SpiderWorker(rule.LinkedSpiderDetail, url, rootSpider);
-                            rootSpider.MountChildTaskEvent(spider);
-                            await spider.Start();
-                        }
+                        var spider = new SpiderWorker(rule.LinkedSpiderDetail, url, rootSpider);
+                        rootSpider.MountChildTaskEvent(spider);
+                        await spider.Start();
                     }
-                });
-            }
-            catch (OperationCanceledException ex)
-            {
-                return;
-            }
+                }
+            });
             //foreach (var item in nodes)
             //{
             //    if (IsCanceled(rootSpider, cancellationToken))
@@ -97,8 +78,7 @@ namespace SpiderTool
         {
             foreach (var item in nodes)
             {
-                if (IsCanceled(rootSpider, cancellationToken))
-                    return;
+                cancellationToken.ThrowIfCancellationRequested();
 
                 await SpiderUtility.SaveTextAsync(savePath, item.InnerHtml);
             }
@@ -106,17 +86,14 @@ namespace SpiderTool
 
         public virtual async Task ProcessContentAsync(SpiderWorker rootSpider, string documentContent, List<TemplateDetailViewModel> templateRules, CancellationToken cancellationToken = default)
         {
-            if (IsCanceled(rootSpider, cancellationToken))
-                return;
+            cancellationToken.ThrowIfCancellationRequested();
 
             var currentDoc = new HtmlDocument();
             currentDoc.LoadHtml(documentContent);
 
-            var savePath = rootSpider.CurrentDir;
             for (int i = 0; i < templateRules.Count; i++)
             {
-                if (IsCanceled(rootSpider, cancellationToken))
-                    return;
+                cancellationToken.ThrowIfCancellationRequested();
 
                 var rule = templateRules[i];
                 var nodes = string.IsNullOrEmpty(rule.TemplateStr)
@@ -125,7 +102,7 @@ namespace SpiderTool
                 if (nodes == null)
                     continue;
 
-                savePath = Path.Combine(rootSpider.CurrentDir, $"Rule{rule.Id.ToString()}");
+                var savePath = Path.Combine(rootSpider.CurrentDir, $"Rule{rule.Id.ToString()}");
 
                 if (rule.Type == (int)TemplateTypeEnum.Object)
                 {
