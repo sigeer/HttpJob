@@ -56,7 +56,7 @@ namespace SpiderService.Services
             var resultModel = new TaskListResult();
             list.ForEach(x =>
             {
-                resultModel.List.Add(_mapper.Map<TaskProtoViewModel>(request));
+                resultModel.List.Add(_mapper.Map<TaskProtoViewModel>(x));
             });
             return Task.FromResult(resultModel);
         }
