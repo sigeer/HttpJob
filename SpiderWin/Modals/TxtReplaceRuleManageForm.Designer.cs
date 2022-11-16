@@ -33,6 +33,8 @@
             this.DataGridMenu = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.DataGridMenu_Item_Delete = new System.Windows.Forms.ToolStripMenuItem();
             this.BtnSave = new System.Windows.Forms.Button();
+            this.Txt_Search = new System.Windows.Forms.TextBox();
+            this.Btn_Search = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.DataGridViewMain)).BeginInit();
             this.DataGridMenu.SuspendLayout();
             this.SuspendLayout();
@@ -40,7 +42,7 @@
             // DataGridViewMain
             // 
             this.DataGridViewMain.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.DataGridViewMain.Location = new System.Drawing.Point(12, 12);
+            this.DataGridViewMain.Location = new System.Drawing.Point(12, 41);
             this.DataGridViewMain.Name = "DataGridViewMain";
             this.DataGridViewMain.RowTemplate.Height = 25;
             this.DataGridViewMain.Size = new System.Drawing.Size(425, 298);
@@ -63,7 +65,7 @@
             // 
             // BtnSave
             // 
-            this.BtnSave.Location = new System.Drawing.Point(362, 318);
+            this.BtnSave.Location = new System.Drawing.Point(362, 345);
             this.BtnSave.Name = "BtnSave";
             this.BtnSave.Size = new System.Drawing.Size(75, 23);
             this.BtnSave.TabIndex = 2;
@@ -71,20 +73,41 @@
             this.BtnSave.UseVisualStyleBackColor = true;
             this.BtnSave.Click += new System.EventHandler(this.BtnSave_Click);
             // 
+            // Txt_Search
+            // 
+            this.Txt_Search.Location = new System.Drawing.Point(12, 12);
+            this.Txt_Search.Name = "Txt_Search";
+            this.Txt_Search.Size = new System.Drawing.Size(188, 23);
+            this.Txt_Search.TabIndex = 3;
+            this.Txt_Search.KeyUp += new System.Windows.Forms.KeyEventHandler(this.Txt_Search_KeyUp);
+            // 
+            // Btn_Search
+            // 
+            this.Btn_Search.Location = new System.Drawing.Point(206, 12);
+            this.Btn_Search.Name = "Btn_Search";
+            this.Btn_Search.Size = new System.Drawing.Size(75, 23);
+            this.Btn_Search.TabIndex = 4;
+            this.Btn_Search.Text = "查找重复项";
+            this.Btn_Search.UseVisualStyleBackColor = true;
+            this.Btn_Search.Click += new System.EventHandler(this.Btn_Search_Click);
+            // 
             // TxtReplaceRuleManageForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 17F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(449, 353);
+            this.ClientSize = new System.Drawing.Size(449, 375);
+            this.Controls.Add(this.Btn_Search);
+            this.Controls.Add(this.Txt_Search);
             this.Controls.Add(this.BtnSave);
             this.Controls.Add(this.DataGridViewMain);
             this.Name = "TxtReplaceRuleManageForm";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
-            this.Text = "TxtReplaceRuleManageForm";
+            this.Text = "替换规则";
             this.Load += new System.EventHandler(this.TxtReplaceRuleManageForm_Load);
             ((System.ComponentModel.ISupportInitialize)(this.DataGridViewMain)).EndInit();
             this.DataGridMenu.ResumeLayout(false);
             this.ResumeLayout(false);
+            this.PerformLayout();
 
         }
 
@@ -94,5 +117,7 @@
         private Button BtnSave;
         private ContextMenuStrip DataGridMenu;
         private ToolStripMenuItem DataGridMenu_Item_Delete;
+        private TextBox Txt_Search;
+        private Button Btn_Search;
     }
 }
