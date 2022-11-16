@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using SpiderRemoteServiceClient.Services;
 using SpiderTool.Dto.Spider;
-using SpiderTool.IService;
 using Utility.Constants;
 
 namespace MineServer.Controllers

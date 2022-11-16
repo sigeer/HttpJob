@@ -1,7 +1,6 @@
 ﻿using SpiderTool.Constants;
 using SpiderTool.Dto.Spider;
 using SpiderTool.IService;
-using Utility.Extensions;
 
 namespace SpiderWin.Modals
 {
@@ -10,7 +9,7 @@ namespace SpiderWin.Modals
         #region form variables
         SpiderEditDto _currentSpider = new SpiderEditDto();
         int _spiderId;
-        
+
         public event EventHandler<string>? OnSubmit;
         #endregion
 
@@ -133,7 +132,7 @@ namespace SpiderWin.Modals
             templateListForm.OnSelect += (data, evt) =>
             {
                 if (evt != null)
-                    _currentSpider.Templates = (evt as List<int>)!;
+                    _currentSpider.Templates = evt!;
 
                 labelTemplateInfo.Text = $"已选择{_currentSpider.Templates.Count}项";
             };

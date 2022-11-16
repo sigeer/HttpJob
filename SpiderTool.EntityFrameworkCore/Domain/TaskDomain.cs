@@ -1,11 +1,9 @@
-﻿using ICSharpCode.SharpZipLib.Zip;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using SpiderTool.Data.Constants;
 using SpiderTool.DataBase;
 using SpiderTool.Dto.Tasks;
 using SpiderTool.EntityFrameworkCore.ContextModel;
 using SpiderTool.IDomain;
-using System.Threading.Tasks;
 
 namespace SpiderTool.EntityFrameworkCore.Domain
 {

@@ -1,4 +1,5 @@
-﻿using SpiderTool.Dto.Spider;
+﻿using System.Linq;
+using SpiderTool.Dto.Spider;
 using Utility.Extensions;
 
 namespace SpiderWin.Modals
@@ -7,6 +8,9 @@ namespace SpiderWin.Modals
     {
         readonly List<ReplacementRuleDto>? _rules;
         public event EventHandler<List<ReplacementRuleDto>>? OnOk;
+        const int Col_IgnoreCase = 0;
+        const int Col_OldStr = 1;
+        const int Col_NewStr = 2;
         public TxtReplaceRuleManageForm(List<ReplacementRuleDto>? rules = null)
         {
             _rules = rules;
@@ -46,9 +50,7 @@ namespace SpiderWin.Modals
             _rules?.ForEach(x =>
             {
                 var row = new DataGridViewRow();
-
-                var chkCell = new DataGridViewCheckBoxCell() { Value = x.IgnoreCase, ValueType = typeof(bool?) };
-                row.Cells.Add(chkCell);
+                row.Cells.Add(new DataGridViewCheckBoxCell() { Value = x.IgnoreCase, ValueType = typeof(bool?) });
                 row.Cells.Add(new DataGridViewTextBoxCell() { Value = x.ReplacementOldStr, ValueType = typeof(string) });
                 row.Cells.Add(new DataGridViewTextBoxCell() { Value = x.ReplacementNewlyStr, ValueType = typeof(string) });
                 row.ContextMenuStrip = DataGridMenu;
@@ -62,13 +64,13 @@ namespace SpiderWin.Modals
             for (int i = 0; i < DataGridViewMain.Rows.Count - 1; i++)
             {
                 var row = DataGridViewMain.Rows[i];
-                var col1 = row.Cells[1].Value?.ToString();
-                var col2 = row.Cells[2].Value?.ToString();
+                var col1 = row.Cells[Col_OldStr].Value?.ToString();
+                var col2 = row.Cells[Col_NewStr].Value?.ToString();
                 if (string.IsNullOrEmpty(col1))
                     continue;
                 data.Add(new ReplacementRuleDto
                 {
-                    IgnoreCase = (bool)(row.Cells[0]?.Value ?? false),
+                    IgnoreCase = (bool)(row.Cells[Col_IgnoreCase]?.Value ?? false),
                     ReplacementOldStr = col1.ToString(),
                     ReplacementNewlyStr = col2?.ToString(),
                 });
@@ -99,6 +101,41 @@ namespace SpiderWin.Modals
                     ctrl.CurrentCell = ctrl.Rows[e.RowIndex].Cells[e.ColumnIndex.ToMax(0)];
                     DataGridMenu.Show(MousePosition.X, MousePosition.Y);
                 }
+            }
+        }
+
+        private void Search()
+        {
+            List<DataGridViewRow> filteredRows = new List<DataGridViewRow>();
+            foreach (DataGridViewRow row in DataGridViewMain.Rows)
+            {
+                var cellOldVal = row.Cells[Col_OldStr].Value?.ToString() ?? "";
+                var cellNewVal = row.Cells[Col_NewStr].Value?.ToString() ?? "";
+                if (cellOldVal.Contains(Txt_Search.Text)|| cellNewVal.Contains(Txt_Search.Text))
+                {
+                    filteredRows.Add(row);
+                }
+            }
+            DataGridViewMain.ClearSelection();
+            for (int i = 0; i < filteredRows.Count; i++)
+            {
+                var row = filteredRows[i];
+                if (i == 0)
+                    DataGridViewMain.FirstDisplayedScrollingRowIndex = row.Index;
+                row.Selected = true;
+            }
+        }
+
+        private void Btn_Search_Click(object sender, EventArgs e)
+        {
+            Search();
+        }
+
+        private void Txt_Search_KeyUp(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Enter)
+            {
+                Search();
             }
         }
     }

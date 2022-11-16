@@ -1,8 +1,8 @@
-﻿using SpiderTool.Constants;
+﻿using FreeSql;
+using SpiderTool.Constants;
 using SpiderTool.DataBase;
 using SpiderTool.Dto.Spider;
 using SpiderTool.IDomain;
-using FreeSql;
 
 namespace SpiderTool.FreeSql.Domain
 {

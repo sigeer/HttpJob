@@ -5,7 +5,6 @@ using SpiderTool.Constants;
 using SpiderTool.Data;
 using SpiderTool.Dto.Spider;
 using SpiderTool.Dto.Tasks;
-using System.Threading.Tasks;
 
 namespace SpiderRemoteServiceClient.Services
 {
@@ -207,7 +206,7 @@ namespace SpiderRemoteServiceClient.Services
         public void BulkUpdateTaskStatus(IEnumerable<int> tasks, int taskStatus)
         {
             var postModel = new TaskProtoBulkEditDto
-            { 
+            {
                 TaskStatus = taskStatus
             };
             postModel.Tasks.AddRange(tasks);
