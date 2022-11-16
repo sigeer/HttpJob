@@ -1,9 +1,7 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using MongoDB.Driver;
-using SpiderTool.Data.Mapper;
 using SpiderTool.Injection;
 using SpiderTool.MongoDB.Domain;
-using Utility.GuidHelper;
 
 namespace SpiderTool.MongoDB
 {

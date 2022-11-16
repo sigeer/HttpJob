@@ -5,8 +5,6 @@ using SpiderTool.Data;
 using SpiderTool.Dto.Spider;
 using SpiderTool.Dto.Tasks;
 using SpiderTool.IService;
-using System;
-using System.Diagnostics;
 using System.Web;
 using Utility.Extensions;
 using Utility.Http;
@@ -151,11 +149,11 @@ namespace SpiderTool
         /// <param name="service"></param>
         /// <param name="processor"></param>
         /// <exception cref="Exception"></exception>
-        public SpiderWorker(ILogger<SpiderWorker> logger, 
-            WorkerController controller, 
-            SpiderDetailViewModel spiderDetail, 
-            string url, 
-            ISpiderService? service = null, 
+        public SpiderWorker(ILogger<SpiderWorker> logger,
+            WorkerController controller,
+            SpiderDetailViewModel spiderDetail,
+            string url,
+            ISpiderService? service = null,
             ISpiderProcessor? processor = null)
         {
             _service = service;

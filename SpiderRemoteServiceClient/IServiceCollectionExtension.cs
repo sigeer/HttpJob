@@ -2,7 +2,6 @@
 using Microsoft.Extensions.DependencyInjection;
 using SpiderRemoteServiceClient.Mapper.Spiders;
 using SpiderRemoteServiceClient.Services;
-using SpiderService;
 using SpiderTool.Data;
 
 namespace SpiderRemoteServiceClient

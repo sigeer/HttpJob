@@ -101,7 +101,7 @@ namespace SpiderTool.MongoDB.Domain
             var detailList = await detailTable.Find(x => relatedTemplateIds.Contains(x.Id)).ToListAsync();
             var nextPage = await detailTable.Find(x => x.Id == dbModel.NextPageTemplateId).FirstOrDefaultAsync();
 
-            var replaceRuleTable= _db.GetCollection<DB_ReplacementRule>(nameof(DB_ReplacementRule));
+            var replaceRuleTable = _db.GetCollection<DB_ReplacementRule>(nameof(DB_ReplacementRule));
             var replaceRules = await replaceRuleTable.Find(x => relatedTemplateIds.Contains(x.TemplateId)).ToListAsync();
 
             var data = new SpiderDetailViewModel()

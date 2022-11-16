@@ -1,9 +1,8 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
+using SpiderTool.Data;
+using SpiderTool.Data.Mapper;
 using SpiderTool.IDomain;
 using SpiderTool.IService;
-using AutoMapper;
-using SpiderTool.Data.Mapper;
-using SpiderTool.Data;
 
 namespace SpiderTool.Injection
 {
@@ -17,21 +16,21 @@ namespace SpiderTool.Injection
             services.Add(new ServiceDescriptor(typeof(TType), typeof(TImplemetation), serviceLifetime));
             return services;
         }
-        public static IServiceCollection AddSpiderDomain<TImplemetation>(this IServiceCollection services, 
-            ServiceLifetime serviceLifetime = ServiceLifetime.Scoped) 
+        public static IServiceCollection AddSpiderDomain<TImplemetation>(this IServiceCollection services,
+            ServiceLifetime serviceLifetime = ServiceLifetime.Scoped)
             where TImplemetation : class, ISpiderDomain
         {
             return services.AddService<ISpiderDomain, TImplemetation>(serviceLifetime);
         }
 
-        public static IServiceCollection AddTemplateDomain<TImplemetation>(this IServiceCollection services, 
+        public static IServiceCollection AddTemplateDomain<TImplemetation>(this IServiceCollection services,
             ServiceLifetime serviceLifetime = ServiceLifetime.Scoped)
             where TImplemetation : class, ITemplateDomain
         {
             return services.AddService<ITemplateDomain, TImplemetation>(serviceLifetime);
         }
 
-        public static IServiceCollection AddTaskDomain<TImplemetation>(this IServiceCollection services, 
+        public static IServiceCollection AddTaskDomain<TImplemetation>(this IServiceCollection services,
             ServiceLifetime serviceLifetime = ServiceLifetime.Scoped)
             where TImplemetation : class, ITaskDomain
         {

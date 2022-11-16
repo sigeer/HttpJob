@@ -73,7 +73,7 @@ namespace SpiderWin
             var remoteService = serviceProvider.GetService<ISpiderService>()!;
             if (configuration["DirectUseSqlite"].ToStrictBoolean() || !remoteService.CanConnect())
             {
-                services.AddSpiderService(configuration.GetConnectionString("Sqlite"), DataType.Sqlite , ServiceLifetime.Singleton);
+                services.AddSpiderService(configuration.GetConnectionString("Sqlite"), DataType.Sqlite, ServiceLifetime.Singleton);
                 serviceProvider = services.BuildServiceProvider();
             }
 
