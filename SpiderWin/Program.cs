@@ -1,18 +1,13 @@
 using FreeSql;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
-using MongoDB.Driver;
 using Serilog;
 using SpiderTool;
 using SpiderTool.FreeSql;
 using SpiderTool.Injection;
-using SpiderTool.IService;
-using SpiderTool.MongoDB;
 using System.Diagnostics;
 using System.Reflection;
 using System.Runtime.InteropServices;
-using Utility.Extensions;
 using Utility.Serilog.Extension;
 
 namespace SpiderWin
@@ -59,7 +54,7 @@ namespace SpiderWin
             services.AddSingleton<IConfiguration>(configuration);
             services.AddSingleton<Form1>();
 
-            services.AddSpiderService(() => new MongoClient(configuration.GetConnectionString("MongoDB")), ServiceLifetime.Singleton);
+            services.AddSpiderService(configuration.GetConnectionString("Sqlite"), DataType.Sqlite, ServiceLifetime.Singleton);
 
             var serviceProvider = services.BuildServiceProvider();
             if (File.Exists("scripts.dll"))
@@ -68,13 +63,6 @@ namespace SpiderWin
                 var newlyService = processorAssembly.GetTypes().FirstOrDefault(x => x.GetInterfaces().Contains(typeof(ISpiderProcessor)));
                 if (newlyService != null)
                     services.AddSingleton<ISpiderProcessor>((Activator.CreateInstance(newlyService) as ISpiderProcessor)!);
-            }
-            var logger = serviceProvider.GetService<ILogger<Application>>()!;
-            var remoteService = serviceProvider.GetService<ISpiderService>()!;
-            if (configuration["DirectUseSqlite"].ToStrictBoolean() || !remoteService.CanConnect())
-            {
-                services.AddSpiderService(configuration.GetConnectionString("Sqlite"), DataType.Sqlite, ServiceLifetime.Singleton);
-                serviceProvider = services.BuildServiceProvider();
             }
 
             Application.SetUnhandledExceptionMode(UnhandledExceptionMode.CatchException);

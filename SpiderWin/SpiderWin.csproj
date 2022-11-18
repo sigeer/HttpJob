@@ -34,7 +34,6 @@
   <ItemGroup>
     <ProjectReference Include="..\SpiderRemoteServiceClient\SpiderRemoteServiceClient.csproj" />
     <ProjectReference Include="..\SpiderTool.FreeSql\SpiderTool.FreeSql.csproj" />
-    <ProjectReference Include="..\SpiderTool.MongoDB\SpiderTool.MongoDB.csproj" />
     <ProjectReference Include="..\SpiderTool\SpiderTool.csproj" />
   </ItemGroup>
 
