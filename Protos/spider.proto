@@ -1,5 +1,6 @@
 syntax = "proto3";
 import "google/protobuf/empty.proto";
+import "google/protobuf/wrappers.proto";
 option csharp_namespace = "SpiderService";
 
 package spider;
@@ -7,7 +8,7 @@ package spider;
 // The greeting service definition.
 service SpiderWorkerProtoService {
 
-  rpc Crawl (RequestModel) returns (StringModel);
+  rpc Crawl (RequestModel) returns (google.protobuf.StringValue);
   rpc Ping (google.protobuf.Empty) returns (StringModel);
 
   rpc AddTask(TaskProtoEditDto) returns (IntModel);
@@ -45,18 +46,18 @@ message StringModel {
 }
 // *********** Task ***********
 message TaskProtoViewModel{
-	string rootUrl = 1;
+	google.protobuf.StringValue rootUrl = 1;
 	int32 spiderId = 2;
 	int32 status = 3;
-	string description = 4;
+	google.protobuf.StringValue description = 4;
 	int32 id = 5;
 }
 
 message TaskProtoEditDto{
-	string rootUrl = 1;
+	google.protobuf.StringValue rootUrl = 1;
 	int32 spiderId = 2;
 	int32 status = 3;
-	string description = 4;
+	google.protobuf.StringValue description = 4;
 	int32 id = 5;
 }
 
@@ -66,7 +67,7 @@ message TaskListResult {
 
 message TaskProtoSimpleViewModel {
 	int32 id = 1;
-	string rootUrl = 2;
+	google.protobuf.StringValue rootUrl = 2;
 	int32 spiderId = 3;
 }
 
@@ -84,22 +85,22 @@ message TaskProtoBulkEditDto {
 
 message SpiderProtoEditDto {
 	int32 id = 1;
-	string name = 2;
-	string description = 3;
-	string method = 4;
-	string postObjStr = 5;
-	string headers = 6;
+	google.protobuf.StringValue name = 2;
+	google.protobuf.StringValue description = 3;
+	google.protobuf.StringValue method = 4;
+	google.protobuf.StringValue postObjStr = 5;
+	google.protobuf.StringValue headers = 6;
 	int32 nextPageId = 7;
 	repeated int32 templates = 8;
 }
 
 message SpiderProtoDetailViewModel {
 	int32 id = 1;
-	string name = 2;
-	string description = 3;
-	string method = 4;
-	string postObjStr = 5;
-	string headers = 6;
+	google.protobuf.StringValue name = 2;
+	google.protobuf.StringValue description = 3;
+	google.protobuf.StringValue method = 4;
+	google.protobuf.StringValue postObjStr = 5;
+	google.protobuf.StringValue headers = 6;
 	int32 nextPageId = 7;
 	repeated int32 templates = 8;
 	TemplateProtoDto nextPage = 9;
@@ -108,7 +109,7 @@ message SpiderProtoDetailViewModel {
 
 message SpiderProtoListItemViewModel {
 	int32 id = 1;
-	string name = 2;
+	google.protobuf.StringValue name = 2;
 }
 
 message SpiderListResult {
@@ -121,9 +122,9 @@ message SpiderListResult {
 
 message TemplateProtoDto {
 	int32 id = 1;
-	string name = 2;
+	google.protobuf.StringValue name = 2;
 	int32 type = 3;
-	string xPath = 4;
+	google.protobuf.StringValue xPath = 4;
 	int32 linkedSpiderId = 5;
 	repeated TextReplacementRuleProtoDto rules = 6;
 }
@@ -134,8 +135,8 @@ message TemplateListResult {
 
 message TextReplacementRuleProtoDto {
 	int32 id = 1;
-	string oldStr = 2;
-	string newStr = 3;
+	google.protobuf.StringValue oldStr = 2;
+	google.protobuf.StringValue newStr = 3;
 }
 
 // *********** Template ***********

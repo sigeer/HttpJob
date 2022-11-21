@@ -12,7 +12,12 @@ namespace SpiderService.Mapper.Spiders
         public SpiderProfile()
         {
             CreateMap<TaskProtoEditDto, TaskEditDto>();
-            CreateMap<TaskListItemViewModel, TaskProtoViewModel>();
+            CreateMap<TaskListItemViewModel, TaskProtoViewModel>()
+                .ForMember(x => x.Id, opt => opt.MapFrom(x => x.Id))
+                .ForMember(x => x.RootUrl, opt => opt.MapFrom(x => x.RootUrl))
+                .ForMember(x => x.Description, opt => opt.MapFrom(x => x.Description))
+                .ForMember(x => x.SpiderId, opt => opt.MapFrom(x => x.SpiderId))
+                .ForMember(x => x.Status, opt => opt.MapFrom(x => x.Status));
             CreateMap<TaskSimpleViewModel, TaskProtoSimpleViewModel>();
 
             CreateMap<SpiderProtoEditDto, SpiderEditDto>()

@@ -9,9 +9,9 @@ namespace SpiderTool.DataBase
         [Key]
         public int Id { get; set; }
         [MaxLength(100)]
-        public string? Description { get; set; }
+        public string Description { get; set; } = null!;
         [MaxLength(500)]
-        public string? RootUrl { get; set; }
+        public string RootUrl { get; set; } = null!;
         public int SpiderId { get; set; }
         /// <summary>
         /// 0未开始 1正在执行 2完成

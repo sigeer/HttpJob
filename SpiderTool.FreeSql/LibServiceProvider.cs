@@ -7,7 +7,7 @@ namespace SpiderTool.FreeSql
 {
     public static class LibServiceProvider
     {
-        public static IServiceCollection AddSpiderService(this IServiceCollection services, string? connectionStr, global::FreeSql.DataType dbType, ServiceLifetime serviceLifetime = ServiceLifetime.Scoped)
+        public static IServiceCollection AddSpiderService(this IServiceCollection services, string? connectionStr, DataType dbType, ServiceLifetime serviceLifetime = ServiceLifetime.Scoped)
         {
             ArgumentNullException.ThrowIfNull(services);
             ArgumentException.ThrowIfNullOrEmpty(connectionStr);

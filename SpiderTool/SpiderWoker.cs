@@ -107,7 +107,7 @@ namespace SpiderTool
             _service = service;
             _processor = processor ?? new DefaultSpiderProcessor();
             _logger = logger;
-            _control = _service.Controller;
+            _control = _service.GetController();
 
             _rootUrl = url;
 
@@ -130,7 +130,7 @@ namespace SpiderTool
             _service = rootSpider._service;
             _processor = rootSpider._processor;
             _logger = rootSpider._logger;
-            _control = rootSpider._service!.Controller;
+            _control = rootSpider._service!.GetController();
             ParentTask = rootSpider;
             rootSpider.ChildrenTask.Add(this);
 

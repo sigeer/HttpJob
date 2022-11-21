@@ -13,7 +13,7 @@ var sqlClient = new SqlSugarClient(new ConnectionConfig
     DbType = DbType.Sqlite,
     ConfigureExternalServices = ExternalServiceDefaultBuilder.Build()
 });
-builder.Services.AddSpiderService(sqlClient, ServiceLifetime.Scoped);
+builder.Services.AddSpiderService(sqlClient, ServiceLifetime.Singleton);
 // Add services to the container.
 builder.Services.AddGrpc(o =>
 {
