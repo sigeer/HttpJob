@@ -6,7 +6,7 @@ namespace SpiderTool.IService
 {
     public interface ISpiderBaseService
     {
-        WorkerController Controller { get; }
+        WorkerController GetController();
         List<TaskSimpleViewModel> GetTaskHistoryList();
         Task<List<TaskSimpleViewModel>> GetTaskHistoryListAsync();
 

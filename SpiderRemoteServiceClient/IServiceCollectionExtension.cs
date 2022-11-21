@@ -18,7 +18,6 @@ namespace SpiderRemoteServiceClient
             {
                 x.AddProfile<SpiderProtoProfile>();
             });
-            services.AddSingleton<WorkerController>(WorkerController.GetInstance());
             services.Add(new ServiceDescriptor(typeof(ISpiderRemoteService), typeof(SpiderRemoteService), serviceLifetime));
 
             return services;

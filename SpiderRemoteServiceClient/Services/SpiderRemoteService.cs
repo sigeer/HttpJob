@@ -12,9 +12,7 @@ namespace SpiderRemoteServiceClient.Services
     {
         readonly SpiderWorkerProtoService.SpiderWorkerProtoServiceClient _client;
         readonly IMapper Mapper;
-        readonly WorkerController _controller;
         readonly GrpcChannel _channel;
-        public WorkerController Controller => _controller;
 
         public bool CanConnect() => _channel.State == Grpc.Core.ConnectivityState.Connecting;
         public Task<bool> CanConnectAsync() => Task.FromResult(_channel.State == Grpc.Core.ConnectivityState.Connecting);
@@ -23,7 +21,6 @@ namespace SpiderRemoteServiceClient.Services
         {
             _client = new SpiderWorkerProtoService.SpiderWorkerProtoServiceClient(channel);
             Mapper = mapper;
-            _controller = controller;
             _channel = channel;
         }
 
@@ -244,6 +241,11 @@ namespace SpiderRemoteServiceClient.Services
         public void StopAllTask()
         {
             _client.StopAllTask(new Google.Protobuf.WellKnownTypes.Empty());
+        }
+
+        public WorkerController GetController()
+        {
+            throw new NotImplementedException();
         }
     }
 }

@@ -12,7 +12,6 @@ namespace SpiderTool.Service
         readonly ITemplateDomain _templateDomain;
         readonly ITaskDomain _taskDomain;
         readonly WorkerController _controller;
-        public WorkerController Controller => _controller;
 
         public SpiderBaseService(ISpiderDomain spiderDomain, ITemplateDomain templateDomain, ITaskDomain taskDomain, WorkerController controller)
         {
@@ -193,6 +192,11 @@ namespace SpiderTool.Service
         public void StopAllTask()
         {
             _controller.CancelAll();
+        }
+
+        public WorkerController GetController()
+        {
+            return _controller;
         }
     }
 }

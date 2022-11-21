@@ -21,11 +21,14 @@ namespace SpiderService.Services
             _spiderLogger = spiderLogger;
         }
 
-        public override async Task<StringModel> Crawl(RequestModel request, ServerCallContext context)
+        public override async Task<StringValue> Crawl(RequestModel request, ServerCallContext context)
         {
             var worker = new SpiderWorker(_spiderLogger, request.SpiderId, request.Url, _service);
             await worker.Start();
-            return new StringModel { Data = "" };
+            return new StringValue()
+            {
+                Value = ""
+            };
         }
 
         public override Task<StringModel> Ping(Empty request, ServerCallContext context)

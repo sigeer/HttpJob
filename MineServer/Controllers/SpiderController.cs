@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using SpiderRemoteServiceClient.Services;
 using SpiderTool.Dto.Spider;
+using SpiderTool.Dto.Tasks;
 using Utility.Constants;
 
 namespace MineServer.Controllers
@@ -54,10 +55,30 @@ namespace MineServer.Controllers
         }
         #endregion
 
+        #region
+        [HttpGet]
+        public async Task<ResponseModel<List<TaskListItemViewModel>>> GetTaskList()
+        {
+            return new ResponseModel<List<TaskListItemViewModel>>(await _spiderService.GetTaskListAsync());
+        }
+
+        [HttpGet]
+        public async Task<ResponseModel<List<TaskSimpleViewModel>>> GetTaskHistoryList()
+        {
+            return new ResponseModel<List<TaskSimpleViewModel>>(await _spiderService.GetTaskHistoryListAsync());
+        }
+        #endregion
+
         [HttpGet]
         public async Task<ResponseModel<string>> Run(string url, int spiderId)
         {
             return new ResponseModel<string>(await _spiderService.CrawlAsync(spiderId, url));
+        }
+
+        [HttpPost]
+        public async Task Stop()
+        {
+            _spiderService.StopAllTask();
         }
     }
 }

@@ -18,7 +18,7 @@ namespace SpiderTool.Dto.Tasks
 
     public class TaskListItemViewModel : TaskSimpleViewModel
     {
-        public string? Description { get; set; }
+        public string Description { get; set; } = null!;
         /// <summary>
         /// 0未开始 1正在执行 2完成 3取消
         /// </summary>
@@ -39,7 +39,7 @@ namespace SpiderTool.Dto.Tasks
     public class TaskSimpleViewModel
     {
         public int Id { get; set; }
-        public string? RootUrl { get; set; } = string.Empty;
+        public string RootUrl { get; set; } = null!;
         public int SpiderId { get; set; }
     }
 
