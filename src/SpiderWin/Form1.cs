@@ -393,5 +393,45 @@ namespace SpiderWin
         {
             LoadTaskList();
         }
+
+        private void Form1_SizeChanged(object sender, EventArgs e)
+        {
+            if (this.WindowState == FormWindowState.Minimized)
+            {
+                //将程序从任务栏移除显示
+                this.ShowInTaskbar = false;
+                //隐藏窗口
+                this.Visible = false;
+                //显示托盘图标
+                notifyIcon1.Visible = true;
+            }
+        }
+
+        private void ShowModalFromMinimum()
+        {
+            //设置程序允许显示在任务栏
+            this.ShowInTaskbar = true;
+            //设置窗口可见
+            this.Visible = true;
+            //设置窗口状态
+            this.WindowState = FormWindowState.Normal;
+            //设置窗口为活动状态，防止被其他窗口遮挡。
+            this.Activate();
+        }
+
+        private void notifyIcon1_MouseDoubleClick(object sender, MouseEventArgs e)
+        {
+            ShowModalFromMinimum();
+        }
+
+        private void MenuItem_ShowModal_Click(object sender, EventArgs e)
+        {
+            ShowModalFromMinimum();
+        }
+
+        private void MenuItem_Exit_Click(object sender, EventArgs e)
+        {
+            Close();
+        }
     }
 }

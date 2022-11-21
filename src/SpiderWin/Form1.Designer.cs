@@ -29,6 +29,7 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form1));
             this.btnShowConfig = new System.Windows.Forms.Button();
             this.label1 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
@@ -60,6 +61,10 @@
             this.DataGrid_OtherTasks = new System.Windows.Forms.DataGridView();
             this.panel1 = new System.Windows.Forms.Panel();
             this.Link_Refresh = new System.Windows.Forms.LinkLabel();
+            this.notifyIcon1 = new System.Windows.Forms.NotifyIcon(this.components);
+            this.IconMenu = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.MenuItem_ShowModal = new System.Windows.Forms.ToolStripMenuItem();
+            this.MenuItem_Exit = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1.SuspendLayout();
             this.statusStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.DataGrid_InProgressTasks)).BeginInit();
@@ -69,6 +74,7 @@
             this.tabPage2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.DataGrid_OtherTasks)).BeginInit();
             this.panel1.SuspendLayout();
+            this.IconMenu.SuspendLayout();
             this.SuspendLayout();
             // 
             // btnShowConfig
@@ -368,6 +374,36 @@
             this.Link_Refresh.Text = "刷新";
             this.Link_Refresh.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.Link_Refresh_LinkClicked);
             // 
+            // notifyIcon1
+            // 
+            this.notifyIcon1.ContextMenuStrip = this.IconMenu;
+            this.notifyIcon1.Icon = ((System.Drawing.Icon)(resources.GetObject("notifyIcon1.Icon")));
+            this.notifyIcon1.Text = "双击展开";
+            this.notifyIcon1.Visible = true;
+            this.notifyIcon1.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.notifyIcon1_MouseDoubleClick);
+            // 
+            // IconMenu
+            // 
+            this.IconMenu.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.MenuItem_ShowModal,
+            this.MenuItem_Exit});
+            this.IconMenu.Name = "IconMenu";
+            this.IconMenu.Size = new System.Drawing.Size(101, 48);
+            // 
+            // MenuItem_ShowModal
+            // 
+            this.MenuItem_ShowModal.Name = "MenuItem_ShowModal";
+            this.MenuItem_ShowModal.Size = new System.Drawing.Size(100, 22);
+            this.MenuItem_ShowModal.Text = "打开";
+            this.MenuItem_ShowModal.Click += new System.EventHandler(this.MenuItem_ShowModal_Click);
+            // 
+            // MenuItem_Exit
+            // 
+            this.MenuItem_Exit.Name = "MenuItem_Exit";
+            this.MenuItem_Exit.Size = new System.Drawing.Size(100, 22);
+            this.MenuItem_Exit.Text = "关闭";
+            this.MenuItem_Exit.Click += new System.EventHandler(this.MenuItem_Exit_Click);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 17F);
@@ -377,12 +413,14 @@
             this.Controls.Add(this.panel1);
             this.Controls.Add(this.statusStrip1);
             this.Controls.Add(this.menuStrip1);
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MainMenuStrip = this.menuStrip1;
             this.Name = "Form1";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "爬虫";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.Form1_FormClosing);
             this.Load += new System.EventHandler(this.Form1_Load);
+            this.SizeChanged += new System.EventHandler(this.Form1_SizeChanged);
             this.menuStrip1.ResumeLayout(false);
             this.menuStrip1.PerformLayout();
             this.statusStrip1.ResumeLayout(false);
@@ -395,6 +433,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.DataGrid_OtherTasks)).EndInit();
             this.panel1.ResumeLayout(false);
             this.panel1.PerformLayout();
+            this.IconMenu.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -433,5 +472,9 @@
         private ToolStripMenuItem MenuItem_Cancel;
         private ToolStripMenuItem MenuItem_Remove;
         private LinkLabel Link_Refresh;
+        private NotifyIcon notifyIcon1;
+        private ContextMenuStrip IconMenu;
+        private ToolStripMenuItem MenuItem_ShowModal;
+        private ToolStripMenuItem MenuItem_Exit;
     }
 }
