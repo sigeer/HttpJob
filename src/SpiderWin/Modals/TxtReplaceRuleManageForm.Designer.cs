@@ -29,6 +29,7 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(TxtReplaceRuleManageForm));
             this.DataGridViewMain = new System.Windows.Forms.DataGridView();
             this.DataGridMenu = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.DataGridMenu_Item_Delete = new System.Windows.Forms.ToolStripMenuItem();
@@ -100,6 +101,7 @@
             this.Controls.Add(this.Txt_Search);
             this.Controls.Add(this.BtnSave);
             this.Controls.Add(this.DataGridViewMain);
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "TxtReplaceRuleManageForm";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "替换规则";
