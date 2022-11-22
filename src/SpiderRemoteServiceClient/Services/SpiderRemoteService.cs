@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Google.Protobuf.WellKnownTypes;
 using Grpc.Net.Client;
 using SpiderService;
 using SpiderTool.Data;
@@ -26,13 +27,13 @@ namespace SpiderRemoteServiceClient.Services
 
         public async Task<List<TaskListItemViewModel>> GetTaskListAsync()
         {
-            var data = await _client.GetTaskListAsync(new Google.Protobuf.WellKnownTypes.Empty());
+            var data = await _client.GetTaskListAsync(new Empty());
             return data.List.Select(x => Mapper.Map<TaskListItemViewModel>(x)).ToList();
         }
 
         public async Task<int> AddTaskAsync(TaskEditDto model)
         {
-            return (await _client.AddTaskAsync(Mapper.Map<TaskProtoEditDto>(model))).Data;
+            return (await _client.AddTaskAsync(Mapper.Map<TaskProtoEditDto>(model))).Value;
         }
 
         public async Task UpdateTaskAsync(TaskEditDto model)
@@ -42,34 +43,34 @@ namespace SpiderRemoteServiceClient.Services
 
         public async Task<List<SpiderListItemViewModel>> GetSpiderDtoListAsync()
         {
-            var result = await _client.GetSpiderListAsync(new Google.Protobuf.WellKnownTypes.Empty());
+            var result = await _client.GetSpiderListAsync(new Empty());
             return Mapper.Map<List<SpiderListItemViewModel>>(result.List);
         }
 
         public async Task<string> SubmitSpiderAsync(SpiderEditDto model)
         {
-            return (await _client.SubmitSpiderAsync(Mapper.Map<SpiderProtoEditDto>(model))).Data;
+            return (await _client.SubmitSpiderAsync(Mapper.Map<SpiderProtoEditDto>(model))).Value;
         }
 
         public async Task<string> DeleteSpiderAsync(SpiderEditDto model)
         {
-            return (await _client.DeleteSpiderAsync(Mapper.Map<SpiderProtoEditDto>(model))).Data;
+            return (await _client.DeleteSpiderAsync(Mapper.Map<SpiderProtoEditDto>(model))).Value;
         }
 
         public async Task<List<TemplateDetailViewModel>> GetTemplateDtoListAsync()
         {
-            var data = await _client.GetTemplateConfigListAsync(new Google.Protobuf.WellKnownTypes.Empty());
+            var data = await _client.GetTemplateConfigListAsync(new Empty());
             return Mapper.Map<List<TemplateDetailViewModel>>(data.List);
         }
 
         public async Task<string> SubmitTemplateAsync(TemplateEditDto model)
         {
-            return (await _client.SubmitTemplateConfigAsync(Mapper.Map<TemplateProtoDto>(model))).Data;
+            return (await _client.SubmitTemplateConfigAsync(Mapper.Map<TemplateProtoDto>(model))).Value;
         }
 
         public async Task<string> DeleteTemplateAsync(TemplateEditDto model)
         {
-            return (await _client.DeleteTemplateConfigAsync(Mapper.Map<TemplateProtoDto>(model))).Data;
+            return (await _client.DeleteTemplateConfigAsync(Mapper.Map<TemplateProtoDto>(model))).Value;
         }
 
 
@@ -84,63 +85,63 @@ namespace SpiderRemoteServiceClient.Services
 
         public async Task<SpiderDetailViewModel?> GetSpiderAsync(int id)
         {
-            var data = await _client.GetSpiderAsync(new IntModel { Data = id });
+            var data = await _client.GetSpiderAsync(new Int32Value { Value = id });
             return Mapper.Map<SpiderDetailViewModel>(data);
         }
 
         private bool PingSync()
         {
-            var data = _client.Ping(new Google.Protobuf.WellKnownTypes.Empty());
-            return data.Data == "ok";
+            var data = _client.Ping(new Empty());
+            return data.Value == "ok";
         }
 
         public async Task<bool> Ping()
         {
-            var data = await _client.PingAsync(new Google.Protobuf.WellKnownTypes.Empty());
-            return data.Data == "ok";
+            var data = await _client.PingAsync(new Empty());
+            return data.Value == "ok";
         }
 
         public List<SpiderListItemViewModel> GetSpiderDtoList()
         {
-            var result = _client.GetSpiderList(new Google.Protobuf.WellKnownTypes.Empty());
+            var result = _client.GetSpiderList(new Empty());
             return Mapper.Map<List<SpiderListItemViewModel>>(result.List);
         }
 
         public string SubmitSpider(SpiderEditDto model)
         {
-            return _client.SubmitSpider(Mapper.Map<SpiderProtoEditDto>(model)).Data;
+            return _client.SubmitSpider(Mapper.Map<SpiderProtoEditDto>(model)).Value;
         }
 
         public string DeleteSpider(SpiderEditDto model)
         {
-            return _client.DeleteSpider(Mapper.Map<SpiderProtoEditDto>(model)).Data;
+            return _client.DeleteSpider(Mapper.Map<SpiderProtoEditDto>(model)).Value;
         }
 
         public List<TemplateDetailViewModel> GetTemplateDtoList()
         {
-            var data = _client.GetTemplateConfigList(new Google.Protobuf.WellKnownTypes.Empty());
+            var data = _client.GetTemplateConfigList(new Empty());
             return Mapper.Map<List<TemplateDetailViewModel>>(data.List);
         }
 
         public string SubmitTemplate(TemplateEditDto model)
         {
-            return _client.SubmitTemplateConfig(Mapper.Map<TemplateProtoDto>(model)).Data;
+            return _client.SubmitTemplateConfig(Mapper.Map<TemplateProtoDto>(model)).Value;
         }
 
         public string DeleteTemplate(TemplateEditDto model)
         {
-            return _client.DeleteTemplateConfig(Mapper.Map<TemplateProtoDto>(model)).Data;
+            return _client.DeleteTemplateConfig(Mapper.Map<TemplateProtoDto>(model)).Value;
         }
 
         public List<TaskListItemViewModel> GetTaskList()
         {
-            var data = _client.GetTaskList(new Google.Protobuf.WellKnownTypes.Empty());
+            var data = _client.GetTaskList(new Empty());
             return data.List.Select(x => Mapper.Map<TaskListItemViewModel>(x)).ToList();
         }
 
         public int AddTask(TaskEditDto model)
         {
-            return _client.AddTask(Mapper.Map<TaskProtoEditDto>(model)).Data;
+            return _client.AddTask(Mapper.Map<TaskProtoEditDto>(model)).Value;
         }
 
         public void UpdateTask(TaskEditDto model)
@@ -159,19 +160,19 @@ namespace SpiderRemoteServiceClient.Services
 
         public SpiderDetailViewModel? GetSpider(int id)
         {
-            var data = _client.GetSpider(new IntModel { Data = id });
+            var data = _client.GetSpider(new Int32Value { Value = id });
             return Mapper.Map<SpiderDetailViewModel>(data);
         }
 
         public List<TaskSimpleViewModel> GetTaskHistoryList()
         {
-            var data = _client.GetTaskHistoryList(new Google.Protobuf.WellKnownTypes.Empty());
+            var data = _client.GetTaskHistoryList(new Empty());
             return Mapper.Map<List<TaskSimpleViewModel>>(data.List);
         }
 
         public async Task<List<TaskSimpleViewModel>> GetTaskHistoryListAsync()
         {
-            var data = await _client.GetTaskHistoryListAsync(new Google.Protobuf.WellKnownTypes.Empty());
+            var data = await _client.GetTaskHistoryListAsync(new Empty());
             return Mapper.Map<List<TaskSimpleViewModel>>(data.List);
         }
 
@@ -222,25 +223,25 @@ namespace SpiderRemoteServiceClient.Services
 
         public void RemoveTask(int taskId)
         {
-            var postModel = new IntModel { Data = taskId };
+            var postModel = new Int32Value { Value = taskId };
             _client.RemoveTask(postModel);
         }
 
         public async Task RemoveTaskAsync(int taskId)
         {
-            var postModel = new IntModel { Data = taskId };
+            var postModel = new Int32Value { Value = taskId };
             await _client.RemoveTaskAsync(postModel);
         }
 
         public void StopTask(int taskId)
         {
-            var postModel = new IntModel { Data = taskId };
+            var postModel = new Int32Value { Value = taskId };
             _client.StopTask(postModel);
         }
 
         public void StopAllTask()
         {
-            _client.StopAllTask(new Google.Protobuf.WellKnownTypes.Empty());
+            _client.StopAllTask(new Empty());
         }
 
         public WorkerController GetController()
