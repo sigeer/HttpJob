@@ -1,7 +1,6 @@
 ﻿using SpiderTool.Data.Constants;
 using SpiderTool.Data.DataBase;
 using SpiderTool.Data.Dto.Spider;
-using SpiderTool.Dto.Spider;
 using SpiderTool.IDomain;
 using SqlSugar;
 

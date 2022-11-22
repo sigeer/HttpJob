@@ -1,5 +1,4 @@
-﻿using SpiderTool.Data;
-using SpiderTool.Data.Dto.Spider;
+﻿using SpiderTool.Data.Dto.Spider;
 using SpiderTool.Data.Dto.Tasks;
 
 namespace SpiderTool.Data.IService
