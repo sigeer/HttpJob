@@ -8,9 +8,9 @@ namespace SpiderWin.Modals
     {
         readonly ISpiderService _service;
 
-        TemplateEditDto edittingModel;
+        readonly TemplateEditDto edittingModel;
 
-        List<TemplateType> types = TemplateType.GetAll();
+        readonly List<TemplateType> types = TemplateType.GetAll();
         List<SpiderListItemViewModel> spiderList = new List<SpiderListItemViewModel>();
 
         public event EventHandler<string>? OnSubmit;
@@ -66,7 +66,7 @@ namespace SpiderWin.Modals
 
         }
 
-        private void btnReplaceRule_Click(object sender, EventArgs e)
+        private void BtnReplaceRule_Click(object sender, EventArgs e)
         {
             var txtReplaceRuleForm = new TxtReplaceRuleManageForm(edittingModel.ReplacementRules);
             txtReplaceRuleForm.OnOk += (sender, evt) =>
@@ -95,8 +95,8 @@ namespace SpiderWin.Modals
                 Id = edittingModel.Id,
                 Name = txtName.Text,
                 TemplateStr = txtXPath.Text,
-                Type = (int)(comboType.SelectedValue),
-                LinkedSpiderId = (int)(comboSpider.SelectedValue),
+                Type = (int)(comboType.SelectedValue!),
+                LinkedSpiderId = (int?)(comboSpider.SelectedValue),
                 ReplacementRules = edittingModel.ReplacementRules
             });
             if (submitResult == StatusMessage.Success)
@@ -127,7 +127,7 @@ namespace SpiderWin.Modals
             label3.Visible = true;
         }
 
-        private void comboType_SelectedValueChanged(object sender, EventArgs e)
+        private void ComboType_SelectedValueChanged(object sender, EventArgs e)
         {
             if (comboType.SelectedValue != null)
             {

@@ -105,7 +105,7 @@ namespace SpiderWin.Modals
             _currentSpider.Description = TxtDescription.Text;
             _currentSpider.PostObjStr = TxtPostObj.Text;
             _currentSpider.Method = ComboMethod.Text;
-            _currentSpider.NextPageTemplateId = (int)ComboBoxNextPage.SelectedValue;
+            _currentSpider.NextPageTemplateId = (int?)ComboBoxNextPage.SelectedValue;
             var submitResult = await Task.Run(() => _coreService.SubmitSpider(_currentSpider));
             if (submitResult != StatusMessage.Success)
                 MessageBox.Show(submitResult);
