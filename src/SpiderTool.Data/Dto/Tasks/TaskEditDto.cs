@@ -6,8 +6,8 @@ namespace SpiderTool.Dto.Tasks
     public class TaskEditDto
     {
         public int Id { get; set; }
-        public string? Description { get; set; }
-        public string? RootUrl { get; set; } = String.Empty;
+        public string Description { get; set; } = null!;
+        public string RootUrl { get; set; } = null!;
         public int SpiderId { get; set; }
         /// <summary>
         /// 0未开始 1正在执行 2完成 3取消

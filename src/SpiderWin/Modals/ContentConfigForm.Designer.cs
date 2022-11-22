@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(ContentConfigForm));
             this.label1 = new System.Windows.Forms.Label();
             this.comboType = new System.Windows.Forms.ComboBox();
             this.label2 = new System.Windows.Forms.Label();
@@ -57,7 +58,7 @@
             this.comboType.Name = "comboType";
             this.comboType.Size = new System.Drawing.Size(180, 25);
             this.comboType.TabIndex = 1;
-            this.comboType.SelectedValueChanged += new System.EventHandler(this.comboType_SelectedValueChanged);
+            this.comboType.SelectedValueChanged += new System.EventHandler(this.ComboType_SelectedValueChanged);
             // 
             // label2
             // 
@@ -92,7 +93,7 @@
             this.btnReplaceRule.TabIndex = 5;
             this.btnReplaceRule.Text = "文本替换规则";
             this.btnReplaceRule.UseVisualStyleBackColor = true;
-            this.btnReplaceRule.Click += new System.EventHandler(this.btnReplaceRule_Click);
+            this.btnReplaceRule.Click += new System.EventHandler(this.BtnReplaceRule_Click);
             // 
             // comboSpider
             // 
@@ -144,6 +145,7 @@
             this.Controls.Add(this.label2);
             this.Controls.Add(this.comboType);
             this.Controls.Add(this.label1);
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.KeyPreview = true;
             this.Name = "ContentConfigForm";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
