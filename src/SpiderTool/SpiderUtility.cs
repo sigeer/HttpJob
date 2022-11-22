@@ -55,12 +55,12 @@ namespace SpiderTool
             var data = urls.Distinct().ToDictionary(x => x, x => snowFlake.NextId().ToString());
             var dirRoot = dir.GetDirectory();
             using var httpRequestPool = new HttpClientPool();
-            await Parallel.ForEachAsync(data, cancellationToken, async (url, ct) =>
+            await Parallel.ForEachAsync(data, cancellationToken, async (item, ct) =>
             {
                 var client = httpRequestPool.GetInstance();
-                var uri = new Uri(url.Key);
+                var uri = new Uri(item.Key);
                 var result = await client.HttpGetCore(uri.ToString(), cancellationToken: ct);
-                log?.Invoke($"BulkDownload 请求 {url}");
+                log?.Invoke($"BulkDownload 请求 {item}");
                 var fileName = uri.Segments.Last();
                 if (!TryGetExtension(fileName, out var extension))
                 {
@@ -69,14 +69,14 @@ namespace SpiderTool
                     if (extension == null)
                         return;
 
-                    fileName = url.Value + extension;
+                    fileName = item.Value + extension;
                 }
                 var path = Path.Combine(dirRoot, fileName);
                 var fileBytes = await result.Content.ReadAsByteArrayAsync(cancellationToken: ct);
                 if (fileBytes.Length > 0)
                     await File.WriteAllBytesAsync(path, fileBytes, ct);
                 else
-                    log?.Invoke($"BulkDownload for {url}, file bytes = 0");
+                    log?.Invoke($"BulkDownload for {item}, file bytes = 0");
                 httpRequestPool.Return(client);
             });
         }
@@ -91,7 +91,7 @@ namespace SpiderTool
                 return false;
 
             var lastIndex = fileName.LastIndexOf('.');
-            var tempExtension = fileName.Substring(lastIndex, fileName.Length - lastIndex - 1);
+            var tempExtension = fileName.Substring(lastIndex, fileName.Length - lastIndex);
             if (tempExtension.GetMimeType() != String.Empty)
             {
                 extension = tempExtension;
@@ -106,7 +106,7 @@ namespace SpiderTool
                 return null;
             foreach (var key in StringExtension.MimeMapping.Keys)
             {
-                if (StringExtension.MimeMapping[key] == contentType)
+                if (StringExtension.MimeMapping[key].ToLower() == contentType.ToLower())
                 {
                     return key;
                 }

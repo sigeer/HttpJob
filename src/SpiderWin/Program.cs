@@ -67,8 +67,13 @@ namespace SpiderWin
 
             Application.SetUnhandledExceptionMode(UnhandledExceptionMode.CatchException);
             Application.ThreadException += new System.Threading.ThreadExceptionEventHandler(Application_ThreadException);
+            AppDomain.CurrentDomain.ProcessExit += (s, e) =>
+            {
+                _logger.Information("程序关闭");
+            };
             AppDomain.CurrentDomain.UnhandledException += new UnhandledExceptionEventHandler(CurrentDomain_UnhandledException);
 
+            _logger.Information("程序启动");
             var form = serviceProvider.GetService<Form1>()!;
             form.Show();
             Application.Run(form);
