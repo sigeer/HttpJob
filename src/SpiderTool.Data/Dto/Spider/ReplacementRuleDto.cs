@@ -1,4 +1,4 @@
-﻿namespace SpiderTool.Dto.Spider
+﻿namespace SpiderTool.Data.Dto.Spider
 {
     public class ReplacementRuleDto
     {

@@ -1,5 +1,4 @@
-﻿using System.Linq;
-using SpiderTool.Dto.Spider;
+﻿using SpiderTool.Data.Dto.Spider;
 using Utility.Extensions;
 
 namespace SpiderWin.Modals
@@ -111,7 +110,7 @@ namespace SpiderWin.Modals
             {
                 var cellOldVal = row.Cells[Col_OldStr].Value?.ToString() ?? "";
                 var cellNewVal = row.Cells[Col_NewStr].Value?.ToString() ?? "";
-                if (cellOldVal.Contains(Txt_Search.Text)|| cellNewVal.Contains(Txt_Search.Text))
+                if (cellOldVal.Contains(Txt_Search.Text) || cellNewVal.Contains(Txt_Search.Text))
                 {
                     filteredRows.Add(row);
                 }

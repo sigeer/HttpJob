@@ -1,7 +1,7 @@
 ﻿using AutoMapper;
 using SpiderService;
-using SpiderTool.Dto.Spider;
-using SpiderTool.Dto.Tasks;
+using SpiderTool.Data.Dto.Spider;
+using SpiderTool.Data.Dto.Tasks;
 
 namespace SpiderRemoteServiceClient.Mapper.Spiders
 {

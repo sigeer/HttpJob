@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace SpiderTool.DataBase
+namespace SpiderTool.Data.DataBase
 {
     [Table("db_replacementrule")]
     public class DB_ReplacementRule

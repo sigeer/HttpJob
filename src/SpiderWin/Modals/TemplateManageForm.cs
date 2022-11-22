@@ -1,5 +1,5 @@
-﻿using SpiderTool.Dto.Spider;
-using SpiderTool.IService;
+﻿using SpiderTool.Data.Dto.Spider;
+using SpiderTool.Data.IService;
 
 namespace SpiderWin.Modals
 {

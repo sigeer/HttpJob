@@ -1,4 +1,4 @@
-﻿using SpiderTool.Dto.Tasks;
+﻿using SpiderTool.Data.Dto.Tasks;
 
 namespace SpiderWin.Constants
 {

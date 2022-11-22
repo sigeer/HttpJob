@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
 
-namespace SpiderTool.Constants
+namespace SpiderTool.Data.Constants
 {
     public static class CommonExtension
     {

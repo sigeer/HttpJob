@@ -1,6 +1,6 @@
 ﻿using SpiderTool.Data;
+using SpiderTool.Data.IService;
 using SpiderTool.IDomain;
-using SpiderTool.IService;
 using SpiderTool.Service;
 
 namespace SpiderTool.FreeSql

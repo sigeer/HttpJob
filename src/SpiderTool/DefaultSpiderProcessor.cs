@@ -1,5 +1,5 @@
 ﻿using HtmlAgilityPack;
-using SpiderTool.Dto.Spider;
+using SpiderTool.Data.Dto.Spider;
 
 namespace SpiderTool
 {

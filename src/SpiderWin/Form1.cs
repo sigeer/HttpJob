@@ -1,9 +1,9 @@
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using SpiderTool;
-using SpiderTool.Dto.Spider;
-using SpiderTool.Dto.Tasks;
-using SpiderTool.IService;
+using SpiderTool.Data.Dto.Spider;
+using SpiderTool.Data.Dto.Tasks;
+using SpiderTool.Data.IService;
 using SpiderWin.Constants;
 using SpiderWin.Modals;
 using SpiderWin.Server;

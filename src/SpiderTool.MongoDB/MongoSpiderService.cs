@@ -1,7 +1,7 @@
 ﻿using MongoDB.Driver;
 using SpiderTool.Data;
+using SpiderTool.Data.IService;
 using SpiderTool.IDomain;
-using SpiderTool.IService;
 using SpiderTool.Service;
 
 namespace SpiderTool.MongoDB
@@ -26,7 +26,7 @@ namespace SpiderTool.MongoDB
                 _db.ListDatabases(_tokenSource.Token);
                 return true;
             }
-            catch (Exception ex)
+            catch
             {
                 return false;
             }
@@ -43,7 +43,7 @@ namespace SpiderTool.MongoDB
                 await _db.ListDatabasesAsync(_tokenSource.Token);
                 return true;
             }
-            catch (Exception ex)
+            catch
             {
                 return false;
             }

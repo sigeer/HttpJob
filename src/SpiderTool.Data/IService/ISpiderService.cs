@@ -1,8 +1,7 @@
-﻿using SpiderTool.Data;
-using SpiderTool.Dto.Spider;
-using SpiderTool.Dto.Tasks;
+﻿using SpiderTool.Data.Dto.Spider;
+using SpiderTool.Data.Dto.Tasks;
 
-namespace SpiderTool.IService
+namespace SpiderTool.Data.IService
 {
     public interface ISpiderBaseService
     {

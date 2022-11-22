@@ -1,4 +1,4 @@
-﻿using SpiderTool.IService;
+﻿using SpiderTool.Data.IService;
 
 namespace SpiderRemoteServiceClient.Services
 {

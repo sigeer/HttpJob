@@ -9,26 +9,26 @@ package spider;
 service SpiderWorkerProtoService {
 
   rpc Crawl (RequestModel) returns (google.protobuf.StringValue);
-  rpc Ping (google.protobuf.Empty) returns (StringModel);
+  rpc Ping (google.protobuf.Empty) returns (google.protobuf.StringValue);
 
-  rpc AddTask(TaskProtoEditDto) returns (IntModel);
+  rpc AddTask(TaskProtoEditDto) returns (google.protobuf.Int32Value);
   rpc UpdateTask(TaskProtoEditDto) returns (google.protobuf.Empty);
   rpc GetTaskList(google.protobuf.Empty) returns (TaskListResult);
-  rpc SetTaskStatus(TaskProtoEditDto) returns (StringModel);
+  rpc SetTaskStatus(TaskProtoEditDto) returns (google.protobuf.StringValue);
   rpc BulkUpdateTaskStatus(TaskProtoBulkEditDto) returns (google.protobuf.Empty);
   rpc GetTaskHistoryList(google.protobuf.Empty) returns(TaskProtoSimpleListResult);
-  rpc RemoveTask(IntModel) returns (google.protobuf.Empty);
-  rpc StopTask(IntModel) returns (google.protobuf.Empty);
+  rpc RemoveTask(google.protobuf.Int32Value) returns (google.protobuf.Empty);
+  rpc StopTask(google.protobuf.Int32Value) returns (google.protobuf.Empty);
   rpc StopAllTask(google.protobuf.Empty) returns (google.protobuf.Empty);
 
-  rpc SubmitSpider(SpiderProtoEditDto) returns(StringModel);
-  rpc DeleteSpider(SpiderProtoEditDto) returns(StringModel);
-  rpc GetSpider(IntModel) returns(SpiderProtoDetailViewModel);
+  rpc SubmitSpider(SpiderProtoEditDto) returns(google.protobuf.StringValue);
+  rpc DeleteSpider(SpiderProtoEditDto) returns(google.protobuf.StringValue);
+  rpc GetSpider(google.protobuf.Int32Value) returns(SpiderProtoDetailViewModel);
   rpc SetLinkedSpider(SpiderProtoDetailViewModel) returns (google.protobuf.Empty);
   rpc GetSpiderList(google.protobuf.Empty) returns(SpiderListResult);
 
-  rpc SubmitTemplateConfig(TemplateProtoDto) returns(StringModel);
-  rpc DeleteTemplateConfig(TemplateProtoDto) returns(StringModel);
+  rpc SubmitTemplateConfig(TemplateProtoDto) returns(google.protobuf.StringValue);
+  rpc DeleteTemplateConfig(TemplateProtoDto) returns(google.protobuf.StringValue);
   rpc GetTemplateConfigList(google.protobuf.Empty) returns (TemplateListResult);
 }
 
@@ -37,13 +37,6 @@ message RequestModel {
   int32 spiderId = 2;
 }
 
-message IntModel {
-	int32 data = 1;
-}
-
-message StringModel {
-	string data = 1;
-}
 // *********** Task ***********
 message TaskProtoViewModel{
 	google.protobuf.StringValue rootUrl = 1;
