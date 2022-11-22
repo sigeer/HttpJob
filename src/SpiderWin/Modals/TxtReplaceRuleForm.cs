@@ -1,4 +1,4 @@
-﻿using SpiderTool.Dto.Spider;
+﻿using SpiderTool.Data.Dto.Spider;
 using Utility.Extensions;
 
 namespace SpiderWin.Modals

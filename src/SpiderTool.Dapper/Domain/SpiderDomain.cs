@@ -1,8 +1,8 @@
 ﻿using Dapper;
 using Dapper.Contrib.Extensions;
-using SpiderTool.Constants;
-using SpiderTool.DataBase;
-using SpiderTool.Dto.Spider;
+using SpiderTool.Data.Constants;
+using SpiderTool.Data.DataBase;
+using SpiderTool.Data.Dto.Spider;
 using SpiderTool.IDomain;
 using System.Data;
 

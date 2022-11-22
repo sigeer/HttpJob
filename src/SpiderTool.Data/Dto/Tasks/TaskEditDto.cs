@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel;
 using Utility.Extensions;
 
-namespace SpiderTool.Dto.Tasks
+namespace SpiderTool.Data.Dto.Tasks
 {
     public class TaskEditDto
     {

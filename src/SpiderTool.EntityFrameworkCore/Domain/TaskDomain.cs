@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using SpiderTool.Data.Constants;
+using SpiderTool.Data.Dto.Tasks;
 using SpiderTool.DataBase;
-using SpiderTool.Dto.Tasks;
 using SpiderTool.EntityFrameworkCore.ContextModel;
 using SpiderTool.IDomain;
 

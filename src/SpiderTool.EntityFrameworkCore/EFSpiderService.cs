@@ -1,7 +1,7 @@
 ﻿using SpiderTool.Data;
+using SpiderTool.Data.IService;
 using SpiderTool.EntityFrameworkCore.ContextModel;
 using SpiderTool.IDomain;
-using SpiderTool.IService;
 using SpiderTool.Service;
 
 namespace SpiderTool.EntityFrameworkCore

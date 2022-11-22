@@ -3,7 +3,7 @@ using Grpc.Net.Client;
 using SpiderRemoteServiceClient.Mapper.Spiders;
 using SpiderRemoteServiceClient.Services;
 using SpiderTool.Data;
-using SpiderTool.IService;
+using SpiderTool.Data.IService;
 using SpiderWin.Services;
 
 namespace SpiderWin.Server

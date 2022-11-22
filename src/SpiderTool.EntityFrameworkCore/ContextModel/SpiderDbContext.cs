@@ -1,5 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using SpiderTool.DataBase;
+using SpiderTool.Data.DataBase;
 
 namespace SpiderTool.EntityFrameworkCore.ContextModel
 {

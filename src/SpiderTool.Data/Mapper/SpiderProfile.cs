@@ -1,7 +1,7 @@
 ﻿using AutoMapper;
-using SpiderTool.DataBase;
-using SpiderTool.Dto.Spider;
-using SpiderTool.Dto.Tasks;
+using SpiderTool.Data.DataBase;
+using SpiderTool.Data.Dto.Spider;
+using SpiderTool.Data.Dto.Tasks;
 
 namespace SpiderTool.Data.Mapper
 {

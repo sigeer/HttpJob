@@ -1,10 +1,10 @@
 ﻿using AutoMapper;
 using Grpc.Net.Client;
 using SpiderService;
-using SpiderTool.Constants;
 using SpiderTool.Data;
-using SpiderTool.Dto.Spider;
-using SpiderTool.Dto.Tasks;
+using SpiderTool.Data.Constants;
+using SpiderTool.Data.Dto.Spider;
+using SpiderTool.Data.Dto.Tasks;
 
 namespace SpiderRemoteServiceClient.Services
 {

@@ -1,7 +1,7 @@
 ﻿using System.Text.Json;
 using Utility.Extensions;
 
-namespace SpiderTool.Dto.Spider
+namespace SpiderTool.Data.Dto.Spider
 {
     public class SpiderEditDto
     {

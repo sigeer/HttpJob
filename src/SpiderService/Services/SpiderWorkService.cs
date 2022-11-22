@@ -2,9 +2,10 @@
 using Google.Protobuf.WellKnownTypes;
 using Grpc.Core;
 using SpiderTool;
+using SpiderTool.Data.Dto.Spider;
+using SpiderTool.Data.Dto.Tasks;
+using SpiderTool.Data.IService;
 using SpiderTool.Dto.Spider;
-using SpiderTool.Dto.Tasks;
-using SpiderTool.IService;
 
 namespace SpiderService.Services
 {

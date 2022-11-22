@@ -1,8 +1,8 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using SpiderTool.Data;
+using SpiderTool.Data.IService;
 using SpiderTool.Data.Mapper;
 using SpiderTool.IDomain;
-using SpiderTool.IService;
 
 namespace SpiderTool.Injection
 {

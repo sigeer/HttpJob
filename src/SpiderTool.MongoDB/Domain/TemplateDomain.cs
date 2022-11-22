@@ -1,7 +1,8 @@
 ﻿using AutoMapper;
 using MongoDB.Driver;
-using SpiderTool.Constants;
-using SpiderTool.DataBase;
+using SpiderTool.Data.Constants;
+using SpiderTool.Data.DataBase;
+using SpiderTool.Data.Dto.Spider;
 using SpiderTool.Dto.Spider;
 using SpiderTool.IDomain;
 
@@ -14,7 +15,7 @@ namespace SpiderTool.MongoDB.Domain
 
         public TemplateDomain(IMongoClient client, IMapper mapper)
         {
-            _db = client.GetDatabase(Constants.Constants.DBName);
+            _db = client.GetDatabase(Constants.DBName);
             _mapper = mapper;
         }
 

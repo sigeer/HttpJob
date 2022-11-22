@@ -1,4 +1,4 @@
-﻿namespace SpiderTool.Constants
+﻿namespace SpiderTool.Data.Constants
 {
     public class StatusMessage
     {
