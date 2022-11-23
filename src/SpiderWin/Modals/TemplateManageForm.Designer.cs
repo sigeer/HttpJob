@@ -85,7 +85,7 @@
             this.Controls.Add(this.BtnCancel);
             this.Controls.Add(this.BtnOK);
             this.Controls.Add(this.dataGridView1);
-            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
+            this.Icon = GlobalResource.icon;
             this.Name = "TemplateManageForm";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "模板管理";

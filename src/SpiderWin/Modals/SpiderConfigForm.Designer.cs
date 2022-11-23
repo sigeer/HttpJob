@@ -267,7 +267,7 @@
             this.Controls.Add(this.TxtName);
             this.Controls.Add(this.labelName);
             this.Controls.Add(this.menuStrip1);
-            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
+            this.Icon = GlobalResource.icon;
             this.KeyPreview = true;
             this.MainMenuStrip = this.menuStrip1;
             this.Name = "SpiderConfigForm";
