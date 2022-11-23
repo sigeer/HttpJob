@@ -101,7 +101,7 @@
             this.Controls.Add(this.Txt_Search);
             this.Controls.Add(this.BtnSave);
             this.Controls.Add(this.DataGridViewMain);
-            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
+            this.Icon = GlobalResource.icon;
             this.Name = "TxtReplaceRuleManageForm";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "替换规则";
