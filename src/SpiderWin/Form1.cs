@@ -301,21 +301,28 @@ namespace SpiderWin
 
         private void Form1_FormClosing(object sender, FormClosingEventArgs e)
         {
-            var inWorkingTasks = _taskList.Where(x => x.IsWorking).Select(x => x.Id).ToList();
-            if (inWorkingTasks.Count > 0)
+            if (e.CloseReason == CloseReason.UserClosing)
             {
-                var result = MessageBox.Show("尚有未完成的任务，是否取消任务并关闭？", "提示", MessageBoxButtons.YesNo);
-                if (result == DialogResult.Yes)
+                e.Cancel = true;
+                HideModalFromNormal();
+            }
+            else
+            {
+                var inWorkingTasks = _taskList.Where(x => x.IsWorking).Select(x => x.Id).ToList();
+                if (inWorkingTasks.Count > 0)
                 {
-                    _coreService.BulkUpdateTaskStatus(inWorkingTasks, (int)TaskType.Canceled);
-                    Dispose();
-                }
-                else
-                {
-                    e.Cancel = true;
+                    var result = MessageBox.Show("尚有未完成的任务，是否取消任务并关闭？", "提示", MessageBoxButtons.YesNo);
+                    if (result == DialogResult.Yes)
+                    {
+                        _coreService.BulkUpdateTaskStatus(inWorkingTasks, (int)TaskType.Canceled);
+                        Dispose();
+                    }
+                    else
+                    {
+                        e.Cancel = true;
+                    }
                 }
             }
-
         }
 
         private void MenuItem_LogDir_Click(object sender, EventArgs e)
@@ -395,15 +402,6 @@ namespace SpiderWin
             LoadTaskList();
         }
 
-        private void Form1_SizeChanged(object sender, EventArgs e)
-        {
-            if (this.WindowState == FormWindowState.Minimized)
-            {
-                HideModalFromNormal();
-                return;
-            }
-        }
-
         private void HideModalFromNormal()
         {
             //将程序从任务栏移除显示
@@ -425,10 +423,10 @@ namespace SpiderWin
             //设置窗口为活动状态，防止被其他窗口遮挡。
             this.Activate();
         }
-
-        private void notifyIcon1_MouseDoubleClick(object sender, MouseEventArgs e)
+        private void NotifyIcon_MouseClick(object sender, MouseEventArgs e)
         {
-            ShowModalFromMinimum();
+            if (e.Button == MouseButtons.Left)
+                ShowModalFromMinimum();
         }
 
         private void MenuItem_ShowModal_Click(object sender, EventArgs e)
@@ -438,7 +436,24 @@ namespace SpiderWin
 
         private void MenuItem_Exit_Click(object sender, EventArgs e)
         {
-            Close();
+            var inWorkingTasks = _taskList.Where(x => x.IsWorking).Select(x => x.Id).ToList();
+            if (inWorkingTasks.Count == 0)
+                Application.Exit();
+
+            if (inWorkingTasks.Count > 0)
+            {
+                var result = MessageBox.Show("尚有未完成的任务，是否取消任务并关闭？", "提示", MessageBoxButtons.YesNo);
+                if (result == DialogResult.Yes)
+                {
+                    _coreService.BulkUpdateTaskStatus(inWorkingTasks, (int)TaskType.Canceled);
+                    Application.Exit();
+                }
+                else
+                {
+                    return;
+                }
+            }
+           
         }
 
         protected override void OnLeave(EventArgs e)
