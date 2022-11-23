@@ -19,22 +19,18 @@ namespace SpiderTool.SqlSugar
         {
             try
             {
-                _dbContext.Ado.Open();
-                return true;
+                return _dbContext.Ado.SqlQuerySingle<int>("select 1") == 1;
             }
-            catch (Exception ex)
-            {
-                return false;
-            }
-            finally
-            {
-                _dbContext.Ado.Close();
-            }
+            catch { return false; }
         }
 
-        public Task<bool> CanConnectAsync()
+        public async Task<bool> CanConnectAsync()
         {
-            throw new NotImplementedException();
+            try
+            {
+                return await _dbContext.Ado.SqlQuerySingleAsync<int>("select 1") == 1;
+            }
+            catch { return false; }
         }
     }
 }
