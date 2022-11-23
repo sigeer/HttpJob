@@ -20,7 +20,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution", "Solution", "{57
 		readme.md = readme.md
 		Solution\sqlite.sql = Solution\sqlite.sql
 		Solution\sqlserver.sql = Solution\sqlserver.sql
-		规范笔记.txt = 规范笔记.txt
 	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SpiderTool.SqlSugar", "SpiderTool.SqlSuger\SpiderTool.SqlSugar.csproj", "{D5DB4A5F-26BB-4437-803D-190AD824779F}"
