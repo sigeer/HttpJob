@@ -9,6 +9,7 @@ using SpiderWin.Modals;
 using SpiderWin.Server;
 using SpiderWin.Services;
 using System.Diagnostics;
+using System.Globalization;
 using Utility.Common;
 using Utility.Extensions;
 
@@ -300,21 +301,28 @@ namespace SpiderWin
 
         private void Form1_FormClosing(object sender, FormClosingEventArgs e)
         {
-            var inWorkingTasks = _taskList.Where(x => x.IsWorking).Select(x => x.Id).ToList();
-            if (inWorkingTasks.Count > 0)
+            if (e.CloseReason == CloseReason.UserClosing)
             {
-                var result = MessageBox.Show("尚有未完成的任务，是否取消任务并关闭？", "提示", MessageBoxButtons.YesNo);
-                if (result == DialogResult.Yes)
+                e.Cancel = true;
+                HideModalFromNormal();
+            }
+            else
+            {
+                var inWorkingTasks = _taskList.Where(x => x.IsWorking).Select(x => x.Id).ToList();
+                if (inWorkingTasks.Count > 0)
                 {
-                    _coreService.BulkUpdateTaskStatus(inWorkingTasks, (int)TaskType.Canceled);
-                    Dispose();
-                }
-                else
-                {
-                    e.Cancel = true;
+                    var result = MessageBox.Show("尚有未完成的任务，是否取消任务并关闭？", "提示", MessageBoxButtons.YesNo);
+                    if (result == DialogResult.Yes)
+                    {
+                        _coreService.BulkUpdateTaskStatus(inWorkingTasks, (int)TaskType.Canceled);
+                        Dispose();
+                    }
+                    else
+                    {
+                        e.Cancel = true;
+                    }
                 }
             }
-
         }
 
         private void MenuItem_LogDir_Click(object sender, EventArgs e)
@@ -394,17 +402,14 @@ namespace SpiderWin
             LoadTaskList();
         }
 
-        private void Form1_SizeChanged(object sender, EventArgs e)
+        private void HideModalFromNormal()
         {
-            if (this.WindowState == FormWindowState.Minimized)
-            {
-                //将程序从任务栏移除显示
-                this.ShowInTaskbar = false;
-                //隐藏窗口
-                this.Visible = false;
-                //显示托盘图标
-                notifyIcon1.Visible = true;
-            }
+            //将程序从任务栏移除显示
+            this.ShowInTaskbar = false;
+            //隐藏窗口
+            this.Visible = false;
+            //显示托盘图标
+            notifyIcon1.Visible = true;
         }
 
         private void ShowModalFromMinimum()
@@ -418,10 +423,10 @@ namespace SpiderWin
             //设置窗口为活动状态，防止被其他窗口遮挡。
             this.Activate();
         }
-
-        private void notifyIcon1_MouseDoubleClick(object sender, MouseEventArgs e)
+        private void NotifyIcon_MouseClick(object sender, MouseEventArgs e)
         {
-            ShowModalFromMinimum();
+            if (e.Button == MouseButtons.Left)
+                ShowModalFromMinimum();
         }
 
         private void MenuItem_ShowModal_Click(object sender, EventArgs e)
@@ -431,7 +436,65 @@ namespace SpiderWin
 
         private void MenuItem_Exit_Click(object sender, EventArgs e)
         {
-            Close();
+            var inWorkingTasks = _taskList.Where(x => x.IsWorking).Select(x => x.Id).ToList();
+            if (inWorkingTasks.Count == 0)
+                Application.Exit();
+
+            if (inWorkingTasks.Count > 0)
+            {
+                var result = MessageBox.Show("尚有未完成的任务，是否取消任务并关闭？", "提示", MessageBoxButtons.YesNo);
+                if (result == DialogResult.Yes)
+                {
+                    _coreService.BulkUpdateTaskStatus(inWorkingTasks, (int)TaskType.Canceled);
+                    Application.Exit();
+                }
+                else
+                {
+                    return;
+                }
+            }
+           
+        }
+
+        protected override void OnLeave(EventArgs e)
+        {
+            KeyboardHook.UnregisterHotKey(Handle, 100);
+            KeyboardHook.UnregisterHotKey(Handle, 101);
+            base.OnLeave(e);
+        }
+
+        protected override void OnActivated(EventArgs e)
+        {
+            //MessageBox.Show("OnActivated");
+            KeyboardHook.RegisterHotKey(Handle, 100, KeyboardHook.KeyModifiers.Alt, Keys.Add);
+            KeyboardHook.RegisterHotKey(Handle, 101, KeyboardHook.KeyModifiers.Alt, Keys.Subtract);
+            base.OnActivated(e);
+        }
+
+        protected override void WndProc(ref Message m)
+        {
+            const int WM_HOTKEY = 0x0312;
+            //按快捷键 
+            switch (m.Msg)
+            {
+                case WM_HOTKEY:
+                    switch (m.WParam.ToInt32())
+                    {
+                        case 100:    //按下的是Shift+S
+                            //此处填写快捷键响应代码  
+                            ShowModalFromMinimum();
+                            break;
+                        case 101:    //按下的是Ctrl+B
+                            //此处填写快捷键响应代码
+                            HideModalFromNormal();
+                            break;
+                        case 102:    //按下的是Alt+D
+                            //此处填写快捷键响应代码
+                            break;
+                    }
+                    break;
+            }
+            base.WndProc(ref m);
         }
     }
 }
