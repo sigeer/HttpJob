@@ -1,4 +1,5 @@
-﻿using SpiderTool.Data;
+﻿using Dapper;
+using SpiderTool.Data;
 using SpiderTool.Data.IService;
 using SpiderTool.IDomain;
 using SpiderTool.Service;
@@ -18,22 +19,18 @@ namespace SpiderTool.Dapper
         {
             try
             {
-                _dbConn.Open();
-                return true;
+                return _dbConn.ExecuteScalar<int>("select 1") == 1;
             }
-            catch (Exception ex)
-            {
-                return false;
-            }
-            finally
-            {
-                _dbConn.Close();
-            }
+            catch { return false; }
         }
 
         public async Task<bool> CanConnectAsync()
         {
-            return await Task.Run(() => CanConnect());
+            try
+            {
+                return await _dbConn.ExecuteScalarAsync<int>("select 1") == 1;
+            }
+            catch { return false; }
         }
     }
 }

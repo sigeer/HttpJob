@@ -407,7 +407,8 @@ namespace SpiderWin
             //将程序从任务栏移除显示
             this.ShowInTaskbar = false;
             //隐藏窗口
-            this.Visible = false;
+            Hide();
+            //this.Visible = false;
             //显示托盘图标
             notifyIcon1.Visible = true;
         }
@@ -417,7 +418,8 @@ namespace SpiderWin
             //设置程序允许显示在任务栏
             this.ShowInTaskbar = true;
             //设置窗口可见
-            this.Visible = true;
+            Show();
+            //this.Visible = true;
             //设置窗口状态
             this.WindowState = FormWindowState.Normal;
             //设置窗口为活动状态，防止被其他窗口遮挡。
