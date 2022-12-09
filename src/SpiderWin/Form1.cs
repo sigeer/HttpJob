@@ -138,6 +138,7 @@ namespace SpiderWin
                 return;
             }
 
+
             var spiderId = (int)ComboxSpider.SelectedValue;
             if (_taskList.Any(x => x.IsWorking && x.RootUrl == ComboxUrl.Text && x.SpiderId == spiderId))
             {
@@ -145,9 +146,23 @@ namespace SpiderWin
                 return;
             }
 
-            var currentTask = NewWorkTask(spiderId, ComboxUrl.Text);
-            mainModalStatusLabel.Text = "运行中...";
-            currentTask.Start();
+            if (_taskList.Any(x => !x.IsWorking && x.RootUrl == ComboxUrl.Text && x.SpiderId == spiderId))
+            {
+                var isConfirmed = MessageBox.Show("已存在一个相同的任务，是否继续？", "提示", MessageBoxButtons.YesNo);
+                if (isConfirmed == DialogResult.Yes)
+                {
+                    var currentTask = NewWorkTask(spiderId, ComboxUrl.Text);
+                    mainModalStatusLabel.Text = "运行中...";
+                    currentTask.Start();
+                }
+            }
+            else
+            {
+                var currentTask = NewWorkTask(spiderId, ComboxUrl.Text);
+                mainModalStatusLabel.Text = "运行中...";
+                currentTask.Start();
+            }
+
         }
 
         private Task NewWorkTask(int spiderId, string url)
