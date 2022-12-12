@@ -1,0 +1,36 @@
+﻿using Utility.Http;
+
+namespace SpiderWin.Services
+{
+    public class SystemUpdate
+    {
+        const string NewlyVersionFile = "https://github.com/sigeer/HttpJob/raw/master/Version.txt";
+        const string InstallationPackage = "";
+
+        public static async Task<string> GetNewlyVersion()
+        {
+            var data = await HttpRequest.GetAsync(NewlyVersionFile);
+            return data;
+        }
+
+        public static async Task<string> DownloadPackage()
+        {
+            var fileReponse = await HttpRequest.HttpGetCore(InstallationPackage);
+            using var stream = fileReponse.Content.ReadAsStream();
+            var bytes = new byte[stream.Length];
+            stream.Read(bytes, 0, bytes.Length);
+            stream.Seek(0, SeekOrigin.Begin);
+            File.WriteAllBytes(InstallationPackage, bytes);
+            return InstallationPackage;
+        }
+
+        public static async Task Install()
+        {
+            //1.下载最新文件
+            //2.调起更新脚本
+            //3.脚本更新
+            var installationPackage = await DownloadPackage();
+
+        }
+    }
+}
