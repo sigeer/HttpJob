@@ -513,5 +513,10 @@ namespace SpiderWin
             }
             base.WndProc(ref m);
         }
+
+        private void MenuItem_About_Click(object sender, EventArgs e)
+        {
+            new AboutForm().ShowDialog();
+        }
     }
 }

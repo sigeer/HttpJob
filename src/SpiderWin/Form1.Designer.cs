@@ -29,7 +29,6 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form1));
             this.btnShowConfig = new System.Windows.Forms.Button();
             this.label1 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
@@ -65,6 +64,8 @@
             this.IconMenu = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.MenuItem_ShowModal = new System.Windows.Forms.ToolStripMenuItem();
             this.MenuItem_Exit = new System.Windows.Forms.ToolStripMenuItem();
+            this.帮助ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.MenuItem_About = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1.SuspendLayout();
             this.statusStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.DataGrid_InProgressTasks)).BeginInit();
@@ -127,7 +128,8 @@
             // menuStrip1
             // 
             this.menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.设置ToolStripMenuItem});
+            this.设置ToolStripMenuItem,
+            this.帮助ToolStripMenuItem});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
             this.menuStrip1.Size = new System.Drawing.Size(674, 25);
@@ -377,7 +379,7 @@
             // notifyIcon1
             // 
             this.notifyIcon1.ContextMenuStrip = this.IconMenu;
-            this.notifyIcon1.Icon = GlobalResource.icon;
+            this.notifyIcon1.Icon = global::SpiderWin.GlobalResource.icon;
             this.notifyIcon1.Visible = true;
             this.notifyIcon1.MouseClick += new System.Windows.Forms.MouseEventHandler(this.NotifyIcon_MouseClick);
             // 
@@ -403,6 +405,21 @@
             this.MenuItem_Exit.Text = "关闭";
             this.MenuItem_Exit.Click += new System.EventHandler(this.MenuItem_Exit_Click);
             // 
+            // 帮助ToolStripMenuItem
+            // 
+            this.帮助ToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.MenuItem_About});
+            this.帮助ToolStripMenuItem.Name = "帮助ToolStripMenuItem";
+            this.帮助ToolStripMenuItem.Size = new System.Drawing.Size(44, 21);
+            this.帮助ToolStripMenuItem.Text = "帮助";
+            // 
+            // MenuItem_About
+            // 
+            this.MenuItem_About.Name = "MenuItem_About";
+            this.MenuItem_About.Size = new System.Drawing.Size(180, 22);
+            this.MenuItem_About.Text = "关于";
+            this.MenuItem_About.Click += new System.EventHandler(this.MenuItem_About_Click);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 17F);
@@ -412,7 +429,7 @@
             this.Controls.Add(this.panel1);
             this.Controls.Add(this.statusStrip1);
             this.Controls.Add(this.menuStrip1);
-            this.Icon = GlobalResource.icon;
+            this.Icon = global::SpiderWin.GlobalResource.icon;
             this.MainMenuStrip = this.menuStrip1;
             this.Name = "Form1";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
@@ -474,5 +491,7 @@
         private ContextMenuStrip IconMenu;
         private ToolStripMenuItem MenuItem_ShowModal;
         private ToolStripMenuItem MenuItem_Exit;
+        private ToolStripMenuItem 帮助ToolStripMenuItem;
+        private ToolStripMenuItem MenuItem_About;
     }
 }
