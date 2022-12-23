@@ -1,16 +1,32 @@
-﻿using Utility.Http;
+﻿using System.Xml;
+using Utility.Http;
 
 namespace SpiderWin.Services
 {
     public class SystemUpdate
     {
-        const string NewlyVersionFile = "https://github.com/sigeer/HttpJob/raw/master/Version.txt";
+        const string NewlyVersionFile = "https://raw.githubusercontent.com/sigeer/HttpJob/master/src/SpiderWin/SpiderWin.csproj";
         const string InstallationPackage = "";
 
-        public static async Task<string> GetNewlyVersion()
+        public static async Task<UpdateInfo> GetNewlyVersion()
         {
             var data = await HttpRequest.GetAsync(NewlyVersionFile);
-            return data;
+            var doc = new XmlDocument();
+            doc.LoadXml(data);
+
+            var rootNode = doc.SelectSingleNode("Project");
+            if (rootNode != null)
+            {
+                var coreNode = rootNode.SelectSingleNode("PropertyGroup");
+                if (coreNode == null)
+                    return new UpdateInfo();
+
+                var info = new UpdateInfo();
+                info.Version = coreNode.SelectSingleNode("Version")?.InnerText ?? "---";
+                info.Description = coreNode.SelectSingleNode("Description")?.InnerText ?? "---";
+                return info;
+            }
+            return new UpdateInfo();
         }
 
         public static async Task<string> DownloadPackage()
@@ -32,5 +48,11 @@ namespace SpiderWin.Services
             var installationPackage = await DownloadPackage();
 
         }
+    }
+
+    public class UpdateInfo
+    {
+        public string Version { get; set; } = null!;
+        public string Description { get; set; } = null!;
     }
 }
