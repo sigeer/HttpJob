@@ -17,14 +17,29 @@ namespace SpiderWin
             if (nowAssembly != null)
             {
                 FileVersionInfo fileVersionInfo = FileVersionInfo.GetVersionInfo(nowAssembly.Location);
-                Label_Version.Text = fileVersionInfo.ProductVersion.ToString();
+                Label_Version.Text = fileVersionInfo.ProductVersion?.ToString();
             }
         }
 
         private async void Link_Update_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
         {
-            var newlyVersion = await CheckUpdate.GetNewlyVersion();
-            MessageBox.Show($"最新版本是{newlyVersion}");
+            var newlyVersion = await SystemUpdate.GetNewlyVersion();
+            if (Label_Version.Text != newlyVersion.Version)
+            {
+                Label_UpdateDescription.Text = newlyVersion.Description;
+                var confirmResult = MessageBox.Show($"最新版本是{newlyVersion.Version}，是否需要更新？", "更新", MessageBoxButtons.YesNo);
+                if (confirmResult == DialogResult.Yes)
+                {
+                    //1.下载安装包（压缩包到临时目录）
+                    //2.调起更新脚本
+                    //3.退出当前程序
+                }
+            }
+            else
+            {
+                MessageBox.Show("当前版本已是最新版本！");
+            }
+
         }
     }
 }
