@@ -33,6 +33,7 @@ namespace SpiderWin
             _serviceProvider = serviceProvider;
             _logger = logger;
             _delayedTaskPool.ChangeDelayedDuration(200);
+            Configs.InitBaseDir();
 
             InitializeComponent();
         }
@@ -517,6 +518,16 @@ namespace SpiderWin
         private void MenuItem_About_Click(object sender, EventArgs e)
         {
             new AboutForm().ShowDialog();
+        }
+
+        private void MenuItem_SetDir_Click(object sender, EventArgs e)
+        {
+            var folder = new FolderBrowserDialog();
+            folder.InitialDirectory = Configs.BaseDir;
+            if (folder.ShowDialog() == DialogResult.OK)
+            {
+                Configs.UpdateBaseDir(folder.SelectedPath);
+            }
         }
     }
 }
