@@ -42,6 +42,8 @@
             this.MenuNewSpider = new System.Windows.Forms.ToolStripMenuItem();
             this.MenuItem_Dir = new System.Windows.Forms.ToolStripMenuItem();
             this.MenuItem_LogDir = new System.Windows.Forms.ToolStripMenuItem();
+            this.帮助ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.MenuItem_About = new System.Windows.Forms.ToolStripMenuItem();
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
             this.mainModalStatusLabel = new System.Windows.Forms.ToolStripStatusLabel();
             this.ResultTxtBox = new System.Windows.Forms.RichTextBox();
@@ -64,8 +66,7 @@
             this.IconMenu = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.MenuItem_ShowModal = new System.Windows.Forms.ToolStripMenuItem();
             this.MenuItem_Exit = new System.Windows.Forms.ToolStripMenuItem();
-            this.帮助ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.MenuItem_About = new System.Windows.Forms.ToolStripMenuItem();
+            this.MenuItem_SetDir = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1.SuspendLayout();
             this.statusStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.DataGrid_InProgressTasks)).BeginInit();
@@ -141,6 +142,7 @@
             this.设置ToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.工作设置ToolStripMenuItem,
             this.MenuNewSpider,
+            this.MenuItem_SetDir,
             this.MenuItem_Dir,
             this.MenuItem_LogDir});
             this.设置ToolStripMenuItem.Name = "设置ToolStripMenuItem";
@@ -153,7 +155,7 @@
             this.UseLocalMenu,
             this.UseServiceMenu});
             this.工作设置ToolStripMenuItem.Name = "工作设置ToolStripMenuItem";
-            this.工作设置ToolStripMenuItem.Size = new System.Drawing.Size(148, 22);
+            this.工作设置ToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.工作设置ToolStripMenuItem.Text = "工作设置";
             // 
             // UseLocalMenu
@@ -177,23 +179,38 @@
             // MenuNewSpider
             // 
             this.MenuNewSpider.Name = "MenuNewSpider";
-            this.MenuNewSpider.Size = new System.Drawing.Size(148, 22);
+            this.MenuNewSpider.Size = new System.Drawing.Size(180, 22);
             this.MenuNewSpider.Text = "新增爬虫";
             this.MenuNewSpider.Click += new System.EventHandler(this.MenuNewSpider_Click);
             // 
             // MenuItem_Dir
             // 
             this.MenuItem_Dir.Name = "MenuItem_Dir";
-            this.MenuItem_Dir.Size = new System.Drawing.Size(148, 22);
+            this.MenuItem_Dir.Size = new System.Drawing.Size(180, 22);
             this.MenuItem_Dir.Text = "打开保存目录";
             this.MenuItem_Dir.Click += new System.EventHandler(this.MenuItem_Dir_Click);
             // 
             // MenuItem_LogDir
             // 
             this.MenuItem_LogDir.Name = "MenuItem_LogDir";
-            this.MenuItem_LogDir.Size = new System.Drawing.Size(148, 22);
+            this.MenuItem_LogDir.Size = new System.Drawing.Size(180, 22);
             this.MenuItem_LogDir.Text = "打开日志目录";
             this.MenuItem_LogDir.Click += new System.EventHandler(this.MenuItem_LogDir_Click);
+            // 
+            // 帮助ToolStripMenuItem
+            // 
+            this.帮助ToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.MenuItem_About});
+            this.帮助ToolStripMenuItem.Name = "帮助ToolStripMenuItem";
+            this.帮助ToolStripMenuItem.Size = new System.Drawing.Size(44, 21);
+            this.帮助ToolStripMenuItem.Text = "帮助";
+            // 
+            // MenuItem_About
+            // 
+            this.MenuItem_About.Name = "MenuItem_About";
+            this.MenuItem_About.Size = new System.Drawing.Size(100, 22);
+            this.MenuItem_About.Text = "关于";
+            this.MenuItem_About.Click += new System.EventHandler(this.MenuItem_About_Click);
             // 
             // statusStrip1
             // 
@@ -405,20 +422,12 @@
             this.MenuItem_Exit.Text = "关闭";
             this.MenuItem_Exit.Click += new System.EventHandler(this.MenuItem_Exit_Click);
             // 
-            // 帮助ToolStripMenuItem
+            // MenuItem_SetDir
             // 
-            this.帮助ToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.MenuItem_About});
-            this.帮助ToolStripMenuItem.Name = "帮助ToolStripMenuItem";
-            this.帮助ToolStripMenuItem.Size = new System.Drawing.Size(44, 21);
-            this.帮助ToolStripMenuItem.Text = "帮助";
-            // 
-            // MenuItem_About
-            // 
-            this.MenuItem_About.Name = "MenuItem_About";
-            this.MenuItem_About.Size = new System.Drawing.Size(180, 22);
-            this.MenuItem_About.Text = "关于";
-            this.MenuItem_About.Click += new System.EventHandler(this.MenuItem_About_Click);
+            this.MenuItem_SetDir.Name = "MenuItem_SetDir";
+            this.MenuItem_SetDir.Size = new System.Drawing.Size(180, 22);
+            this.MenuItem_SetDir.Text = "设置保存目录";
+            this.MenuItem_SetDir.Click += new System.EventHandler(this.MenuItem_SetDir_Click);
             // 
             // Form1
             // 
@@ -493,5 +502,6 @@
         private ToolStripMenuItem MenuItem_Exit;
         private ToolStripMenuItem 帮助ToolStripMenuItem;
         private ToolStripMenuItem MenuItem_About;
+        private ToolStripMenuItem MenuItem_SetDir;
     }
 }
