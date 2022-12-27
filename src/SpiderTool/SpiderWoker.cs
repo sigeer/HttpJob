@@ -5,9 +5,11 @@ using SpiderTool.Data.Constants;
 using SpiderTool.Data.Dto.Spider;
 using SpiderTool.Data.Dto.Tasks;
 using SpiderTool.Data.IService;
+using System.Reflection.PortableExecutable;
 using System.Web;
 using Utility.Extensions;
 using Utility.Http;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace SpiderTool
 {
@@ -307,12 +309,20 @@ namespace SpiderTool
 
         public static async Task<string> RequestDocumentContent(string url, SpiderDetailViewModel spiderConfig, CancellationToken cancellationToken = default)
         {
-            HttpResponseMessage res;
-            if (spiderConfig.Method == RequestMethod.POST)
-                res = await HttpRequest.HttpPostCore(url, spiderConfig.PostObj, spiderConfig.GetHeaders(), cancellationToken: cancellationToken);
-            else
-                res = await HttpRequest.HttpGetCore(url, spiderConfig.GetHeaders(), cancellationToken: cancellationToken);
+            var requestConfig = new HttpRequestMessage();
+            requestConfig.Method = string.IsNullOrEmpty(spiderConfig.Method) ? HttpMethod.Get : new HttpMethod(spiderConfig.Method);
+            requestConfig.RequestUri = new Uri(url);
+            var headerObj = spiderConfig.GetHeaders();
+            foreach (var item in headerObj)
+            {
+                requestConfig.Headers.TryAddWithoutValidation(item.Key, headerObj[item.Key]);
+            }
 
+            HttpResponseMessage res;
+            using (HttpClient httpClient = new HttpClient())
+            {
+                res = await httpClient.HttpSendCore(requestConfig, cancellationToken);
+            }
             var responseStream = await res.Content.ReadAsStreamAsync(cancellationToken);
             return responseStream.DecodeData(res.Content.Headers.ContentType?.CharSet);
         }
