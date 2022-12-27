@@ -91,6 +91,7 @@ namespace SpiderTool
             if (templateRules.Count == 0)
             {
                 await SpiderUtility.SaveTextAsync(rootSpider.CurrentDir, documentContent);
+                return;
             }
 
             var currentDoc = new HtmlDocument();
