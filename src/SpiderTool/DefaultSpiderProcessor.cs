@@ -1,5 +1,6 @@
 ﻿using HtmlAgilityPack;
 using SpiderTool.Data.Dto.Spider;
+using System.Data;
 
 namespace SpiderTool
 {
@@ -86,6 +87,11 @@ namespace SpiderTool
         public virtual async Task ProcessContentAsync(SpiderWorker rootSpider, string documentContent, List<TemplateDetailViewModel> templateRules, CancellationToken cancellationToken = default)
         {
             cancellationToken.ThrowIfCancellationRequested();
+
+            if (templateRules.Count == 0)
+            {
+                await SpiderUtility.SaveTextAsync(rootSpider.CurrentDir, documentContent);
+            }
 
             var currentDoc = new HtmlDocument();
             currentDoc.LoadHtml(documentContent);
