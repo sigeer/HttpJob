@@ -6,9 +6,9 @@
     <Nullable>enable</Nullable>
     <UseWindowsForms>true</UseWindowsForms>
     <ImplicitUsings>enable</ImplicitUsings>
-    <Version>1.0.2</Version>
+    <Version>1.0.2.1</Version>
     <ApplicationIcon>icon.ico</ApplicationIcon>
-    <Description>设置保存目录</Description>
+    <Description>保存请求头，请求非dom</Description>
   </PropertyGroup>
 
   <ItemGroup>

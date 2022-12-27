@@ -26,7 +26,7 @@ namespace SpiderTool.Data.Dto.Spider
 
         public bool FormValid()
         {
-            return !string.IsNullOrEmpty(Name) && !string.IsNullOrEmpty(Method) && Templates.Count > 0;
+            return !string.IsNullOrEmpty(Name) && !string.IsNullOrEmpty(Method);
         }
     }
     public class SpiderListItemViewModel
