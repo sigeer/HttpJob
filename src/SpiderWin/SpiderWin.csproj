@@ -6,9 +6,9 @@
     <Nullable>enable</Nullable>
     <UseWindowsForms>true</UseWindowsForms>
     <ImplicitUsings>enable</ImplicitUsings>
-    <Version>1.0.2.1</Version>
+    <Version>1.0.3</Version>
     <ApplicationIcon>icon.ico</ApplicationIcon>
-    <Description>保存请求头，请求非dom</Description>
+    <Description>减少刷新url下拉框的频率</Description>
   </PropertyGroup>
 
   <ItemGroup>

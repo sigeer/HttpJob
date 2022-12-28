@@ -13,6 +13,8 @@ namespace SpiderWin
 
         private void AboutForm_Load(object sender, EventArgs e)
         {
+            label2.Visible = false;
+            Label_UpdateDescription.Visible = false;
             var nowAssembly = Assembly.GetEntryAssembly();
             if (nowAssembly != null)
             {
@@ -26,6 +28,8 @@ namespace SpiderWin
             var newlyVersion = await SystemUpdate.GetNewlyVersion();
             if (Label_Version.Text != newlyVersion.Version)
             {
+                label2.Visible = true;
+                Label_UpdateDescription.Visible = true;
                 Label_UpdateDescription.Text = newlyVersion.Description;
                 var confirmResult = MessageBox.Show($"最新版本是{newlyVersion.Version}，是否需要更新？", "更新", MessageBoxButtons.YesNo);
                 if (confirmResult == DialogResult.Yes)
