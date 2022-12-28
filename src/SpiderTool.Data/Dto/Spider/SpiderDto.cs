@@ -1,4 +1,5 @@
-﻿using System.Text.Json;
+﻿using System.Net.Http.Headers;
+using System.Text.Json;
 using Utility.Extensions;
 
 namespace SpiderTool.Data.Dto.Spider
@@ -55,13 +56,7 @@ namespace SpiderTool.Data.Dto.Spider
         public object? PostObj => string.IsNullOrEmpty(PostObjStr) ? null : PostObjStr.ToJson();
         public Dictionary<string, string> GetHeaders()
         {
-            Dictionary<string, string> dic = new Dictionary<string, string>();
-            var headerObj = JsonSerializer.Deserialize<List<SpiderHeaderDto>>(HeaderStr ?? "[]") ?? new List<SpiderHeaderDto>();
-            headerObj.ForEach(x =>
-            {
-                dic.Add(x.Key, x.Value);
-            });
-            return dic;
+            return JsonSerializer.Deserialize<Dictionary<string, string>>(HeaderStr ?? "{}") ?? new Dictionary<string, string>();
         }
 
         public SpiderEditDto ToEditModel()
@@ -78,11 +73,5 @@ namespace SpiderTool.Data.Dto.Spider
                 Templates = TemplateList.Select(x => x.Id).ToList()
             };
         }
-    }
-
-    public class SpiderHeaderDto
-    {
-        public string Key { get; set; } = null!;
-        public string Value { get; set; } = null!;
     }
 }

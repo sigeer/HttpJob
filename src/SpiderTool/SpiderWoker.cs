@@ -5,6 +5,7 @@ using SpiderTool.Data.Constants;
 using SpiderTool.Data.Dto.Spider;
 using SpiderTool.Data.Dto.Tasks;
 using SpiderTool.Data.IService;
+using System.Net.Http.Json;
 using System.Reflection.PortableExecutable;
 using System.Web;
 using Utility.Extensions;
@@ -310,8 +311,12 @@ namespace SpiderTool
         public static async Task<string> RequestDocumentContent(string url, SpiderDetailViewModel spiderConfig, CancellationToken cancellationToken = default)
         {
             var requestConfig = new HttpRequestMessage();
-            requestConfig.Method = string.IsNullOrEmpty(spiderConfig.Method) ? HttpMethod.Get : new HttpMethod(spiderConfig.Method);
             requestConfig.RequestUri = new Uri(url);
+            if (!string.IsNullOrEmpty(spiderConfig.Method))
+                requestConfig.Method = new HttpMethod(spiderConfig.Method);
+            if (!string.IsNullOrEmpty(spiderConfig.PostObjStr))
+                requestConfig.Content = new StringContent(spiderConfig.PostObjStr);
+
             var headerObj = spiderConfig.GetHeaders();
             foreach (var item in headerObj)
             {
