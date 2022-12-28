@@ -109,14 +109,15 @@ namespace SpiderWin
             });
         }
 
-        private void LoadTaskList()
+        private void LoadTaskList(bool refreshUrlDropdown = false)
         {
             Task.Run(async () =>
             {
                 _taskList = await _coreService.GetTaskListAsync();
                 BeginInvoke(() =>
                 {
-                    ComboxUrl.DataSource = _taskList.Select(x => x.RootUrl).Distinct().ToList();
+                    if (refreshUrlDropdown)
+                        ComboxUrl.DataSource = _taskList.Select(x => x.RootUrl).Distinct().ToList();
 
                     LoadDataGridData(_taskList.Where(x => x.Status == (int)TaskType.InProgress || x.Status == (int)TaskType.NotEffective).ToList(), DataGrid_InProgressTasks);
                     LoadDataGridData(_taskList.Where(x => x.Status == (int)TaskType.Completed || x.Status == (int)TaskType.Canceled).ToList(), DataGrid_OtherTasks);
@@ -191,7 +192,7 @@ namespace SpiderWin
                 };
                 worker.OnTaskStatusChanged += (obj, task) =>
                 {
-                    _delayedTaskPool.AddTask(nameof(LoadTaskList), LoadTaskList);
+                    _delayedTaskPool.AddTask(nameof(LoadTaskList), () => LoadTaskList(task.Status == TaskType.Completed));
                 };
                 worker.OnNewTask += (obj, spider) =>
                 {
