@@ -320,7 +320,7 @@ namespace SpiderTool
             var headerObj = spiderConfig.GetHeaders();
             foreach (var item in headerObj)
             {
-                requestConfig.Headers.TryAddWithoutValidation(item.Key, headerObj[item.Key]);
+                requestConfig.Headers.TryAddWithoutValidation(item.Key, item.Value);
             }
 
             HttpResponseMessage res;
