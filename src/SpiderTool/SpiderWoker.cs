@@ -253,7 +253,7 @@ namespace SpiderTool
                 UpdateTaskStatus(TaskType.NotEffective);
 
                 await ProcessUrl(_rootUrl, true, tokenSource.Token);
-                await CompleteTask();
+                await CompleteTask(tokenSource.Token);
             }
             catch (OperationCanceledException cancelException)
             {

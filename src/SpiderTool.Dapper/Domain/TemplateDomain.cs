@@ -38,7 +38,7 @@ namespace SpiderTool.Dapper.Domain
 
         public List<TemplateDetailViewModel> GetTemplateDtoList()
         {
-            var sql = $"select a.TemplateId as Id, c.Name, c.TemplateStr, c.LinkedSpiderId, c.Type, a.ReplacementOldStr, a.ReplacementNewlyStr " +
+            var sql = $"select a.TemplateId as Id, c.Name, c.TemplateStr, c.ReadAttribute, c.LinkedSpiderId, c.Type, a.ReplacementOldStr, a.ReplacementNewlyStr " +
                 $"from {replacementRule} a" +
                 $"join {templateTable} c on c.id = a.templateId";
 
@@ -61,7 +61,7 @@ namespace SpiderTool.Dapper.Domain
 
         public async Task<List<TemplateDetailViewModel>> GetTemplateDtoListAsync()
         {
-            var sql = $"select a.TemplateId as Id, c.Name, c.TemplateStr, c.LinkedSpiderId, c.Type, a.ReplacementOldStr, a.ReplacementNewlyStr " +
+            var sql = $"select a.TemplateId as Id, c.Name, c.TemplateStr, c.ReadAttribute, c.LinkedSpiderId, c.Type, a.ReplacementOldStr, a.ReplacementNewlyStr " +
                 $"from {replacementRule} a" +
                 $"join {templateTable} c on c.id = a.templateId";
 
@@ -98,6 +98,7 @@ namespace SpiderTool.Dapper.Domain
 
             dbModel.Name = model.Name;
             dbModel.TemplateStr = model.TemplateStr;
+            dbModel.ReadAttribute = model.ReadAttribute;
             dbModel.Type = model.Type;
             dbModel.LastUpdatedTime = DateTime.Now;
             dbModel.LinkedSpiderId = model.LinkedSpiderId;
@@ -132,6 +133,7 @@ namespace SpiderTool.Dapper.Domain
 
             dbModel.Name = model.Name;
             dbModel.TemplateStr = model.TemplateStr;
+            dbModel.ReadAttribute = model.ReadAttribute;
             dbModel.Type = model.Type;
             dbModel.LastUpdatedTime = DateTime.Now;
             dbModel.LinkedSpiderId = model.LinkedSpiderId;
