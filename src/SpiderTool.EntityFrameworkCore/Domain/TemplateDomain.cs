@@ -37,6 +37,7 @@ namespace SpiderTool.EntityFrameworkCore.Domain
                         Id = a.Id,
                         Name = a.Name,
                         TemplateStr = a.TemplateStr,
+                        ReadAttribute = a.ReadAttribute,
                         LinkedSpiderId = a.LinkedSpiderId,
                         Type = a.Type,
                         ReplacementRules = b.Select(x => new ReplacementRuleDto
@@ -60,6 +61,7 @@ namespace SpiderTool.EntityFrameworkCore.Domain
                               TemplateStr = a.TemplateStr,
                               LinkedSpiderId = a.LinkedSpiderId,
                               Type = a.Type,
+                              ReadAttribute = a.ReadAttribute,
                               ReplacementRules = b.Select(x => new ReplacementRuleDto
                               {
                                   Id = x.Id,

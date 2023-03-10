@@ -1,4 +1,5 @@
-﻿using System.ComponentModel;
+﻿using SpiderTool.Data.DataBase;
+using System.ComponentModel;
 using Utility.Extensions;
 
 namespace SpiderTool.Data.Dto.Spider
@@ -12,6 +13,8 @@ namespace SpiderTool.Data.Dto.Spider
         /// </summary>
         public int Type { get; set; }
         public string? TemplateStr { get; set; }
+        public string? ReadAttribute { get; set; }
+
 
         /// <summary>
         /// type == 跳转链接时 为必填，仅在作为子爬虫时使用
@@ -22,7 +25,7 @@ namespace SpiderTool.Data.Dto.Spider
         public bool FormValid()
         {
             return !string.IsNullOrEmpty(Name) && !string.IsNullOrEmpty(TemplateStr)
-                && Type > 0 && (Type != 4 || LinkedSpiderId.HasValue)
+                && Type > 0 && (Type != (int)TemplateTypeEnum.JumpLink || LinkedSpiderId.HasValue)
                 && ReplacementRules.All(x => !string.IsNullOrEmpty(x.ReplacementOldStr)
                 && !ReplacementRules.GroupBy(x => new { x.ReplacementOldStr, x.ReplacementNewlyStr }).Any(x => x.Count() > 1));
         }
@@ -45,6 +48,34 @@ namespace SpiderTool.Data.Dto.Spider
         public int? LinkedSpiderId { get; set; }
         public SpiderDetailViewModel? LinkedSpiderDetail { get; set; }
         public List<ReplacementRuleDto> ReplacementRules { get; set; } = new List<ReplacementRuleDto>();
+        public string? ReadAttribute { get; set; }
+
+        public TemplateDetailViewModel() { }
+        public TemplateDetailViewModel(DB_Template template, List<DB_ReplacementRule>? replacementRules = null, bool isNextPage = false)
+        {
+            Id = template.Id;
+            Name = template.Name;
+            Type = template.Type;
+            TemplateStr = template.TemplateStr;
+            if (isNextPage)
+                ReadAttribute = template.ReadAttribute ?? "href";
+            else
+            {
+                if (Type == (int)TemplateTypeEnum.Object)
+                    ReadAttribute = template.ReadAttribute ?? "src";
+                else
+                    ReadAttribute = template.ReadAttribute;
+            }
+            if (replacementRules != null)
+            {
+                ReplacementRules = replacementRules.Where(x => x.TemplateId == Id).Select(x => new ReplacementRuleDto()
+                {
+                    Id = x.Id,
+                    ReplacementNewlyStr = x.ReplacementNewlyStr,
+                    ReplacementOldStr = x.ReplacementOldStr,
+                }).ToList();
+            }
+        }
 
         public TemplateEditDto ToEditModel()
         {
@@ -55,6 +86,7 @@ namespace SpiderTool.Data.Dto.Spider
                 LinkedSpiderId = LinkedSpiderId,
                 ReplacementRules = ReplacementRules,
                 TemplateStr = TemplateStr,
+                ReadAttribute = ReadAttribute,
                 Type = Type
             };
         }

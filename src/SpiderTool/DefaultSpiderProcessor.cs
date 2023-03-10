@@ -9,7 +9,8 @@ namespace SpiderTool
         protected virtual async Task ProcessObject(string savePath, SpiderWorker rootSpider, HtmlNodeCollection nodes, TemplateDetailViewModel rule, CancellationToken cancellationToken = default)
         {
 
-            var urlList = nodes.Select(item => (item.Attributes["src"] ?? item.Attributes["data-src"]).Value.GetTotalUrl(rootSpider.HostUrl)).ToList();
+            var urlList = nodes.Where(x => x.GetAttributeValue(rule.ReadAttribute, null) != null)
+                .Select(x => x.GetAttributeValue(rule.ReadAttribute, "1").GetTotalUrl(rootSpider.HostUrl)).ToList();
             urlList.AddRange(nodes.Where(x => x.Attributes["srcset"] != null || x.Attributes["data-srcset"] != null).SelectMany(item =>
             {
                 return (item.Attributes["srcset"] ?? item.Attributes["data-srcset"]).Value.Split(',').Select(x => x.Trim().Split(' ')[0].GetTotalUrl(rootSpider.HostUrl));

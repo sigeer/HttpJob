@@ -43,21 +43,7 @@ namespace SpiderTool.SqlSugar.Domain
 
             return (from a in allTemplates
                     let b = templateRules.Where(x => x.TemplateId == a.Id).ToList()
-                    select new TemplateDetailViewModel
-                    {
-                        Id = a.Id,
-                        Name = a.Name,
-                        TemplateStr = a.TemplateStr,
-                        LinkedSpiderId = a.LinkedSpiderId,
-                        Type = a.Type,
-                        ReplacementRules = b.Select(x => new ReplacementRuleDto
-                        {
-                            Id = x.Id,
-                            ReplacementOldStr = x.ReplacementOldStr,
-                            ReplacementNewlyStr = x.ReplacementNewlyStr,
-                            IgnoreCase = x.IgnoreCase
-                        }).ToList()
-                    }).ToList();
+                    select new TemplateDetailViewModel(a, b)).ToList();
         }
 
         public async Task<List<TemplateDetailViewModel>> GetTemplateDtoListAsync()
@@ -68,21 +54,7 @@ namespace SpiderTool.SqlSugar.Domain
 
             return (from a in allTemplates
                     let b = templateRules.Where(x => x.TemplateId == a.Id).ToList()
-                    select new TemplateDetailViewModel
-                    {
-                        Id = a.Id,
-                        Name = a.Name,
-                        TemplateStr = a.TemplateStr,
-                        LinkedSpiderId = a.LinkedSpiderId,
-                        Type = a.Type,
-                        ReplacementRules = b.Select(x => new ReplacementRuleDto
-                        {
-                            Id = x.Id,
-                            ReplacementOldStr = x.ReplacementOldStr,
-                            ReplacementNewlyStr = x.ReplacementNewlyStr,
-                            IgnoreCase = x.IgnoreCase
-                        }).ToList()
-                    }).ToList();
+                    select new TemplateDetailViewModel(a, b)).ToList();
         }
 
         public string Submit(TemplateEditDto model)
@@ -107,6 +79,7 @@ namespace SpiderTool.SqlSugar.Domain
 
                 dbModel.Name = model.Name;
                 dbModel.TemplateStr = model.TemplateStr;
+                dbModel.ReadAttribute = model.ReadAttribute;
                 dbModel.Type = model.Type;
                 dbModel.LastUpdatedTime = DateTime.Now;
                 dbModel.LinkedSpiderId = model.LinkedSpiderId;

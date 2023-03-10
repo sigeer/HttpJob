@@ -4,6 +4,7 @@ using SpiderTool.Data.Constants;
 using SpiderTool.Data.DataBase;
 using SpiderTool.Data.Dto.Spider;
 using SpiderTool.IDomain;
+using System.Linq;
 
 namespace SpiderTool.MongoDB.Domain
 {
@@ -40,21 +41,7 @@ namespace SpiderTool.MongoDB.Domain
             var total = templateCollection.Find(Builders<DB_Template>.Filter.Empty).ToList();
             var allRule = templateReplacementRuleCollection.Find(Builders<DB_ReplacementRule>.Filter.Empty).ToList();
 
-            return total.Select(a => new TemplateDetailViewModel
-            {
-                Id = a.Id,
-                Name = a.Name,
-                TemplateStr = a.TemplateStr,
-                LinkedSpiderId = a.LinkedSpiderId,
-                Type = a.Type,
-                ReplacementRules = allRule.Where(x => x.TemplateId == a.Id).Select(x => new ReplacementRuleDto
-                {
-                    Id = x.Id,
-                    ReplacementOldStr = x.ReplacementOldStr,
-                    ReplacementNewlyStr = x.ReplacementNewlyStr,
-                    IgnoreCase = x.IgnoreCase
-                }).ToList()
-            }).ToList();
+            return total.Select(a => new TemplateDetailViewModel(a, allRule.Where(x => x.TemplateId == a.Id).ToList())).ToList();
         }
 
         public async Task<List<TemplateDetailViewModel>> GetTemplateDtoListAsync()
@@ -64,21 +51,7 @@ namespace SpiderTool.MongoDB.Domain
 
             var total = await (await templateCollection.FindAsync(Builders<DB_Template>.Filter.Empty)).ToListAsync();
             var allRule = await (await templateReplacementRuleCollection.FindAsync(Builders<DB_ReplacementRule>.Filter.Empty)).ToListAsync();
-            return total.Select(a => new TemplateDetailViewModel
-            {
-                Id = a.Id,
-                Name = a.Name,
-                TemplateStr = a.TemplateStr,
-                LinkedSpiderId = a.LinkedSpiderId,
-                Type = a.Type,
-                ReplacementRules = allRule.Where(x => x.TemplateId == a.Id).Select(x => new ReplacementRuleDto
-                {
-                    Id = x.Id,
-                    ReplacementOldStr = x.ReplacementOldStr,
-                    ReplacementNewlyStr = x.ReplacementNewlyStr,
-                    IgnoreCase = x.IgnoreCase
-                }).ToList()
-            }).ToList();
+            return total.Select(a => new TemplateDetailViewModel(a, allRule.Where(x => x.TemplateId == a.Id).ToList())).ToList();
         }
 
         public string Submit(TemplateEditDto model)

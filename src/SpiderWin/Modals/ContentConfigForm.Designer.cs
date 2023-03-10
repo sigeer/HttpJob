@@ -28,7 +28,6 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(ContentConfigForm));
             this.label1 = new System.Windows.Forms.Label();
             this.comboType = new System.Windows.Forms.ComboBox();
             this.label2 = new System.Windows.Forms.Label();
@@ -39,6 +38,8 @@
             this.label4 = new System.Windows.Forms.Label();
             this.txtName = new System.Windows.Forms.TextBox();
             this.BtnSave = new System.Windows.Forms.Button();
+            this.labalAttr = new System.Windows.Forms.Label();
+            this.TxtAttribute = new System.Windows.Forms.TextBox();
             this.SuspendLayout();
             // 
             // label1
@@ -63,7 +64,7 @@
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(32, 119);
+            this.label2.Location = new System.Drawing.Point(36, 119);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(39, 17);
             this.label2.TabIndex = 2;
@@ -79,7 +80,7 @@
             // label3
             // 
             this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(39, 168);
+            this.label3.Location = new System.Drawing.Point(43, 168);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(32, 17);
             this.label3.TabIndex = 4;
@@ -87,7 +88,7 @@
             // 
             // btnReplaceRule
             // 
-            this.btnReplaceRule.Location = new System.Drawing.Point(37, 217);
+            this.btnReplaceRule.Location = new System.Drawing.Point(30, 261);
             this.btnReplaceRule.Name = "btnReplaceRule";
             this.btnReplaceRule.Size = new System.Drawing.Size(233, 23);
             this.btnReplaceRule.TabIndex = 5;
@@ -107,7 +108,7 @@
             // label4
             // 
             this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(32, 30);
+            this.label4.Location = new System.Drawing.Point(39, 30);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(32, 17);
             this.label4.TabIndex = 7;
@@ -122,7 +123,7 @@
             // 
             // BtnSave
             // 
-            this.BtnSave.Location = new System.Drawing.Point(37, 256);
+            this.BtnSave.Location = new System.Drawing.Point(32, 301);
             this.BtnSave.Name = "BtnSave";
             this.BtnSave.Size = new System.Drawing.Size(231, 23);
             this.BtnSave.TabIndex = 9;
@@ -130,11 +131,29 @@
             this.BtnSave.UseVisualStyleBackColor = true;
             this.BtnSave.Click += new System.EventHandler(this.BtnSave_Click);
             // 
+            // labalAttr
+            // 
+            this.labalAttr.AutoSize = true;
+            this.labalAttr.Location = new System.Drawing.Point(17, 211);
+            this.labalAttr.Name = "labalAttr";
+            this.labalAttr.Size = new System.Drawing.Size(58, 17);
+            this.labalAttr.TabIndex = 10;
+            this.labalAttr.Text = "Attribute";
+            // 
+            // TxtAttribute
+            // 
+            this.TxtAttribute.Location = new System.Drawing.Point(89, 208);
+            this.TxtAttribute.Name = "TxtAttribute";
+            this.TxtAttribute.Size = new System.Drawing.Size(181, 23);
+            this.TxtAttribute.TabIndex = 11;
+            // 
             // ContentConfigForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 17F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(317, 303);
+            this.ClientSize = new System.Drawing.Size(317, 336);
+            this.Controls.Add(this.TxtAttribute);
+            this.Controls.Add(this.labalAttr);
             this.Controls.Add(this.BtnSave);
             this.Controls.Add(this.txtName);
             this.Controls.Add(this.label4);
@@ -145,7 +164,7 @@
             this.Controls.Add(this.label2);
             this.Controls.Add(this.comboType);
             this.Controls.Add(this.label1);
-            this.Icon = GlobalResource.icon;
+            this.Icon = global::SpiderWin.GlobalResource.icon;
             this.KeyPreview = true;
             this.Name = "ContentConfigForm";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
@@ -169,5 +188,7 @@
         private Label label4;
         private TextBox txtName;
         private Button BtnSave;
+        private Label labalAttr;
+        private TextBox TxtAttribute;
     }
 }

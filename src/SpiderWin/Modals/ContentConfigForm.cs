@@ -52,6 +52,7 @@ namespace SpiderWin.Modals
         {
             txtName.Text = edittingModel.Name;
             txtXPath.Text = edittingModel.TemplateStr;
+            TxtAttribute.Text = edittingModel.ReadAttribute;
             comboType.SelectedValue = edittingModel.Type;
 
             if (comboType.SelectedValue != null && (int)comboType.SelectedValue == 4)
@@ -95,6 +96,7 @@ namespace SpiderWin.Modals
                 Id = edittingModel.Id,
                 Name = txtName.Text,
                 TemplateStr = txtXPath.Text,
+                ReadAttribute = TxtAttribute.Text,
                 Type = (int)(comboType.SelectedValue!),
                 LinkedSpiderId = (int?)(comboSpider.SelectedValue),
                 ReplacementRules = edittingModel.ReplacementRules

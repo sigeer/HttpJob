@@ -59,20 +59,8 @@ namespace SpiderTool.EntityFrameworkCore.Domain
                 HeaderStr = x.spider.Headers,
                 Method = x.spider.Method,
                 PostObjStr = x.spider.PostObjStr,
-                TemplateList = x.templates.Select(y => new TemplateDetailViewModel
-                {
-                    Id = y.TemplateInfo.Id,
-                    Name = y.TemplateInfo.Name,
-                    TemplateStr = y.TemplateInfo.TemplateStr,
-                    Type = y.TemplateInfo.Type,
-                }).ToList(),
-                NextPageTemplate = x.nextPage == null ? null : new TemplateDetailViewModel
-                {
-                    Id = x.nextPage.Id,
-                    Name = x.nextPage.Name,
-                    TemplateStr = x.nextPage.TemplateStr,
-                    Type = x.nextPage.Type
-                },
+                TemplateList = x.templates.Select(y => new TemplateDetailViewModel(y.TemplateInfo)).ToList(),
+                NextPageTemplate = x.nextPage == null ? null : new TemplateDetailViewModel(x.nextPage,isNextPage: true),
             }).FirstOrDefault();
         }
 
@@ -105,21 +93,8 @@ namespace SpiderTool.EntityFrameworkCore.Domain
                 HeaderStr = x.spider.Headers,
                 Method = x.spider.Method,
                 PostObjStr = x.spider.PostObjStr,
-                TemplateList = x.templates.Select(y => new TemplateDetailViewModel
-                {
-                    Id = y.TemplateInfo.Id,
-                    Name = y.TemplateInfo.Name,
-                    TemplateStr = y.TemplateInfo.TemplateStr,
-                    Type = y.TemplateInfo.Type,
-                    LinkedSpiderId = y.TemplateInfo.LinkedSpiderId
-                }).ToList(),
-                NextPageTemplate = x.nextPage == null ? null : new TemplateDetailViewModel
-                {
-                    Id = x.nextPage.Id,
-                    Name = x.nextPage.Name,
-                    TemplateStr = x.nextPage.TemplateStr,
-                    Type = x.nextPage.Type
-                },
+                TemplateList = x.templates.Select(y => new TemplateDetailViewModel(y.TemplateInfo)).ToList(),
+                NextPageTemplate = x.nextPage == null ? null : new TemplateDetailViewModel(x.nextPage, isNextPage: true),
             }).FirstOrDefault();
         }
 

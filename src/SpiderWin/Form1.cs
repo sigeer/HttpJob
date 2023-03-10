@@ -109,7 +109,7 @@ namespace SpiderWin
             });
         }
 
-        private void LoadTaskList(bool refreshUrlDropdown = false)
+        private void LoadTaskList(bool refreshUrlDropdown = true)
         {
             Task.Run(async () =>
             {

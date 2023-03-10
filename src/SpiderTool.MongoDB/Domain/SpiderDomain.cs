@@ -61,29 +61,9 @@ namespace SpiderTool.MongoDB.Domain
                 Method = dbModel.Method,
                 PostObjStr = dbModel.PostObjStr,
                 HeaderStr = dbModel.Headers,
-                NextPageTemplate = nextPage == null ? new TemplateDetailViewModel() : new TemplateDetailViewModel
-                {
-                    Id = nextPage.Id,
-                    LinkedSpiderId = nextPage.LinkedSpiderId,
-                    Name = nextPage.Name,
-                    TemplateStr = nextPage.TemplateStr,
-                    Type = nextPage.Type
-                }
+                NextPageTemplate = nextPage == null ? new TemplateDetailViewModel() : new TemplateDetailViewModel(nextPage, replaceRules, true)
             };
-            data.TemplateList = detailList.Select(b => new TemplateDetailViewModel()
-            {
-                Id = b.Id,
-                LinkedSpiderId = b.LinkedSpiderId,
-                Name = b.Name,
-                TemplateStr = b.TemplateStr,
-                Type = b.Type,
-                ReplacementRules = replaceRules.Where(x => x.TemplateId == b.Id).Select(x => new ReplacementRuleDto()
-                {
-                    Id = x.Id,
-                    ReplacementNewlyStr = x.ReplacementNewlyStr,
-                    ReplacementOldStr = x.ReplacementOldStr,
-                }).ToList()
-            }).ToList();
+            data.TemplateList = detailList.Select(b => new TemplateDetailViewModel(b, replaceRules)).ToList();
             return data;
         }
 
@@ -112,29 +92,9 @@ namespace SpiderTool.MongoDB.Domain
                 Method = dbModel.Method,
                 PostObjStr = dbModel.PostObjStr,
                 HeaderStr = dbModel.Headers,
-                NextPageTemplate = nextPage == null ? new TemplateDetailViewModel() : new TemplateDetailViewModel
-                {
-                    Id = nextPage.Id,
-                    LinkedSpiderId = nextPage.LinkedSpiderId,
-                    Name = nextPage.Name,
-                    TemplateStr = nextPage.TemplateStr,
-                    Type = nextPage.Type
-                }
+                NextPageTemplate = nextPage == null ? new TemplateDetailViewModel() : new TemplateDetailViewModel(nextPage, replaceRules, true)
             };
-            data.TemplateList = detailList.Select(b => new TemplateDetailViewModel()
-            {
-                Id = b.Id,
-                LinkedSpiderId = b.LinkedSpiderId,
-                Name = b.Name,
-                TemplateStr = b.TemplateStr,
-                Type = b.Type,
-                ReplacementRules = replaceRules.Where(x => x.TemplateId == b.Id).Select(x => new ReplacementRuleDto()
-                {
-                    Id = x.Id,
-                    ReplacementNewlyStr = x.ReplacementNewlyStr,
-                    ReplacementOldStr = x.ReplacementOldStr,
-                }).ToList()
-            }).ToList();
+            data.TemplateList = detailList.Select(b => new TemplateDetailViewModel(b, replaceRules)).ToList();
             data.NextPageTemplate = _mapper.Map<TemplateDetailViewModel>(nextPage);
             return data;
         }

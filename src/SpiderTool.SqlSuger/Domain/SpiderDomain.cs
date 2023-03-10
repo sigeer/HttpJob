@@ -64,32 +64,12 @@ namespace SpiderTool.SqlSugar.Domain
                 Method = dbModel.Method,
                 PostObjStr = dbModel.PostObjStr,
                 HeaderStr = dbModel.Headers,
-                NextPageTemplate = nextPage == null ? new TemplateDetailViewModel() : new TemplateDetailViewModel
-                {
-                    Id = nextPage.Id,
-                    LinkedSpiderId = nextPage.LinkedSpiderId,
-                    Name = nextPage.Name,
-                    TemplateStr = nextPage.TemplateStr,
-                    Type = nextPage.Type
-                }
+                NextPageTemplate = nextPage == null ? new TemplateDetailViewModel() : new TemplateDetailViewModel(nextPage, isNextPage: true)
             };
 
             var templateIdList = _dbContext.Queryable<DB_SpiderTemplate>().Where(x => x.SpiderId == id).Select(x => x.TemplateId).ToList();
             var templateReplaceList = _dbContext.Queryable<DB_ReplacementRule>().Where(x => templateIdList.Contains(x.TemplateId)).ToList();
-            var templateList = _dbContext.Queryable<DB_Template>().Where(x => templateIdList.Contains(x.Id)).ToList().Select(b => new TemplateDetailViewModel()
-            {
-                Id = b.Id,
-                LinkedSpiderId = b.LinkedSpiderId,
-                Name = b.Name,
-                TemplateStr = b.TemplateStr,
-                Type = b.Type,
-                ReplacementRules = templateReplaceList.Where(x => x.TemplateId == b.Id).Select(x => new ReplacementRuleDto()
-                {
-                    Id = x.Id,
-                    ReplacementNewlyStr = x.ReplacementNewlyStr,
-                    ReplacementOldStr = x.ReplacementOldStr,
-                }).ToList()
-            }).ToList();
+            var templateList = _dbContext.Queryable<DB_Template>().Where(x => templateIdList.Contains(x.Id)).ToList().Select(b => new TemplateDetailViewModel(b, templateReplaceList)).ToList();
 
             data.TemplateList = templateList;
             return data;
@@ -102,6 +82,8 @@ namespace SpiderTool.SqlSugar.Domain
                 return null;
 
             var nextPage = await _dbContext.Queryable<DB_Template>().FirstAsync(x => x.Id == dbModel.NextPageTemplateId);
+            var templateIdList = await _dbContext.Queryable<DB_SpiderTemplate>().Where(x => x.SpiderId == id).Select(x => x.TemplateId).ToListAsync();
+            var templateReplaceList = await _dbContext.Queryable<DB_ReplacementRule>().Where(x => templateIdList.Contains(x.TemplateId)).ToListAsync();
 
             var data = new SpiderDetailViewModel()
             {
@@ -111,32 +93,9 @@ namespace SpiderTool.SqlSugar.Domain
                 Method = dbModel.Method,
                 PostObjStr = dbModel.PostObjStr,
                 HeaderStr = dbModel.Headers,
-                NextPageTemplate = nextPage == null ? new TemplateDetailViewModel() : new TemplateDetailViewModel
-                {
-                    Id = nextPage.Id,
-                    LinkedSpiderId = nextPage.LinkedSpiderId,
-                    Name = nextPage.Name,
-                    TemplateStr = nextPage.TemplateStr,
-                    Type = nextPage.Type
-                }
+                NextPageTemplate = nextPage == null ? new TemplateDetailViewModel() : new TemplateDetailViewModel(nextPage, isNextPage: true)
             };
-
-            var templateIdList = await _dbContext.Queryable<DB_SpiderTemplate>().Where(x => x.SpiderId == id).Select(x => x.TemplateId).ToListAsync();
-            var templateReplaceList = await _dbContext.Queryable<DB_ReplacementRule>().Where(x => templateIdList.Contains(x.TemplateId)).ToListAsync();
-            var templateList = (await _dbContext.Queryable<DB_Template>().Where(x => templateIdList.Contains(x.Id)).ToListAsync()).Select(b => new TemplateDetailViewModel()
-            {
-                Id = b.Id,
-                LinkedSpiderId = b.LinkedSpiderId,
-                Name = b.Name,
-                TemplateStr = b.TemplateStr,
-                Type = b.Type,
-                ReplacementRules = templateReplaceList.Where(x => x.TemplateId == b.Id).Select(x => new ReplacementRuleDto()
-                {
-                    Id = x.Id,
-                    ReplacementNewlyStr = x.ReplacementNewlyStr,
-                    ReplacementOldStr = x.ReplacementOldStr,
-                }).ToList()
-            }).ToList();
+            var templateList = (await _dbContext.Queryable<DB_Template>().Where(x => templateIdList.Contains(x.Id)).ToListAsync()).Select(b => new TemplateDetailViewModel(b, templateReplaceList)).ToList();
 
             data.TemplateList = templateList;
             return data;
