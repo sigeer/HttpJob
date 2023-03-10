@@ -16,6 +16,8 @@ namespace SpiderTool.Data.DataBase
         public int Type { get; set; }
         [MaxLength(100)]
         public string? TemplateStr { get; set; }
+        [MaxLength(50)]
+        public string? ReadAttribute { get; set; }
         public DateTime CreateTime { get; set; }
         public DateTime LastUpdatedTime { get; set; }
 

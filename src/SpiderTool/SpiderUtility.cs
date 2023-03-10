@@ -57,6 +57,9 @@ namespace SpiderTool
             using var httpRequestPool = new HttpClientPool();
             await Parallel.ForEachAsync(data, cancellationToken, async (item, ct) =>
             {
+                if (string.IsNullOrEmpty(item.Key))
+                    return;
+
                 var client = httpRequestPool.GetInstance();
                 var uri = new Uri(item.Key);
                 var result = await client.HttpGetCore(uri.ToString(), cancellationToken: ct);

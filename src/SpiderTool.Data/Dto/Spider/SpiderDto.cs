@@ -56,7 +56,7 @@ namespace SpiderTool.Data.Dto.Spider
         public object? PostObj => string.IsNullOrEmpty(PostObjStr) ? null : PostObjStr.ToJson();
         public List<HeaderItem> GetHeaders()
         {
-            return JsonSerializer.Deserialize<List<HeaderItem>>(HeaderStr ?? "{}") ?? new List<HeaderItem>();
+            return JsonSerializer.Deserialize<List<HeaderItem>>(string.IsNullOrEmpty(HeaderStr) ? "[]" : HeaderStr) ?? new List<HeaderItem>();
         }
 
         public SpiderEditDto ToEditModel()

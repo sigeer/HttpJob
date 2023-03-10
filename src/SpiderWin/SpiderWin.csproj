@@ -6,9 +6,9 @@
     <Nullable>enable</Nullable>
     <UseWindowsForms>true</UseWindowsForms>
     <ImplicitUsings>enable</ImplicitUsings>
-    <Version>1.0.3</Version>
+    <Version>1.0.4</Version>
     <ApplicationIcon>icon.ico</ApplicationIcon>
-    <Description>减少刷新url下拉框的频率</Description>
+    <Description>设置读取的Attribute</Description>
   </PropertyGroup>
 
   <ItemGroup>

@@ -5,6 +5,7 @@ using SpiderTool.Data.Constants;
 using SpiderTool.Data.Dto.Spider;
 using SpiderTool.Data.Dto.Tasks;
 using SpiderTool.Data.IService;
+using System.IO.Compression;
 using System.Net.Http.Json;
 using System.Reflection.PortableExecutable;
 using System.Web;
@@ -324,12 +325,11 @@ namespace SpiderTool
             }
 
             HttpResponseMessage res;
-            using (HttpClient httpClient = new HttpClient())
-            {
-                res = await httpClient.HttpSendCore(requestConfig, cancellationToken);
-            }
-            var responseStream = await res.Content.ReadAsStreamAsync(cancellationToken);
-            return responseStream.DecodeData(res.Content.Headers.ContentType?.CharSet);
+            using HttpClient httpClient = new HttpClient();
+            res = await httpClient.HttpSendCore(requestConfig, cancellationToken);
+            var resStream = await res.Content.ReadAsStreamAsync(cancellationToken);
+            return resStream.DecodeData(res.Content.Headers.ContentType?.CharSet);
+
         }
 
         private async Task ProcessUrl(string currentUrl, bool isRootUrl = true, CancellationToken cancellationToken = default)

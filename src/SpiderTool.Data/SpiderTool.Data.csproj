@@ -8,7 +8,7 @@
 
 	<ItemGroup>
 		<PackageReference Include="AutoMapper" Version="12.0.0" />
-		<PackageReference Include="SigeerUtility" Version="1.0.10" />
+		<PackageReference Include="SigeerUtility" Version="1.0.10.2" />
 	</ItemGroup>
 
 </Project>
