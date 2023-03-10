@@ -54,9 +54,9 @@ namespace SpiderTool.Data.Dto.Spider
         public List<TemplateDetailViewModel> TemplateList { get; set; } = new List<TemplateDetailViewModel>();
         public TemplateDetailViewModel? NextPageTemplate { get; set; }
         public object? PostObj => string.IsNullOrEmpty(PostObjStr) ? null : PostObjStr.ToJson();
-        public Dictionary<string, string> GetHeaders()
+        public List<HeaderItem> GetHeaders()
         {
-            return JsonSerializer.Deserialize<Dictionary<string, string>>(string.IsNullOrEmpty(HeaderStr) ? "{}" : HeaderStr) ?? new Dictionary<string, string>();
+            return JsonSerializer.Deserialize<List<HeaderItem>>(string.IsNullOrEmpty(HeaderStr) ? "[]" : HeaderStr) ?? new List<HeaderItem>();
         }
 
         public SpiderEditDto ToEditModel()
@@ -73,5 +73,11 @@ namespace SpiderTool.Data.Dto.Spider
                 Templates = TemplateList.Select(x => x.Id).ToList()
             };
         }
+    }
+
+    public class HeaderItem
+    {
+        public string Key { get; set; } = null!;
+        public string Value { get; set; } = null!;
     }
 }
