@@ -10,7 +10,7 @@ namespace SpiderTool.Data.DataBase
         public int Id { get; set; }
         public int TemplateId { get; set; }
         [MaxLength(100)]
-        public string? ReplacementOldStr { get; set; }
+        public string ReplacementOldStr { get; set; } = null!;
         [MaxLength(100)]
         public string? ReplacementNewlyStr { get; set; }
         public bool IgnoreCase { get; set; }

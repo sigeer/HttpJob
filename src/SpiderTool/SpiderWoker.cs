@@ -80,7 +80,11 @@ namespace SpiderTool
             {
                 if (string.IsNullOrEmpty(_currentDir))
                 {
-                    _currentDir = Path.Combine(Configs.BaseDir, $"{TaskId}_{GenarteDirName()}");
+                    var path = Path.Combine(Configs.BaseDir, GenarteDirName());
+                    if (Directory.Exists(path))
+                        _currentDir = Path.Combine(Configs.BaseDir, $"{TaskId}_{GenarteDirName()}");
+                    else
+                        _currentDir = path;
                 }
                 return _currentDir;
             }
