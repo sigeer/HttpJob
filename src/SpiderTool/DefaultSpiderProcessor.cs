@@ -1,6 +1,7 @@
 ﻿using HtmlAgilityPack;
 using SpiderTool.Data.Dto.Spider;
 using System.Data;
+using System.Runtime.CompilerServices;
 
 namespace SpiderTool
 {
@@ -37,7 +38,7 @@ namespace SpiderTool
             {
                 ctx.ThrowIfCancellationRequested();
 
-                var resource = (item.Attributes["href"] ?? item.Attributes["data-href"])?.Value;
+                var resource = (item.Attributes[rule.ReadAttribute] ?? item.Attributes["href"] ?? item.Attributes["data-href"])?.Value;
                 if (resource == null)
                     return;
 

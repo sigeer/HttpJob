@@ -28,7 +28,7 @@ namespace SpiderWin.Modals
         {
             edittingModel.ForEach(x =>
             {
-                AddControl(x.ReplacementOldStr ?? "", x.ReplacementNewlyStr ?? "");
+                AddControl(x.ReplacementOldStr, x.ReplacementNewlyStr ?? "");
             });
             SortExtraControls();
         }

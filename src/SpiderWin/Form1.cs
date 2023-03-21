@@ -32,7 +32,7 @@ namespace SpiderWin
             localServiceBackup = _coreService;
             _serviceProvider = serviceProvider;
             _logger = logger;
-            _delayedTaskPool.ChangeDelayedDuration(200);
+            _delayedTaskPool.ChangeDelayedDuration(100);
             Configs.InitBaseDir();
 
             InitializeComponent();
@@ -71,7 +71,7 @@ namespace SpiderWin
 
         private void LoadForm()
         {
-            LoadTaskList();
+            LoadTaskList(true);
             LoadSpiderList();
         }
 
