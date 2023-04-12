@@ -61,26 +61,36 @@ namespace SpiderTool
                     return;
 
                 var client = httpRequestPool.GetInstance();
-                var uri = new Uri(item.Key);
-                var result = await client.HttpGetCore(uri.ToString(), cancellationToken: ct);
-                log?.Invoke($"BulkDownload 请求 {item}");
-                var fileName = uri.Segments.Last();
-                if (!TryGetExtension(fileName, out var extension))
+                try
                 {
-                    var contentType = result.Content.Headers.ContentType?.MediaType;
-                    extension = GetExtensionFromContentType(contentType);
-                    if (extension == null)
-                        return;
+                    var uri = new Uri(item.Key);
+                    var result = await client.HttpGetCore(uri.ToString(), cancellationToken: ct);
+                    log?.Invoke($"BulkDownload 请求 {item}");
+                    var fileName = uri.Segments.Last();
+                    if (!TryGetExtension(fileName, out var extension))
+                    {
+                        var contentType = result.Content.Headers.ContentType?.MediaType;
+                        extension = GetExtensionFromContentType(contentType);
+                        if (extension == null)
+                            return;
 
-                    fileName = item.Value + extension;
+                        fileName = item.Value + extension;
+                    }
+                    var path = Path.Combine(dirRoot, fileName);
+                    var fileBytes = await result.Content.ReadAsByteArrayAsync(cancellationToken: ct);
+                    if (fileBytes.Length > 0)
+                        await File.WriteAllBytesAsync(path, fileBytes, ct);
+                    else
+                        log?.Invoke($"BulkDownload for {item}, file bytes = 0");
                 }
-                var path = Path.Combine(dirRoot, fileName);
-                var fileBytes = await result.Content.ReadAsByteArrayAsync(cancellationToken: ct);
-                if (fileBytes.Length > 0)
-                    await File.WriteAllBytesAsync(path, fileBytes, ct);
-                else
-                    log?.Invoke($"BulkDownload for {item}, file bytes = 0");
-                httpRequestPool.Return(client);
+                catch (Exception ex)
+                {
+                    log?.Invoke(ex.ToString());
+                }
+                finally
+                {
+                    httpRequestPool.Return(client);
+                }
             });
         }
 
