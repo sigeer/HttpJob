@@ -135,7 +135,7 @@ namespace SpiderTool
             var finalText = HttpUtility.HtmlDecode(item.InnerHtml);
             foreach (var handle in rule.ReplacementRules)
             {
-                finalText = Regex.Replace(finalText, handle.ReplacementOldStr.ToDBC(), handle.ReplacementNewlyStr ?? "", RegexOptions.IgnoreCase);
+                finalText = Regex.Replace(finalText, handle.ReplacementOldStr.FullWidth2HalfWidth(), handle.ReplacementNewlyStr ?? "", RegexOptions.IgnoreCase);
                 finalText = Regex.Replace(finalText, handle.ReplacementOldStr, handle.ReplacementNewlyStr ?? "", RegexOptions.IgnoreCase);
             }
             var temp = new HtmlDocument();
@@ -206,7 +206,7 @@ namespace SpiderTool
         /// </summary>
         /// <param name="input"></param>
         /// <returns></returns>
-        public static string ToDBC(this string input)
+        public static string FullWidth2HalfWidth(this string input)
         {
             char[] c = input.ToCharArray();
             for (int i = 0; i < c.Length; i++)
