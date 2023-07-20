@@ -57,6 +57,7 @@ namespace SpiderTool.Data.Dto.Spider
             Name = template.Name;
             Type = template.Type;
             TemplateStr = template.TemplateStr;
+            LinkedSpiderId = template.LinkedSpiderId;
             if (isNextPage)
                 ReadAttribute = template.ReadAttribute ?? "href";
             else
