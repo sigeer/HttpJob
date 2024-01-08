@@ -6,9 +6,9 @@
     <Nullable>enable</Nullable>
     <UseWindowsForms>true</UseWindowsForms>
     <ImplicitUsings>enable</ImplicitUsings>
-    <Version>1.0.4</Version>
+    <Version>1.0.5</Version>
     <ApplicationIcon>icon.ico</ApplicationIcon>
-    <Description>设置读取的Attribute</Description>
+    <Description>合并文件时换行</Description>
   </PropertyGroup>
 
   <ItemGroup>
