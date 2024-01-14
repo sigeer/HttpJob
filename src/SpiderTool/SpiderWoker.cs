@@ -71,7 +71,7 @@ namespace SpiderTool
                 return _spider;
             }
         }
-        private string DocumentTitle => HttpUtility.HtmlDecode(_currentDoc?.DocumentNode?.SelectSingleNode("//title")?.InnerText) ?? _rootUrl;
+        public string DocumentTitle => HttpUtility.HtmlDecode(_currentDoc?.DocumentNode?.SelectSingleNode("//title")?.InnerText) ?? _rootUrl;
 
         private string? _currentDir;
         public string CurrentDir
