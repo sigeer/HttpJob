@@ -32,7 +32,7 @@ namespace SpiderWin
             localServiceBackup = _coreService;
             _serviceProvider = serviceProvider;
             _logger = logger;
-            _delayedTaskPool.ChangeDelayedDuration(200);
+            _delayedTaskPool.ChangeDelayedDuration(100);
             Configs.InitBaseDir();
 
             InitializeComponent();
@@ -71,7 +71,7 @@ namespace SpiderWin
 
         private void LoadForm()
         {
-            LoadTaskList();
+            LoadTaskList(true);
             LoadSpiderList();
         }
 
@@ -499,15 +499,15 @@ namespace SpiderWin
                 case WM_HOTKEY:
                     switch (m.WParam.ToInt32())
                     {
-                        case 100:    //按下的是Shift+S
+                        case 100:
                             //此处填写快捷键响应代码  
                             ShowModalFromMinimum();
                             break;
-                        case 101:    //按下的是Ctrl+B
+                        case 101:
                             //此处填写快捷键响应代码
                             HideModalFromNormal();
                             break;
-                        case 102:    //按下的是Alt+D
+                        case 102:
                             //此处填写快捷键响应代码
                             break;
                     }

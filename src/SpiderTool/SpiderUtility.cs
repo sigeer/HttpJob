@@ -145,8 +145,8 @@ namespace SpiderTool
             var finalText = HttpUtility.HtmlDecode(item.InnerHtml);
             foreach (var handle in rule.ReplacementRules)
             {
-                finalText = Regex.Replace(finalText, handle.ReplacementOldStr!, handle.ReplacementNewlyStr ?? "", RegexOptions.IgnoreCase);
-                // finalText = finalText.Replace(handle.ReplacementOldStr!, handle.ReplacementNewlyStr, handle.IgnoreCase, System.Globalization.CultureInfo.CurrentCulture);
+                finalText = Regex.Replace(finalText, handle.ReplacementOldStr.FullWidth2HalfWidth(), handle.ReplacementNewlyStr ?? "", RegexOptions.IgnoreCase);
+                finalText = Regex.Replace(finalText, handle.ReplacementOldStr, handle.ReplacementNewlyStr ?? "", RegexOptions.IgnoreCase);
             }
             var temp = new HtmlDocument();
             temp.LoadHtml(finalText);
@@ -180,7 +180,7 @@ namespace SpiderTool
                     foreach (var file in files)
                     {
                         var txt = await File.ReadAllTextAsync(file, cancellationToken);
-                        await File.AppendAllTextAsync(filePath, txt, cancellationToken);
+                        await File.AppendAllTextAsync(filePath, txt + "\r\n", cancellationToken);
                         File.Delete(file);
                     }
                 }
@@ -209,6 +209,27 @@ namespace SpiderTool
             sb.Add(rootDirInfo.Name);
             sb.Reverse();
             return string.Join('_', sb);
+        }
+
+        /// <summary>
+        /// 全角转半角
+        /// </summary>
+        /// <param name="input"></param>
+        /// <returns></returns>
+        public static string FullWidth2HalfWidth(this string input)
+        {
+            char[] c = input.ToCharArray();
+            for (int i = 0; i < c.Length; i++)
+            {
+                if (c[i] == 12288)
+                {
+                    c[i] = (char)32;
+                    continue;
+                }
+                if (c[i] > 65280 && c[i] < 65375)
+                    c[i] = (char)(c[i] - 65248);
+            }
+            return new string(c);
         }
 
     }
