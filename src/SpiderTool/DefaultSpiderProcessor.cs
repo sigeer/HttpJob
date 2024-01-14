@@ -27,7 +27,7 @@ namespace SpiderTool
             {
                 cancellationToken.ThrowIfCancellationRequested();
 
-                await SpiderUtility.SaveTextAsync(savePath, SpiderUtility.ReadHtmlNodeInnerHtml(item, rule));
+                await SpiderUtility.SaveTextAsync(savePath, rootSpider.DocumentTitle + "\r\n" + SpiderUtility.ReadHtmlNodeInnerHtml(item, rule));
             }
         }
 
