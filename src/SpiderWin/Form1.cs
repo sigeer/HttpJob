@@ -24,6 +24,7 @@ namespace SpiderWin
 
         List<SpiderListItemViewModel> _spiderList = new List<SpiderListItemViewModel>();
         List<TaskListItemViewModel> _taskList = new List<TaskListItemViewModel>();
+        SpiderWokerCollection _spiders = new SpiderWokerCollection();
 
         readonly DelayedTaskPool _delayedTaskPool = DelayedTaskPool.GetInstance();
         public Form1(ISpiderService coreService, IServiceProvider serviceProvider, ILogger<Form1> logger)
@@ -202,6 +203,7 @@ namespace SpiderWin
                 {
                     PrintLog("日志", logStr);
                 };
+                _spiders.Add(worker);
 
                 BeginInvoke(new MethodInvoker(async () =>
                 {
@@ -363,10 +365,11 @@ namespace SpiderWin
 
             if (row.Index >= 0 && !row.IsNewRow)
             {
-                var taskId = row.Cells[1].Value?.ToString();
+                var taskId = (int?)row.Cells[1].Value;
                 var description = row.Cells[2].Value?.ToString();
-                if (!string.IsNullOrEmpty(taskId))
-                    Process.Start("explorer.exe", Path.Combine(Configs.BaseDir, $"{taskId}_{description?.RenameFolder()}"));
+                var worker = _spiders.FirstOrDefault(x => x.TaskId == taskId);
+                if (worker != null)
+                    Process.Start("explorer.exe", worker.CurrentDir);
             }
         }
 
@@ -395,6 +398,10 @@ namespace SpiderWin
                 var taskId = (int)row.Cells[1].Value;
                 _coreService.StopTask(taskId);
                 LoadTaskList();
+
+                var worker = _spiders.FirstOrDefault(x => x.TaskId == taskId);
+                if (worker != null)
+                    Directory.Delete(worker.CurrentDir, true);
             }
         }
 
