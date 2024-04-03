@@ -1,17 +1,12 @@
 ﻿using HtmlAgilityPack;
 using Microsoft.Extensions.Logging;
 using SpiderTool.Data;
-using SpiderTool.Data.Constants;
 using SpiderTool.Data.Dto.Spider;
 using SpiderTool.Data.Dto.Tasks;
 using SpiderTool.Data.IService;
-using System.IO.Compression;
-using System.Net.Http.Json;
-using System.Reflection.PortableExecutable;
 using System.Web;
 using Utility.Extensions;
 using Utility.Http;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace SpiderTool
 {

@@ -140,12 +140,11 @@ namespace SpiderTool
             }
         }
 
-        public static string ReadHtmlNodeInnerHtml(HtmlNode item, TemplateDetailViewModel rule)
+        public static string ReadHtmlNodeInnerText(HtmlNode item, List<ReplacementRuleDto> replaceRules)
         {
             var finalText = HttpUtility.HtmlDecode(item.InnerHtml);
-            foreach (var handle in rule.ReplacementRules)
+            foreach (var handle in replaceRules)
             {
-                finalText = Regex.Replace(finalText, handle.ReplacementOldStr.FullWidth2HalfWidth(), handle.ReplacementNewlyStr ?? "", RegexOptions.IgnoreCase);
                 finalText = Regex.Replace(finalText, handle.ReplacementOldStr, handle.ReplacementNewlyStr ?? "", RegexOptions.IgnoreCase);
             }
             var temp = new HtmlDocument();
@@ -180,7 +179,7 @@ namespace SpiderTool
                     foreach (var file in files)
                     {
                         var txt = await File.ReadAllTextAsync(file, cancellationToken);
-                        await File.AppendAllTextAsync(filePath, txt + "\r\n", cancellationToken);
+                        await File.AppendAllTextAsync(filePath, txt, cancellationToken);
                         File.Delete(file);
                     }
                 }

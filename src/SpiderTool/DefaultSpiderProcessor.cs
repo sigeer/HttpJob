@@ -2,6 +2,8 @@
 using SpiderTool.Data.Dto.Spider;
 using System.Data;
 using System.Runtime.CompilerServices;
+using System.Text.RegularExpressions;
+using System.Web;
 
 namespace SpiderTool
 {
@@ -28,7 +30,7 @@ namespace SpiderTool
             {
                 cancellationToken.ThrowIfCancellationRequested();
 
-                await SpiderUtility.SaveTextAsync(savePath, rootSpider.DocumentTitle + "\r\n" + SpiderUtility.ReadHtmlNodeInnerHtml(item, rule));
+                await SpiderUtility.SaveTextAsync(savePath, SpiderUtility.ReadHtmlNodeInnerText(item, rule.ReplacementRules));
             }
         }
 
@@ -116,6 +118,8 @@ namespace SpiderTool
 
                 var savePath = Path.Combine(rootSpider.CurrentDir, $"Rule{rule.Id.ToString()}");
 
+                rule.ReplacementRules = FormatReplaceRulesDynamic(currentDoc.DocumentNode, rule.ReplacementRules);
+
                 if (rule.Type == (int)TemplateTypeEnum.Object)
                 {
                     await ProcessObject(savePath, rootSpider, nodes, rule, cancellationToken);
@@ -133,6 +137,39 @@ namespace SpiderTool
                     await ProcessJumpLink(rootSpider, nodes, rule, cancellationToken);
                 }
             }
+        }
+
+        private List<ReplacementRuleDto> FormatReplaceRulesDynamic(HtmlNode htmlNode, List<ReplacementRuleDto> rules)
+        {
+            HtmlNodeNavigator navigator = (HtmlNodeNavigator)htmlNode.CreateNavigator();
+            foreach (var rule in rules)
+            {
+                var regStr = new Regex("(\\$\\{.*?\\})");
+
+                var oldValue = regStr.Replace(rule.ReplacementOldStr, evt =>
+                {
+                    var innerValue = evt.Groups[1].Value;
+                    if (!string.IsNullOrEmpty(innerValue))
+                    {
+                        return navigator.SelectSingleNode(innerValue)?.Value ?? string.Empty;
+                    }
+                    return string.Empty;
+                });
+
+                var newlyValue = string.IsNullOrEmpty(rule.ReplacementNewlyStr) ? null : regStr.Replace(rule.ReplacementNewlyStr, evt =>
+                {
+                    var innerValue = evt.Groups[1].Value;
+                    if (!string.IsNullOrEmpty(innerValue))
+                    {
+                        return navigator.SelectSingleNode(innerValue)?.Value ?? string.Empty;
+                    }
+                    return string.Empty;
+                });
+
+                rule.ReplacementOldStr = oldValue;
+                rule.ReplacementNewlyStr = newlyValue;
+            }
+            return rules;
         }
     }
 }
