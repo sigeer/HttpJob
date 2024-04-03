@@ -2,6 +2,7 @@
 using SpiderTool.Data.Dto.Spider;
 using System.Data;
 using System.Runtime.CompilerServices;
+using System.Text.RegularExpressions;
 using System.Web;
 
 namespace SpiderTool
@@ -117,7 +118,7 @@ namespace SpiderTool
 
                 var savePath = Path.Combine(rootSpider.CurrentDir, $"Rule{rule.Id.ToString()}");
 
-                rule.ReplacementRules = FormatReplaceRulesTitle("{{Title}}", HttpUtility.HtmlDecode(currentDoc.DocumentNode.SelectSingleNode("//title")?.InnerText), rule.ReplacementRules);
+                rule.ReplacementRules = FormatReplaceRulesDynamic(currentDoc.DocumentNode, rule.ReplacementRules);
 
                 if (rule.Type == (int)TemplateTypeEnum.Object)
                 {
@@ -138,12 +139,35 @@ namespace SpiderTool
             }
         }
 
-        private List<ReplacementRuleDto> FormatReplaceRulesTitle(string replaceDomain, string? replaceString, List<ReplacementRuleDto> rules)
+        private List<ReplacementRuleDto> FormatReplaceRulesDynamic(HtmlNode htmlNode, List<ReplacementRuleDto> rules)
         {
+            HtmlNodeNavigator navigator = (HtmlNodeNavigator)htmlNode.CreateNavigator();
             foreach (var rule in rules)
             {
-                rule.ReplacementOldStr = rule.ReplacementOldStr.Replace(replaceDomain, replaceString, StringComparison.OrdinalIgnoreCase);
-                rule.ReplacementNewlyStr = rule.ReplacementNewlyStr?.Replace(replaceDomain, replaceString, StringComparison.OrdinalIgnoreCase);
+                var regStr = new Regex("(\\$\\{.*?\\})");
+
+                var oldValue = regStr.Replace(rule.ReplacementOldStr, evt =>
+                {
+                    var innerValue = evt.Groups[1].Value;
+                    if (!string.IsNullOrEmpty(innerValue))
+                    {
+                        return navigator.SelectSingleNode(innerValue)?.Value ?? string.Empty;
+                    }
+                    return string.Empty;
+                });
+
+                var newlyValue = string.IsNullOrEmpty(rule.ReplacementNewlyStr) ? null : regStr.Replace(rule.ReplacementNewlyStr, evt =>
+                {
+                    var innerValue = evt.Groups[1].Value;
+                    if (!string.IsNullOrEmpty(innerValue))
+                    {
+                        return navigator.SelectSingleNode(innerValue)?.Value ?? string.Empty;
+                    }
+                    return string.Empty;
+                });
+
+                rule.ReplacementOldStr = oldValue;
+                rule.ReplacementNewlyStr = newlyValue;
             }
             return rules;
         }

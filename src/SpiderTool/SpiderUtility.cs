@@ -179,7 +179,7 @@ namespace SpiderTool
                     foreach (var file in files)
                     {
                         var txt = await File.ReadAllTextAsync(file, cancellationToken);
-                        await File.AppendAllTextAsync(filePath, txt + "\r\n", cancellationToken);
+                        await File.AppendAllTextAsync(filePath, txt, cancellationToken);
                         File.Delete(file);
                     }
                 }
