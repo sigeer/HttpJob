@@ -140,10 +140,10 @@ namespace SpiderTool
             }
         }
 
-        public static string ReadHtmlNodeInnerHtml(HtmlNode item, TemplateDetailViewModel rule)
+        public static string ReadHtmlNodeInnerText(HtmlNode item, List<ReplacementRuleDto> replaceRules)
         {
             var finalText = HttpUtility.HtmlDecode(item.InnerHtml);
-            foreach (var handle in rule.ReplacementRules)
+            foreach (var handle in replaceRules)
             {
                 finalText = Regex.Replace(finalText, handle.ReplacementOldStr, handle.ReplacementNewlyStr ?? "", RegexOptions.IgnoreCase);
             }

@@ -2,6 +2,7 @@
 using SpiderTool.Data.Dto.Spider;
 using System.Data;
 using System.Runtime.CompilerServices;
+using System.Web;
 
 namespace SpiderTool
 {
@@ -28,7 +29,7 @@ namespace SpiderTool
             {
                 cancellationToken.ThrowIfCancellationRequested();
 
-                await SpiderUtility.SaveTextAsync(savePath, SpiderUtility.ReadHtmlNodeInnerHtml(item, rule));
+                await SpiderUtility.SaveTextAsync(savePath, SpiderUtility.ReadHtmlNodeInnerText(item, rule.ReplacementRules));
             }
         }
 
@@ -116,6 +117,8 @@ namespace SpiderTool
 
                 var savePath = Path.Combine(rootSpider.CurrentDir, $"Rule{rule.Id.ToString()}");
 
+                rule.ReplacementRules = FormatReplaceRulesTitle("{{Title}}", HttpUtility.HtmlDecode(currentDoc.DocumentNode.SelectSingleNode("//title")?.InnerText), rule.ReplacementRules);
+
                 if (rule.Type == (int)TemplateTypeEnum.Object)
                 {
                     await ProcessObject(savePath, rootSpider, nodes, rule, cancellationToken);
@@ -133,6 +136,16 @@ namespace SpiderTool
                     await ProcessJumpLink(rootSpider, nodes, rule, cancellationToken);
                 }
             }
+        }
+
+        private List<ReplacementRuleDto> FormatReplaceRulesTitle(string replaceDomain, string? replaceString, List<ReplacementRuleDto> rules)
+        {
+            foreach (var rule in rules)
+            {
+                rule.ReplacementOldStr = rule.ReplacementOldStr.Replace(replaceDomain, replaceString, StringComparison.OrdinalIgnoreCase);
+                rule.ReplacementNewlyStr = rule.ReplacementNewlyStr?.Replace(replaceDomain, replaceString, StringComparison.OrdinalIgnoreCase);
+            }
+            return rules;
         }
     }
 }
