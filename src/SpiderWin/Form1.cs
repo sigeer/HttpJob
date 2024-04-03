@@ -366,10 +366,13 @@ namespace SpiderWin
             if (row.Index >= 0 && !row.IsNewRow)
             {
                 var taskId = (int?)row.Cells[1].Value;
-                var description = row.Cells[2].Value?.ToString();
+                var dir = Configs.BaseDir;
+
                 var worker = _spiders.FirstOrDefault(x => x.TaskId == taskId);
                 if (worker != null)
-                    Process.Start("explorer.exe", worker.CurrentDir);
+                    dir = worker.CurrentDir;
+
+                Process.Start("explorer.exe", dir);
             }
         }
 
