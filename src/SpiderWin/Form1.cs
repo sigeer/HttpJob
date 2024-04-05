@@ -403,7 +403,7 @@ namespace SpiderWin
                 LoadTaskList();
 
                 var worker = _spiders.FirstOrDefault(x => x.TaskId == taskId);
-                if (worker != null)
+                if (worker != null && Directory.Exists(worker.CurrentDir))
                     Directory.Delete(worker.CurrentDir, true);
             }
         }

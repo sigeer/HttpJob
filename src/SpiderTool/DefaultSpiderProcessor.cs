@@ -144,7 +144,7 @@ namespace SpiderTool
             HtmlNodeNavigator navigator = (HtmlNodeNavigator)htmlNode.CreateNavigator();
             foreach (var rule in rules)
             {
-                var regStr = new Regex("(\\$\\{.*?\\})");
+                var regStr = new Regex("\\$\\{(.*?)\\}");
 
                 var oldValue = regStr.Replace(rule.ReplacementOldStr, evt =>
                 {
