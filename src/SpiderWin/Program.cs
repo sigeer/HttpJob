@@ -2,6 +2,8 @@ using FreeSql;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Serilog;
+using Serilog.Core;
+using Serilog.Events;
 using SpiderTool;
 using SpiderTool.FreeSql;
 using SpiderTool.Injection;
@@ -12,6 +14,7 @@ using Utility.Serilog.Extension;
 
 namespace SpiderWin
 {
+
     internal static class Program
     {
         static Serilog.ILogger _logger = null!;
@@ -46,11 +49,18 @@ namespace SpiderWin
 
             IConfiguration configuration = cfgBuilder.Build();
 
-            _logger = new LoggerConfiguration().CustomWriteTo().CreateLogger();
+            var sink = new WinFormLogSink();
+
+            _logger = new LoggerConfiguration()
+                .CustomWriteTo()
+                .WriteTo.Sink(sink)
+                .CreateLogger();
+
             services.AddLogging(builder =>
             {
                 builder.AddSerilog(logger: _logger, dispose: true);
             });
+            services.AddSingleton<WinFormLogSink>(sink);
             services.AddSingleton<IConfiguration>(configuration);
             services.AddSingleton<Form1>();
 

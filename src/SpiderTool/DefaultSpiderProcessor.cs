@@ -1,14 +1,14 @@
 ﻿using HtmlAgilityPack;
+using Microsoft.Extensions.Logging;
 using SpiderTool.Data.Dto.Spider;
 using System.Data;
-using System.Runtime.CompilerServices;
 using System.Text.RegularExpressions;
-using System.Web;
 
 namespace SpiderTool
 {
     public class DefaultSpiderProcessor : ISpiderProcessor
     {
+
         protected virtual async Task ProcessObject(string savePath, SpiderWorker rootSpider, HtmlNodeCollection nodes, TemplateDetailViewModel rule, CancellationToken cancellationToken = default)
         {
 
@@ -18,10 +18,7 @@ namespace SpiderTool
             {
                 return (item.Attributes["srcset"] ?? item.Attributes["data-srcset"]).Value.Split(',').Select(x => x.Trim().Split(' ')[0].GetTotalUrl(rootSpider.HostUrl));
             }));
-            await SpiderUtility.BulkDownload(savePath, urlList, (log) =>
-            {
-                rootSpider.CallLog(log);
-            }, cancellationToken);
+            await SpiderUtility.BulkDownload(savePath, urlList, cancellationToken);
         }
 
         protected virtual async Task ProcessText(string savePath, SpiderWorker rootSpider, HtmlNodeCollection nodes, TemplateDetailViewModel rule, CancellationToken cancellationToken = default)
