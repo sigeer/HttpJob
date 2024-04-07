@@ -9,7 +9,6 @@ using SpiderWin.Modals;
 using SpiderWin.Server;
 using SpiderWin.Services;
 using System.Diagnostics;
-using System.Globalization;
 using Utility.Common;
 using Utility.Extensions;
 
@@ -27,12 +26,15 @@ namespace SpiderWin
         SpiderWokerCollection _spiders = new SpiderWokerCollection();
 
         readonly DelayedTaskPool _delayedTaskPool = DelayedTaskPool.GetInstance();
-        public Form1(ISpiderService coreService, IServiceProvider serviceProvider, ILogger<Form1> logger)
+        public Form1(ISpiderService coreService, IServiceProvider serviceProvider, WinFormLogSink logSink, ILogger<Form1> logger)
         {
+            logSink.LogReceived += (obj, evt) => PrintLog(evt);
+            _logger = logger;
+
             _coreService = coreService;
             localServiceBackup = _coreService;
             _serviceProvider = serviceProvider;
-            _logger = logger;
+
             _delayedTaskPool.ChangeDelayedDuration(100);
             Configs.InitBaseDir();
 
@@ -128,6 +130,7 @@ namespace SpiderWin
 
         private void Form1_Load(object sender, EventArgs e)
         {
+            _logger.LogInformation("窗口已启动");
             PreLoadForm();
 
             LoadForm();
@@ -178,18 +181,19 @@ namespace SpiderWin
                 worker.OnTaskInit += (obj, spider) =>
                 {
                     childSW.Start();
-                    PrintUILog($"任务 {spider.TaskId} 正在初始化==========", string.Empty);
+
+                    _logger.LogInformation($"任务 {spider.TaskId} 正在初始化==========");
                 };
                 worker.OnTaskStart += (obj, spider) =>
                 {
-                    PrintUILog($"任务 {spider.TaskId} 开始==========", string.Empty);
+                    _logger.LogInformation($"任务 {spider.TaskId} 开始==========");
                 };
                 worker.OnTaskComplete += (obj, spider) =>
                 {
                     childSW.Stop();
 
                     var cost = $"共耗时：{childSW.Elapsed.TotalSeconds.ToFixed(2)}秒";
-                    PrintUILog($"任务 {spider.TaskId} 结束==========", $"{cost} \"file://{spider.CurrentDir}\"");
+                    _logger.LogInformation($"任务 {spider.TaskId} 结束==========", $"{cost} \"file://{spider.CurrentDir}\"");
                 };
                 worker.OnTaskStatusChanged += (obj, task) =>
                 {
@@ -197,11 +201,7 @@ namespace SpiderWin
                 };
                 worker.OnNewTask += (obj, spider) =>
                 {
-                    PrintLog("创建子任务", string.Empty);
-                };
-                worker.OnLog += (obj, logStr) =>
-                {
-                    PrintLog("日志", logStr);
+                    _logger.LogInformation($"创建子任务: {spider.TaskId}");
                 };
                 _spiders.Add(worker);
 
@@ -247,7 +247,7 @@ namespace SpiderWin
         private void ResultTxtBox_LinkClicked(object sender, LinkClickedEventArgs e)
         {
             if (!string.IsNullOrEmpty(e.LinkText) && e.LinkText.StartsWith("file"))
-                Process.Start("explorer.exe", e.LinkText);
+                OpenDir(e.LinkText);
         }
 
         private void DataGrid_CellDoubleClick(object sender, DataGridViewCellEventArgs e)
@@ -284,28 +284,28 @@ namespace SpiderWin
             _coreService.StopAllTask();
         }
 
-        private void PrintUILog(string type, string str)
+        private void PrintLog(string str)
         {
-            if (!string.IsNullOrEmpty(str))
-                BeginInvoke(() =>
-                {
-                    var logContent = $"{type}：{str}";
-                    var msg = $"[{DateTime.Now:yyyy-MM-dd HH:mm:ss}] >> {logContent} \r\n";
-                    _logger.LogInformation(logContent);
-                    ResultTxtBox.AppendText(msg);
-                    ResultTxtBox.Focus();
-                });
-        }
+            if (IsDisposed)
+                return;
 
-        private void PrintLog(string type, string str)
-        {
-            if (!string.IsNullOrEmpty(str))
-                BeginInvoke(() =>
+            if (!string.IsNullOrWhiteSpace(str))
+            {
+                if (InvokeRequired)
                 {
-                    var msg = $"[{DateTime.Now:yyyy-MM-dd HH:mm:ss}] >> {type}：{str} \r\n";
-                    ResultTxtBox.AppendText(msg);
+                    Invoke(() =>
+                    {
+                        ResultTxtBox.AppendText(str);
+                        ResultTxtBox.Focus();
+                    });
+                }
+                else
+                {
+
+                    ResultTxtBox.AppendText(str);
                     ResultTxtBox.Focus();
-                });
+                }
+            }
         }
 
         private void LinkClearLog_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
@@ -315,7 +315,15 @@ namespace SpiderWin
 
         private void MenuItem_Dir_Click(object sender, EventArgs e)
         {
-            Process.Start("explorer.exe", Configs.BaseDir);
+            OpenDir(Configs.BaseDir);
+        }
+
+        private void OpenDir(string dir)
+        {
+            if (!Directory.Exists(dir))
+                dir = Configs.BaseDir;
+
+            Process.Start("explorer.exe", dir);
         }
 
         private void Form1_FormClosing(object sender, FormClosingEventArgs e)
@@ -346,7 +354,7 @@ namespace SpiderWin
 
         private void MenuItem_LogDir_Click(object sender, EventArgs e)
         {
-            Process.Start("explorer.exe", Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "logs"));
+            OpenDir(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "logs"));
         }
 
         private void MenuItem_UseTask_Click(object sender, EventArgs e)
@@ -372,7 +380,7 @@ namespace SpiderWin
                 if (worker != null)
                     dir = worker.CurrentDir;
 
-                Process.Start("explorer.exe", dir);
+                OpenDir(dir);
             }
         }
 
@@ -438,6 +446,8 @@ namespace SpiderWin
             //this.Visible = false;
             //显示托盘图标
             notifyIcon1.Visible = true;
+            notifyIcon1.Text = Text;
+            notifyIcon1.ShowBalloonTip(1000, Text, "窗口已被最小化到托盘", ToolTipIcon.Info);
         }
 
         private void ShowModalFromMinimum()
@@ -482,7 +492,7 @@ namespace SpiderWin
                     return;
                 }
             }
-           
+
         }
 
         protected override void OnLeave(EventArgs e)

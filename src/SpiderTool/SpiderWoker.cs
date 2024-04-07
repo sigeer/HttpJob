@@ -30,10 +30,6 @@ namespace SpiderTool
         /// </summary>
         public event EventHandler<SpiderWorker>? OnTaskComplete;
         /// <summary>
-        /// 日志
-        /// </summary>
-        public event EventHandler<string>? OnLog;
-        /// <summary>
         /// 创建子任务
         /// </summary>
         public event EventHandler<SpiderWorker>? OnNewTask;
@@ -105,6 +101,7 @@ namespace SpiderTool
 
         public SpiderWorker(ILogger<SpiderWorker> logger, int spiderId, string url, ISpiderService service, ISpiderProcessor? processor = null)
         {
+            Log.Logger = logger;
             ArgumentNullException.ThrowIfNull(service);
 
             _service = service;
@@ -144,74 +141,13 @@ namespace SpiderTool
 
             _service?.SetLinkedSpider(Spider);
         }
-        /// <summary>
-        /// 临时爬虫
-        /// </summary>
-        /// <param name="spiderDetail"></param>
-        /// <param name="url"></param>
-        /// <param name="service"></param>
-        /// <param name="processor"></param>
-        /// <exception cref="Exception"></exception>
-        public SpiderWorker(ILogger<SpiderWorker> logger,
-            WorkerController controller,
-            SpiderDetailViewModel spiderDetail,
-            string url,
-            ISpiderService? service = null,
-            ISpiderProcessor? processor = null)
-        {
-            _service = service;
-            _processor = processor ?? new DefaultSpiderProcessor();
-            _logger = logger;
-            _control = controller;
 
-            _rootUrl = url;
-
-            _spider = spiderDetail;
-            if (Spider == null)
-                throw new Exception($"spiderDetail not existed");
-
-            _service?.SetLinkedSpider(Spider);
-        }
-
-        /// <summary>
-        /// 临时子爬虫
-        /// </summary>
-        /// <param name="spiderDetail"></param>
-        /// <param name="url"></param>
-        /// <param name="service"></param>
-        /// <param name="processor"></param>
-        /// <exception cref="Exception"></exception>
-        public SpiderWorker(SpiderWorker rootSpider, SpiderDetailViewModel spiderDetail, string url)
-        {
-            _service = rootSpider._service;
-            _processor = rootSpider._processor;
-            _logger = rootSpider._logger;
-            _control = rootSpider._control;
-            ParentTask = rootSpider;
-            rootSpider.ChildrenTask.Add(this);
-
-            _rootUrl = url;
-            _spider = spiderDetail;
-            if (Spider == null)
-                throw new Exception($"spiderDetail not existed");
-
-            _service?.SetLinkedSpider(Spider);
-        }
-
-        public void CallLog(string logStr)
-        {
-            OnLog?.Invoke(this, logStr);
-            _logger.LogInformation(logStr);
-        }
 
         public void MountChildTaskEvent(SpiderWorker childTask)
         {
-            CallLog("创建子任务");
+            _logger.LogInformation("创建子任务");
             OnNewTask?.Invoke(this, childTask);
-            childTask.OnLog += (obj, evt) =>
-            {
-                OnLog?.Invoke(obj, evt);
-            };
+
             childTask.OnNewTask += (obj, evt) =>
             {
                 OnNewTask?.Invoke(obj, evt);
@@ -277,7 +213,7 @@ namespace SpiderTool
                 case TaskType.NotEffective:
                     OnTaskInit?.Invoke(this, this);
                     OnTaskStatusChanged?.Invoke(this, this);
-                    CallLog($"添加任务：{TaskId} {_rootUrl}");
+                    _logger.LogInformation($"添加任务：{TaskId} {_rootUrl}");
                     break;
                 case TaskType.InProgress:
                     _service?.UpdateTask(new TaskEditDto
@@ -288,19 +224,19 @@ namespace SpiderTool
                     });
                     OnTaskStart?.Invoke(this, this);
                     OnTaskStatusChanged?.Invoke(this, this);
-                    CallLog($"开始任务：{TaskId} {_currentUrl}");
+                    _logger.LogInformation($"开始任务：{TaskId} {_currentUrl}");
                     break;
                 case TaskType.Completed:
                     _service?.SetTaskStatus(TaskId, (int)TaskType.Completed);
                     OnTaskComplete?.Invoke(this, this);
                     OnTaskStatusChanged?.Invoke(this, this);
-                    CallLog($"完成任务：{TaskId}");
+                    _logger.LogInformation($"完成任务：{TaskId}");
                     break;
                 case TaskType.Canceled:
                     _service?.SetTaskStatus(TaskId, (int)TaskType.Canceled);
                     OnTaskCanceled?.Invoke(this, this);
                     OnTaskStatusChanged?.Invoke(this, this);
-                    CallLog($"取消任务：{TaskId} {logStr}");
+                    _logger.LogInformation($"取消任务：{TaskId} {logStr}");
                     _control.Return(TaskId);
                     break;
                 default:
@@ -334,7 +270,7 @@ namespace SpiderTool
         private async Task ProcessUrl(string currentUrl, bool isRootUrl = true, CancellationToken cancellationToken = default)
         {
             _currentUrl = currentUrl.GetTotalUrl(HostUrl);
-            CallLog($"即将访问：{_currentUrl}");
+            _logger.LogInformation($"即将访问：{_currentUrl}");
             var documentContent = await RequestDocumentContent(_currentUrl, Spider, cancellationToken);
             _currentDoc.LoadHtml(documentContent);
 

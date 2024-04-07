@@ -1,4 +1,5 @@
 ﻿using HtmlAgilityPack;
+using Microsoft.Extensions.Logging;
 using SpiderTool.Data.Dto.Spider;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -49,7 +50,7 @@ namespace SpiderTool
             return dir;
         }
 
-        public static async Task BulkDownload(string dir, List<string> urls, Action<string>? log = null, CancellationToken cancellationToken = default)
+        public static async Task BulkDownload(string dir, List<string> urls, CancellationToken cancellationToken = default)
         {
             var snowFlake = Utility.GuidHelper.Snowflake.GetInstance(1);
             var data = urls.Distinct().ToDictionary(x => x, x => snowFlake.NextId().ToString());
@@ -65,7 +66,7 @@ namespace SpiderTool
                 {
                     var uri = new Uri(item.Key);
                     var result = await client.HttpGetCore(uri.ToString(), cancellationToken: ct);
-                    log?.Invoke($"BulkDownload 请求 {item}");
+                    Log.Logger.LogInformation($"BulkDownload 请求 {item}");
                     var fileName = uri.Segments.Last();
                     if (!TryGetExtension(fileName, out var extension))
                     {
@@ -81,11 +82,11 @@ namespace SpiderTool
                     if (fileBytes.Length > 0)
                         await File.WriteAllBytesAsync(path, fileBytes, ct);
                     else
-                        log?.Invoke($"BulkDownload for {item}, file bytes = 0");
+                        Log.Logger.LogInformation($"BulkDownload for {item}, file bytes = 0");
                 }
                 catch (Exception ex)
                 {
-                    log?.Invoke(ex.ToString());
+                    Log.Logger.LogError(ex.ToString());
                 }
                 finally
                 {
@@ -231,5 +232,10 @@ namespace SpiderTool
             return new string(c);
         }
 
+    }
+
+    public static class Log
+    {
+        public static ILogger Logger { get; set; } = null!;
     }
 }
