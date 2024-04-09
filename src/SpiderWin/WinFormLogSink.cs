@@ -9,7 +9,7 @@ namespace SpiderWin
         // 用于将日志消息发送到 WinForms 应用程序的事件
         public event EventHandler<string>? LogReceived;
 
-        private MessageTemplateTextFormatter? formatter;
+        private MessageTemplateTextFormatter formatter;
 
         public WinFormLogSink()
         {

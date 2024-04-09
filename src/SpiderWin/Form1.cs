@@ -550,5 +550,10 @@ namespace SpiderWin
                 Configs.UpdateBaseDir(folder.SelectedPath);
             }
         }
+
+        private void MenuItem_Replace_Click(object sender, EventArgs e)
+        {
+            new ReplaceTextForm().ShowDialog();
+        }
     }
 }
