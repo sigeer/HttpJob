@@ -76,7 +76,7 @@ namespace SpiderWin
             }
 
             Application.SetUnhandledExceptionMode(UnhandledExceptionMode.CatchException);
-            Application.ThreadException += new System.Threading.ThreadExceptionEventHandler(Application_ThreadException);
+            Application.ThreadException += new ThreadExceptionEventHandler(Application_ThreadException);
             AppDomain.CurrentDomain.ProcessExit += (s, e) =>
             {
                 _logger.Information("³ÌÐò¹Ø±Õ");
@@ -89,7 +89,7 @@ namespace SpiderWin
             Application.Run(form);
         }
 
-        static void Application_ThreadException(object sender, System.Threading.ThreadExceptionEventArgs ex)
+        static void Application_ThreadException(object sender, ThreadExceptionEventArgs ex)
         {
             _logger.Error(ex.Exception.ToString());
         }
