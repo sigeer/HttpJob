@@ -148,6 +148,10 @@ namespace SpiderTool
                     var innerValue = evt.Groups[1].Value;
                     if (!string.IsNullOrEmpty(innerValue))
                     {
+                        if (innerValue == "NewLine")
+                        {
+                            return Environment.NewLine;
+                        }
                         return navigator.SelectSingleNode(innerValue)?.Value ?? string.Empty;
                     }
                     return string.Empty;
@@ -158,6 +162,10 @@ namespace SpiderTool
                     var innerValue = evt.Groups[1].Value;
                     if (!string.IsNullOrEmpty(innerValue))
                     {
+                        if (innerValue == "NewLine")
+                        {
+                            return Environment.NewLine;
+                        }
                         return navigator.SelectSingleNode(innerValue)?.Value ?? string.Empty;
                     }
                     return string.Empty;
