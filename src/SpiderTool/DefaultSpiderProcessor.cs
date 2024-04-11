@@ -1,15 +1,13 @@
 ﻿using HtmlAgilityPack;
-using Microsoft.Extensions.Logging;
 using SpiderTool.Data.Dto.Spider;
 using System.Data;
-using System.Text.RegularExpressions;
 
 namespace SpiderTool
 {
-    public class DefaultSpiderProcessor : ISpiderProcessor
+    public class DefaultSpiderProcessor : BaseSpiderProcessor
     {
 
-        protected virtual async Task ProcessObject(string savePath, SpiderWorker rootSpider, HtmlNodeCollection nodes, TemplateDetailViewModel rule, CancellationToken cancellationToken = default)
+        protected override async Task ProcessObject(string savePath, SpiderWorker rootSpider, HtmlNodeCollection nodes, TemplateDetailViewModel rule, CancellationToken cancellationToken = default)
         {
 
             var urlList = nodes.Where(x => x.GetAttributeValue(rule.ReadAttribute, null) != null)
@@ -21,7 +19,7 @@ namespace SpiderTool
             await SpiderUtility.BulkDownload(savePath, urlList, cancellationToken);
         }
 
-        protected virtual async Task ProcessText(string savePath, SpiderWorker rootSpider, HtmlNodeCollection nodes, TemplateDetailViewModel rule, CancellationToken cancellationToken = default)
+        protected override async Task ProcessText(string savePath, SpiderWorker rootSpider, HtmlNodeCollection nodes, TemplateDetailViewModel rule, CancellationToken cancellationToken = default)
         {
             foreach (var item in nodes)
             {
@@ -31,7 +29,7 @@ namespace SpiderTool
             }
         }
 
-        protected virtual async Task ProcessJumpLink(SpiderWorker rootSpider, HtmlNodeCollection nodes, TemplateDetailViewModel rule, CancellationToken cancellationToken = default)
+        protected override async Task ProcessJumpLink(SpiderWorker rootSpider, HtmlNodeCollection nodes, TemplateDetailViewModel rule, CancellationToken cancellationToken = default)
         {
             await Parallel.ForEachAsync(nodes, cancellationToken, async (item, ctx) =>
             {
@@ -56,30 +54,9 @@ namespace SpiderTool
                     }
                 }
             });
-            //foreach (var item in nodes)
-            //{
-            //    if (IsCanceled(rootSpider, cancellationToken))
-            //        return;
-
-            //    var resource = (item.Attributes["href"] ?? item.Attributes["data-href"])?.Value;
-            //    if (resource == null)
-            //        continue;
-
-            //    if (resource.StartsWith("javascript:"))
-            //        continue;
-
-            //    var url = resource.GetTotalUrl(rootSpider.HostUrl);
-
-            //    if (rule.LinkedSpiderDetail != null)
-            //    {
-            //        var spider = new SpiderWorker(rule.LinkedSpiderDetail, url, rootSpider);
-            //        rootSpider.MountChildTaskEvent(spider);
-            //        await spider.Start();
-            //    }
-            //}
         }
 
-        protected virtual async Task ProcessHtml(string savePath, SpiderWorker rootSpider, HtmlNodeCollection nodes, TemplateDetailViewModel rule, CancellationToken cancellationToken = default)
+        protected override async Task ProcessHtml(string savePath, SpiderWorker rootSpider, HtmlNodeCollection nodes, TemplateDetailViewModel rule, CancellationToken cancellationToken = default)
         {
             foreach (var item in nodes)
             {
@@ -87,86 +64,6 @@ namespace SpiderTool
 
                 await SpiderUtility.SaveTextAsync(savePath, item.InnerHtml);
             }
-        }
-
-        public virtual async Task ProcessContentAsync(SpiderWorker rootSpider, string documentContent, List<TemplateDetailViewModel> templateRules, CancellationToken cancellationToken = default)
-        {
-            cancellationToken.ThrowIfCancellationRequested();
-
-            if (templateRules.Count == 0)
-            {
-                await SpiderUtility.SaveTextAsync(rootSpider.CurrentDir, documentContent);
-                return;
-            }
-
-            var currentDoc = new HtmlDocument();
-            currentDoc.LoadHtml(documentContent);
-
-            for (int i = 0; i < templateRules.Count; i++)
-            {
-                cancellationToken.ThrowIfCancellationRequested();
-
-                var rule = templateRules[i];
-                var nodes = string.IsNullOrEmpty(rule.TemplateStr)
-                    ? new HtmlNodeCollection(currentDoc.DocumentNode)
-                    : currentDoc.DocumentNode.SelectNodes(rule.TemplateStr ?? "");
-                if (nodes == null)
-                    continue;
-
-                var savePath = Path.Combine(rootSpider.CurrentDir, $"Rule{rule.Id.ToString()}");
-
-                rule.ReplacementRules = FormatReplaceRulesDynamic(currentDoc.DocumentNode, rule.ReplacementRules);
-
-                if (rule.Type == (int)TemplateTypeEnum.Object)
-                {
-                    await ProcessObject(savePath, rootSpider, nodes, rule, cancellationToken);
-                }
-                if (rule.Type == (int)TemplateTypeEnum.Text)
-                {
-                    await ProcessText(savePath, rootSpider, nodes, rule, cancellationToken);
-                }
-                if (rule.Type == (int)TemplateTypeEnum.Html)
-                {
-                    await ProcessHtml(savePath, rootSpider, nodes, rule, cancellationToken);
-                }
-                if (rule.Type == (int)TemplateTypeEnum.JumpLink)
-                {
-                    await ProcessJumpLink(rootSpider, nodes, rule, cancellationToken);
-                }
-            }
-        }
-
-        private List<ReplacementRuleDto> FormatReplaceRulesDynamic(HtmlNode htmlNode, List<ReplacementRuleDto> rules)
-        {
-            HtmlNodeNavigator navigator = (HtmlNodeNavigator)htmlNode.CreateNavigator();
-            foreach (var rule in rules)
-            {
-                var regStr = new Regex("\\$\\{(.*?)\\}");
-
-                var oldValue = regStr.Replace(rule.ReplacementOldStr, evt =>
-                {
-                    var innerValue = evt.Groups[1].Value;
-                    if (!string.IsNullOrEmpty(innerValue))
-                    {
-                        return navigator.SelectSingleNode(innerValue)?.Value ?? string.Empty;
-                    }
-                    return string.Empty;
-                });
-
-                var newlyValue = string.IsNullOrEmpty(rule.ReplacementNewlyStr) ? null : regStr.Replace(rule.ReplacementNewlyStr, evt =>
-                {
-                    var innerValue = evt.Groups[1].Value;
-                    if (!string.IsNullOrEmpty(innerValue))
-                    {
-                        return navigator.SelectSingleNode(innerValue)?.Value ?? string.Empty;
-                    }
-                    return string.Empty;
-                });
-
-                rule.ReplacementOldStr = oldValue;
-                rule.ReplacementNewlyStr = newlyValue;
-            }
-            return rules;
         }
     }
 }

@@ -5,8 +5,8 @@ using System.Data;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Web;
+using Utility.Common;
 using Utility.Extensions;
-using Utility.Http;
 
 namespace SpiderTool
 {
@@ -56,7 +56,7 @@ namespace SpiderTool
             var snowFlake = Utility.GuidHelper.Snowflake.GetInstance(1);
             var data = urls.Distinct().ToDictionary(x => x, x => snowFlake.NextId().ToString());
             var dirRoot = dir.GetDirectory();
-            using var httpRequestPool = new HttpClientPool();
+            using var httpRequestPool = new WorkPool<HttpClient>();
             await Parallel.ForEachAsync(data, cancellationToken, async (item, ct) =>
             {
                 if (string.IsNullOrEmpty(item.Key))
@@ -66,7 +66,7 @@ namespace SpiderTool
                 try
                 {
                     var uri = new Uri(item.Key);
-                    var result = await client.HttpGetCore(uri.ToString(), cancellationToken: ct);
+                    var result = await client.GetAsync(uri.ToString(), cancellationToken: ct);
                     Log.Logger.LogInformation($"BulkDownload 请求 {item}");
                     var fileName = uri.Segments.Last();
                     if (!TryGetExtension(fileName, out var extension))
