@@ -34,7 +34,7 @@ namespace SpiderTool
                 if (nodes == null)
                     continue;
 
-                var savePath = Path.Combine(rootSpider.CurrentDir, $"Rule{rule.Id.ToString()}");
+                var savePath = templateRules.Count > 1 ? Path.Combine(rootSpider.CurrentDir, $"Rule{rule.Id.ToString()}") : rootSpider.CurrentDir;
 
                 rule.ReplacementRules = FormatReplaceRulesDynamic(currentDoc.DocumentNode, rule.ReplacementRules);
 

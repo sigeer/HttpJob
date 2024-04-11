@@ -185,16 +185,6 @@ namespace SpiderTool
                         File.Delete(file);
                     }
                 }
-
-                allFiles = currentDirInfo.GetFiles().OrderBy(x => x.CreationTime).ToList();
-                if (dirsCount == 1)
-                {
-                    allFiles.ForEach(file =>
-                    {
-                        File.Move(file.FullName, Path.Combine(rootDir, file.Name));
-                    });
-                    Directory.Delete(currentDirInfo.FullName);
-                }
             }
         }
 
