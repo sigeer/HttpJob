@@ -19,12 +19,17 @@ namespace SpiderWin
             if (nowAssembly != null)
             {
                 FileVersionInfo fileVersionInfo = FileVersionInfo.GetVersionInfo(nowAssembly.Location);
-                Label_Version.Text = fileVersionInfo.ProductVersion?.ToString();
+                Label_Version.Text = fileVersionInfo.ProductVersion?.ToString().Split("+")[0];
             }
         }
 
+        bool isLoading = false;
         private async void Link_Update_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
         {
+            if (isLoading)
+                return;
+
+            isLoading = true;
             var newlyVersion = await SystemUpdate.GetNewlyVersion();
             if (Label_Version.Text != newlyVersion.Version)
             {
@@ -43,7 +48,7 @@ namespace SpiderWin
             {
                 MessageBox.Show("当前版本已是最新版本！");
             }
-
+            isLoading = false;
         }
     }
 }
