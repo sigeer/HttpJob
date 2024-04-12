@@ -380,6 +380,7 @@ namespace SpiderWin
                 if (worker != null)
                     dir = worker.CurrentDir;
 
+                _logger.LogDebug($"尝试打开{dir}");
                 OpenDir(dir);
             }
         }
