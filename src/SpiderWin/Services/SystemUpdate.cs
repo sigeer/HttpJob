@@ -1,5 +1,5 @@
 ﻿using System.Xml;
-using Utility.Http;
+using Utility.HttpRequest.Core;
 
 namespace SpiderWin.Services
 {

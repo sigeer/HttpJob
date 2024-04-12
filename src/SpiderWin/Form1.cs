@@ -192,8 +192,8 @@ namespace SpiderWin
                 {
                     childSW.Stop();
 
-                    var cost = $"共耗时：{childSW.Elapsed.TotalSeconds.ToFixed(2)}秒";
-                    _logger.LogInformation($"任务 {spider.TaskId} 结束==========", $"{cost} \"file://{spider.CurrentDir}\"");
+                    var cost = $"耗时：{childSW.Elapsed.TotalSeconds.ToFixed(2)}秒";
+                    _logger.LogInformation($"任务 {spider.TaskId} 结束========= {cost} 保存路径：file://{spider.CurrentDir}");
                 };
                 worker.OnTaskStatusChanged += (obj, task) =>
                 {

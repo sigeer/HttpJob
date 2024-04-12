@@ -31,7 +31,7 @@ namespace SpiderTool
                 var nodes = string.IsNullOrEmpty(rule.TemplateStr)
                     ? new HtmlNodeCollection(currentDoc.DocumentNode)
                     : currentDoc.DocumentNode.SelectNodes(rule.TemplateStr ?? "");
-                if (nodes == null)
+                if (nodes == null || nodes.Count == 0)
                     continue;
 
                 var savePath = templateRules.Count > 1 ? Path.Combine(rootSpider.CurrentDir, $"Rule{rule.Id.ToString()}") : rootSpider.CurrentDir;
