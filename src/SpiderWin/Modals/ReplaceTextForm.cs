@@ -1,7 +1,11 @@
-﻿using SpiderTool.Data.Dto.Spider;
+﻿using HtmlAgilityPack;
+using SpiderTool;
+using SpiderTool.Data.Dto.Spider;
+using System.Data;
 using System.Diagnostics;
 using System.Text.Json;
 using System.Text.RegularExpressions;
+using Utility.SimpleStringParse;
 
 namespace SpiderWin.Modals
 {
@@ -36,8 +40,9 @@ namespace SpiderWin.Modals
                     SetWorking(true);
                 });
 
+                var workRules = FormatReplaceRulesDynamic(ReplacementRules);
                 var content = File.ReadAllText(txtFilePath);
-                foreach (var rule in ReplacementRules)
+                foreach (var rule in workRules)
                 {
                     content = Regex.Replace(content, rule.ReplacementOldStr, rule.ReplacementNewlyStr ?? string.Empty, rule.IgnoreCase ? RegexOptions.IgnoreCase : RegexOptions.None);
                 }
@@ -48,6 +53,29 @@ namespace SpiderWin.Modals
                     SetWorking(false);
                 });
             });
+        }
+
+        protected virtual List<ReplacementRuleDto> FormatReplaceRulesDynamic(List<ReplacementRuleDto> rules)
+        {
+            var newList = new List<ReplacementRuleDto>();
+            var tokenizer = SimpleStringTokenProvider.GetStringTokenizer();
+            var provider = new SimpleStringTokenProvider();
+            foreach (var rule in rules)
+            {
+                var oldToken = tokenizer.Parse(rule.ReplacementOldStr);
+                var oldValue = provider.Serialize(oldToken);
+
+                var newToken = tokenizer.Parse(rule.ReplacementNewlyStr);
+                var newlyValue = provider.Serialize(newToken);
+                newList.Add(new ReplacementRuleDto
+                {
+                    Id = rule.Id,
+                    IgnoreCase = rule.IgnoreCase,
+                    ReplacementOldStr = oldValue,
+                    ReplacementNewlyStr = newlyValue
+                });
+            }
+            return newList;
         }
 
         private void Btn_OpenDir_Click(object sender, EventArgs e)
@@ -134,6 +162,8 @@ namespace SpiderWin.Modals
             var cfg = ConfigFile(index);
             if (File.Exists(cfg))
                 ReplacementRules = JsonSerializer.Deserialize<List<ReplacementRuleDto>>(File.ReadAllText(cfg) ?? "[]") ?? new List<ReplacementRuleDto>();
+            else
+                ReplacementRules = new List<ReplacementRuleDto>();
         }
         private void BtnConfig1_Click(object sender, EventArgs e)
         {
