@@ -6,7 +6,7 @@ using SpiderTool.Data.Dto.Tasks;
 using SpiderTool.Data.IService;
 using System.Web;
 using Utility.Extensions;
-using Utility.Http;
+using Utility.HttpRequest.Core;
 
 namespace SpiderTool
 {

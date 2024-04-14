@@ -39,10 +39,10 @@ namespace SpiderWin.Modals
                 var content = File.ReadAllText(txtFilePath);
                 foreach (var rule in ReplacementRules)
                 {
-                    content = Regex.Replace(content, rule.ReplacementOldStr, rule.ReplacementNewlyStr ?? string.Empty, RegexOptions.IgnoreCase);
+                    content = Regex.Replace(content, rule.ReplacementOldStr, rule.ReplacementNewlyStr ?? string.Empty, rule.IgnoreCase ? RegexOptions.IgnoreCase : RegexOptions.None);
                 }
                 File.WriteAllText(txtFilePath, content);
-
+                MessageBox.Show("操作完成");
                 Invoke(() =>
                 {
                     SetWorking(false);

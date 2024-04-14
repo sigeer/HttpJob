@@ -1,11 +1,12 @@
 ﻿using HtmlAgilityPack;
 using Microsoft.Extensions.Logging;
 using SpiderTool.Data.Dto.Spider;
+using System.Data;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Web;
+using Utility.Common;
 using Utility.Extensions;
-using Utility.Http;
 
 namespace SpiderTool
 {
@@ -55,7 +56,7 @@ namespace SpiderTool
             var snowFlake = Utility.GuidHelper.Snowflake.GetInstance(1);
             var data = urls.Distinct().ToDictionary(x => x, x => snowFlake.NextId().ToString());
             var dirRoot = dir.GetDirectory();
-            using var httpRequestPool = new HttpClientPool();
+            using var httpRequestPool = new WorkPool<HttpClient>();
             await Parallel.ForEachAsync(data, cancellationToken, async (item, ct) =>
             {
                 if (string.IsNullOrEmpty(item.Key))
@@ -65,7 +66,7 @@ namespace SpiderTool
                 try
                 {
                     var uri = new Uri(item.Key);
-                    var result = await client.HttpGetCore(uri.ToString(), cancellationToken: ct);
+                    var result = await client.GetAsync(uri.ToString(), cancellationToken: ct);
                     Log.Logger.LogInformation($"BulkDownload 请求 {item}");
                     var fileName = uri.Segments.Last();
                     if (!TryGetExtension(fileName, out var extension))
@@ -146,7 +147,7 @@ namespace SpiderTool
             var finalText = HttpUtility.HtmlDecode(item.InnerHtml);
             foreach (var handle in replaceRules)
             {
-                finalText = Regex.Replace(finalText, handle.ReplacementOldStr, handle.ReplacementNewlyStr ?? "", RegexOptions.IgnoreCase);
+                finalText = Regex.Replace(finalText, handle.ReplacementOldStr, handle.ReplacementNewlyStr ?? "", handle.IgnoreCase ? RegexOptions.IgnoreCase : RegexOptions.None);
             }
             var temp = new HtmlDocument();
             temp.LoadHtml(finalText);
@@ -183,16 +184,6 @@ namespace SpiderTool
                         await File.AppendAllTextAsync(filePath, txt.TrimEnd(), cancellationToken);
                         File.Delete(file);
                     }
-                }
-
-                allFiles = currentDirInfo.GetFiles().OrderBy(x => x.CreationTime).ToList();
-                if (dirsCount == 1)
-                {
-                    allFiles.ForEach(file =>
-                    {
-                        File.Move(file.FullName, Path.Combine(rootDir, file.Name));
-                    });
-                    Directory.Delete(currentDirInfo.FullName);
                 }
             }
         }
