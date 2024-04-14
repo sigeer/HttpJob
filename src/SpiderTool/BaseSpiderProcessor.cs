@@ -59,9 +59,9 @@ namespace SpiderTool
         protected virtual StringTokenizer GetStringTokenizer()
         {
             return new StringTokenizer(
-                new StringTokenTag(DefaultStringTokenProvider.Name_XPath, DefaultStringTokenProvider.StartTag, DefaultStringTokenProvider.EndTag),
-                new StringTokenTag(DefaultStringTokenProvider.Name_If, DefaultStringTokenProvider.StartTag, DefaultStringTokenProvider.EndTag),
-                new StringTokenTag(DefaultStringTokenProvider.Name_NewLine)
+                new StringTokenTag(DefaultStringTokenProvider.Name_XPath, SimpleStringTokenProvider.StartTag, SimpleStringTokenProvider.EndTag),
+                new StringTokenTag(SimpleStringTokenProvider.Name_If, SimpleStringTokenProvider.StartTag, SimpleStringTokenProvider.EndTag),
+                new StringTokenTag(SimpleStringTokenProvider.Name_NewLine)
             );
         }
         protected virtual StringTokenProvider GetStringTokenProvider(HtmlNode htmlNode)
@@ -70,6 +70,7 @@ namespace SpiderTool
         }
         protected virtual List<ReplacementRuleDto> FormatReplaceRulesDynamic(HtmlNode htmlNode, List<ReplacementRuleDto> rules)
         {
+            var newList = new List<ReplacementRuleDto>();
             var tokenizer = GetStringTokenizer();
             var provider = GetStringTokenProvider(htmlNode);
             foreach (var rule in rules)
@@ -80,21 +81,22 @@ namespace SpiderTool
                 var newToken = tokenizer.Parse(rule.ReplacementNewlyStr);
                 var newlyValue = provider.Serialize(newToken);
 
-                rule.ReplacementOldStr = oldValue;
-                rule.ReplacementNewlyStr = newlyValue;
+                newList.Add(new ReplacementRuleDto
+                {
+                    Id = rule.Id,
+                    IgnoreCase = rule.IgnoreCase,
+                    ReplacementOldStr = oldValue,
+                    ReplacementNewlyStr = newlyValue
+                });
             }
-            return rules;
+            return newList;
         }
     }
 
-    public class DefaultStringTokenProvider : StringTokenProvider
+    public class DefaultStringTokenProvider : SimpleStringTokenProvider
     {
         readonly HtmlNodeNavigator _navigator;
         public const string Name_XPath = "$XPath";
-        public const string Name_NewLine = "$NewLine";
-        public const string Name_If = "$If";
-        public const char StartTag = '(';
-        public const char EndTag = ')';
 
         public DefaultStringTokenProvider(HtmlNode htmlNode) : base()
         {
@@ -105,21 +107,6 @@ namespace SpiderTool
         public string XPath(string args)
         {
             return _navigator.SelectSingleNode(args)?.Value ?? string.Empty;
-        }
-
-        [StringTokenName(Name_NewLine)]
-        public string NewLine(string args)
-        {
-            return Environment.NewLine;
-        }
-        [StringTokenName(Name_If)]
-        public string If(string args)
-        {
-            var argList = args.Split(',');
-            if (argList.Length != 4)
-                return args;
-
-            return argList[0] == argList[1] ? argList[2] : argList[3];
         }
     }
 }
