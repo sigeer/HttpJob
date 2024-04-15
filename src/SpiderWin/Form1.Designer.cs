@@ -45,6 +45,8 @@
             MenuItem_LogDir = new ToolStripMenuItem();
             帮助ToolStripMenuItem = new ToolStripMenuItem();
             MenuItem_About = new ToolStripMenuItem();
+            工具ToolStripMenuItem = new ToolStripMenuItem();
+            MenuItem_Replace = new ToolStripMenuItem();
             statusStrip1 = new StatusStrip();
             mainModalStatusLabel = new ToolStripStatusLabel();
             ResultTxtBox = new RichTextBox();
@@ -67,8 +69,6 @@
             IconMenu = new ContextMenuStrip(components);
             MenuItem_ShowModal = new ToolStripMenuItem();
             MenuItem_Exit = new ToolStripMenuItem();
-            工具ToolStripMenuItem = new ToolStripMenuItem();
-            MenuItem_Replace = new ToolStripMenuItem();
             menuStrip1.SuspendLayout();
             statusStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)DataGrid_InProgressTasks).BeginInit();
@@ -148,52 +148,50 @@
             // 
             工作设置ToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { UseLocalMenu, UseServiceMenu });
             工作设置ToolStripMenuItem.Name = "工作设置ToolStripMenuItem";
-            工作设置ToolStripMenuItem.Size = new Size(148, 22);
+            工作设置ToolStripMenuItem.Size = new Size(180, 22);
             工作设置ToolStripMenuItem.Text = "工作设置";
             // 
             // UseLocalMenu
             // 
             UseLocalMenu.Checked = true;
-            UseLocalMenu.CheckOnClick = true;
             UseLocalMenu.CheckState = CheckState.Checked;
             UseLocalMenu.Name = "UseLocalMenu";
-            UseLocalMenu.Size = new Size(112, 22);
+            UseLocalMenu.Size = new Size(180, 22);
             UseLocalMenu.Text = "本地";
             UseLocalMenu.Click += UseLocalMenu_Click;
             // 
             // UseServiceMenu
             // 
-            UseServiceMenu.CheckOnClick = true;
             UseServiceMenu.Name = "UseServiceMenu";
-            UseServiceMenu.Size = new Size(112, 22);
+            UseServiceMenu.Size = new Size(180, 22);
             UseServiceMenu.Text = "服务器";
             UseServiceMenu.Click += UseServiceMenu_Click;
             // 
             // MenuNewSpider
             // 
             MenuNewSpider.Name = "MenuNewSpider";
-            MenuNewSpider.Size = new Size(148, 22);
+            MenuNewSpider.Size = new Size(180, 22);
             MenuNewSpider.Text = "新增爬虫";
             MenuNewSpider.Click += MenuNewSpider_Click;
             // 
             // MenuItem_SetDir
             // 
             MenuItem_SetDir.Name = "MenuItem_SetDir";
-            MenuItem_SetDir.Size = new Size(148, 22);
+            MenuItem_SetDir.Size = new Size(180, 22);
             MenuItem_SetDir.Text = "设置保存目录";
             MenuItem_SetDir.Click += MenuItem_SetDir_Click;
             // 
             // MenuItem_Dir
             // 
             MenuItem_Dir.Name = "MenuItem_Dir";
-            MenuItem_Dir.Size = new Size(148, 22);
+            MenuItem_Dir.Size = new Size(180, 22);
             MenuItem_Dir.Text = "打开保存目录";
             MenuItem_Dir.Click += MenuItem_Dir_Click;
             // 
             // MenuItem_LogDir
             // 
             MenuItem_LogDir.Name = "MenuItem_LogDir";
-            MenuItem_LogDir.Size = new Size(148, 22);
+            MenuItem_LogDir.Size = new Size(180, 22);
             MenuItem_LogDir.Text = "打开日志目录";
             MenuItem_LogDir.Click += MenuItem_LogDir_Click;
             // 
@@ -210,6 +208,20 @@
             MenuItem_About.Size = new Size(100, 22);
             MenuItem_About.Text = "关于";
             MenuItem_About.Click += MenuItem_About_Click;
+            // 
+            // 工具ToolStripMenuItem
+            // 
+            工具ToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { MenuItem_Replace });
+            工具ToolStripMenuItem.Name = "工具ToolStripMenuItem";
+            工具ToolStripMenuItem.Size = new Size(44, 21);
+            工具ToolStripMenuItem.Text = "工具";
+            // 
+            // MenuItem_Replace
+            // 
+            MenuItem_Replace.Name = "MenuItem_Replace";
+            MenuItem_Replace.Size = new Size(124, 22);
+            MenuItem_Replace.Text = "文本替换";
+            MenuItem_Replace.Click += MenuItem_Replace_Click;
             // 
             // statusStrip1
             // 
@@ -413,20 +425,6 @@
             MenuItem_Exit.Size = new Size(100, 22);
             MenuItem_Exit.Text = "关闭";
             MenuItem_Exit.Click += MenuItem_Exit_Click;
-            // 
-            // 工具ToolStripMenuItem
-            // 
-            工具ToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { MenuItem_Replace });
-            工具ToolStripMenuItem.Name = "工具ToolStripMenuItem";
-            工具ToolStripMenuItem.Size = new Size(44, 21);
-            工具ToolStripMenuItem.Text = "工具";
-            // 
-            // MenuItem_Replace
-            // 
-            MenuItem_Replace.Name = "MenuItem_Replace";
-            MenuItem_Replace.Size = new Size(180, 22);
-            MenuItem_Replace.Text = "文本替换";
-            MenuItem_Replace.Click += MenuItem_Replace_Click;
             // 
             // Form1
             // 

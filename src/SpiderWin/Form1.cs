@@ -226,6 +226,7 @@ namespace SpiderWin
         {
             //使用本地服务
             UseServiceMenu.Checked = false;
+            UseLocalMenu.Checked = true;
             ServiceFactory.GrpcDisconnect();
             _coreService = localServiceBackup;
             LoadForm();
@@ -240,6 +241,7 @@ namespace SpiderWin
                 _coreService = evt;
                 LoadForm();
                 UseLocalMenu.Checked = false;
+                UseServiceMenu.Checked = true;
             };
             setting.ShowDialog();
         }

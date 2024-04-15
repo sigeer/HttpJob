@@ -1,7 +1,4 @@
-﻿using HtmlAgilityPack;
-using SpiderTool;
-using SpiderTool.Data.Dto.Spider;
-using System.Data;
+﻿using SpiderTool.Data.Dto.Spider;
 using System.Diagnostics;
 using System.Text.Json;
 using System.Text.RegularExpressions;

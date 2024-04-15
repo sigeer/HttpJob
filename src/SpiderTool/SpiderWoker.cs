@@ -194,6 +194,10 @@ namespace SpiderTool
             {
                 UpdateTaskStatus(TaskType.Canceled, cancelException.Message);
             }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.ToString());
+            }
         }
 
         public async Task CompleteTask(CancellationToken cancellationToken = default)
