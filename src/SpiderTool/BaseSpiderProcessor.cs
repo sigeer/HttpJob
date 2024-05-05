@@ -7,9 +7,9 @@ namespace SpiderTool
     public abstract class BaseSpiderProcessor : ISpiderProcessor
     {
         protected abstract Task ProcessObject(string savePath, SpiderWorker rootSpider, HtmlNodeCollection nodes, TemplateDetailViewModel rule, CancellationToken cancellationToken = default);
-        protected abstract Task ProcessText(string savePath, SpiderWorker rootSpider, HtmlNodeCollection nodes, TemplateDetailViewModel rule, CancellationToken cancellationToken = default);
+        protected abstract Task ProcessText(string savePath, SpiderWorker rootSpider, HtmlDocument pageDocument, TemplateDetailViewModel rule, CancellationToken cancellationToken = default);
         protected abstract Task ProcessJumpLink(SpiderWorker rootSpider, HtmlNodeCollection nodes, TemplateDetailViewModel rule, CancellationToken cancellationToken = default);
-        protected abstract Task ProcessHtml(string savePath, SpiderWorker rootSpider, HtmlNodeCollection nodes, TemplateDetailViewModel rule, CancellationToken cancellationToken = default);
+        protected abstract Task ProcessHtml(string savePath, SpiderWorker rootSpider, HtmlDocument pageDocument, TemplateDetailViewModel rule, CancellationToken cancellationToken = default);
         public virtual async Task ProcessContentAsync(SpiderWorker rootSpider, string documentContent, List<TemplateDetailViewModel> templateRules, CancellationToken cancellationToken = default)
         {
             cancellationToken.ThrowIfCancellationRequested();
@@ -28,30 +28,30 @@ namespace SpiderTool
                 cancellationToken.ThrowIfCancellationRequested();
 
                 var rule = templateRules[i];
-                var nodes = string.IsNullOrEmpty(rule.TemplateStr)
-                    ? new HtmlNodeCollection(currentDoc.DocumentNode)
-                    : currentDoc.DocumentNode.SelectNodes(rule.TemplateStr ?? "");
-                if (nodes == null || nodes.Count == 0)
-                    continue;
-
                 var savePath = templateRules.Count > 1 ? Path.Combine(rootSpider.CurrentDir, $"Rule{rule.Id.ToString()}") : rootSpider.CurrentDir;
 
                 rule.ReplacementRules = FormatReplaceRulesDynamic(currentDoc.DocumentNode, rule.ReplacementRules);
 
                 if (rule.Type == (int)TemplateTypeEnum.Object)
                 {
+                    var nodes = string.IsNullOrEmpty(rule.TemplateStr)
+                        ? new HtmlNodeCollection(currentDoc.DocumentNode)
+                        : currentDoc.DocumentNode.SelectNodes(rule.TemplateStr ?? "");
                     await ProcessObject(savePath, rootSpider, nodes, rule, cancellationToken);
                 }
                 if (rule.Type == (int)TemplateTypeEnum.Text)
                 {
-                    await ProcessText(savePath, rootSpider, nodes, rule, cancellationToken);
+                    await ProcessText(savePath, rootSpider, currentDoc, rule, cancellationToken);
                 }
                 if (rule.Type == (int)TemplateTypeEnum.Html)
                 {
-                    await ProcessHtml(savePath, rootSpider, nodes, rule, cancellationToken);
+                    await ProcessHtml(savePath, rootSpider, currentDoc, rule, cancellationToken);
                 }
                 if (rule.Type == (int)TemplateTypeEnum.JumpLink)
                 {
+                    var nodes = string.IsNullOrEmpty(rule.TemplateStr)
+                        ? new HtmlNodeCollection(currentDoc.DocumentNode)
+                        : currentDoc.DocumentNode.SelectNodes(rule.TemplateStr ?? "");
                     await ProcessJumpLink(rootSpider, nodes, rule, cancellationToken);
                 }
             }
