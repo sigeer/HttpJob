@@ -2,6 +2,7 @@
 using Microsoft.Extensions.Logging;
 using SpiderTool.Data.Dto.Spider;
 using System.Data;
+using System.Net;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Web;
@@ -142,16 +143,27 @@ namespace SpiderTool
             }
         }
 
-        public static string ReadHtmlNodeInnerText(HtmlNode item, List<ReplacementRuleDto> replaceRules)
+        public static string ReadHtmlNodeInnerContent(HtmlNode item, List<ReplacementRuleDto> replaceRules)
         {
-            var finalText = HttpUtility.HtmlDecode(item.InnerHtml);
+            var finalText = item.InnerHtml;
             foreach (var handle in replaceRules)
             {
                 finalText = Regex.Replace(finalText, handle.ReplacementOldStr, handle.ReplacementNewlyStr ?? "", handle.IgnoreCase ? RegexOptions.IgnoreCase : RegexOptions.None);
             }
+            return finalText;
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="htmlStr"></param>
+        /// <returns></returns>
+        public static string Html2Text(string htmlStr)
+        {
+            htmlStr = Regex.Replace(htmlStr, "<[bB][rR]\\s?/?>", Environment.NewLine);
             var temp = new HtmlDocument();
-            temp.LoadHtml(finalText);
-            return temp.DocumentNode.InnerText;
+            temp.LoadHtml(htmlStr);
+            return WebUtility.HtmlDecode(temp.DocumentNode.InnerText);
         }
 
         public static async Task MergeTextFileAsync(string rootDir, CancellationToken cancellationToken = default)
