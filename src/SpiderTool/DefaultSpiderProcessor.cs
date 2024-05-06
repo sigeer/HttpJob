@@ -35,7 +35,7 @@ namespace SpiderTool
             if (string.IsNullOrWhiteSpace(rule.TemplateStr))
                 return;
 
-            if (rule.TemplateStr.Contains(DefaultStringTokenProvider.Name_XPath))
+            if (rule.TemplateStr.Contains(DefaultStringTokenProvider.Name_XPathHtml) || rule.TemplateStr.Contains(DefaultStringTokenProvider.Name_XPathText))
             {
                 var value = FormatTemplateDynamic(pageDocument.DocumentNode, rule.TemplateStr);
                 await SpiderUtility.SaveTextAsync(savePath, allowHtml ? value : SpiderUtility.Html2Text(value));
