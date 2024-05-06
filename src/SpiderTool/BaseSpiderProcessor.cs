@@ -61,6 +61,7 @@ namespace SpiderTool
             return new StringTokenizer(
                 new StringTokenTag(DefaultStringTokenProvider.Name_XPathHtml, SimpleStringTokenProvider.StartTag, SimpleStringTokenProvider.EndTag),
                 new StringTokenTag(DefaultStringTokenProvider.Name_XPathText, SimpleStringTokenProvider.StartTag, SimpleStringTokenProvider.EndTag),
+                new StringTokenTag(DefaultStringTokenProvider.Name_XPathAttr, SimpleStringTokenProvider.StartTag, SimpleStringTokenProvider.EndTag),
                 new StringTokenTag(SimpleStringTokenProvider.Name_If, SimpleStringTokenProvider.StartTag, SimpleStringTokenProvider.EndTag),
                 new StringTokenTag(SimpleStringTokenProvider.Name_NewLine)
             );
@@ -99,6 +100,7 @@ namespace SpiderTool
         readonly HtmlNode _htmlNode;
         public const string Name_XPathHtml = "$XHtml";
         public const string Name_XPathText = "$XText";
+        public const string Name_XPathAttr = "$XAttr";
 
         public DefaultStringTokenProvider(HtmlNode htmlNode) : base()
         {
@@ -115,6 +117,13 @@ namespace SpiderTool
         public string XPathText(string args)
         {
             return string.Join(Environment.NewLine, _htmlNode.SelectNodes(args).Select(x => x.InnerText));
+        }
+
+        [StringTokenName(Name_XPathAttr, ArgCount = 2)]
+        public string XPathGetAttr(string args)
+        {
+            var argList = TryOrGetArgs(args);
+            return _htmlNode.SelectSingleNode(argList[0]).GetAttributeValue(argList[1], null);
         }
 
     }
