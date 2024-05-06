@@ -39,6 +39,11 @@ namespace SpiderTool.Dapper.Domain
             return (await _dbConn.QueryAsync<TaskListItemViewModel>(sql)).ToList();
         }
 
+        public async Task<List<TaskListItemViewModel>> GetTaskPageListAsync(int pageIndex, int pageSize)
+        {
+            throw new NotImplementedException();
+        }
+
         public void UpdateTask(TaskEditDto model)
         {
             _dbConn.ExecuteScalar($"update {taskTable} set Description = @Description, Status = @Status where id = @Id", model);

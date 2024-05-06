@@ -25,6 +25,7 @@ namespace SpiderTool.Data.IService
 
         List<TaskListItemViewModel> GetTaskList();
         Task<List<TaskListItemViewModel>> GetTaskListAsync();
+        Task<List<TaskListItemViewModel>> GetTaskPageListAsync(int pageIndex, int pageSize);
         int AddTask(TaskEditDto model);
         Task<int> AddTaskAsync(TaskEditDto model);
         void UpdateTask(TaskEditDto model);

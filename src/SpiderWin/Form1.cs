@@ -9,6 +9,7 @@ using SpiderWin.Modals;
 using SpiderWin.Server;
 using SpiderWin.Services;
 using System.Diagnostics;
+using System.Windows.Forms;
 using Utility.Common;
 using Utility.Extensions;
 
@@ -74,7 +75,7 @@ namespace SpiderWin
 
         private void LoadForm()
         {
-            LoadTaskList(true);
+            LoadTaskList();
             LoadSpiderList();
         }
 
@@ -112,25 +113,70 @@ namespace SpiderWin
             });
         }
 
-        private void LoadTaskList(bool refreshUrlDropdown = true)
+        int pageSize = 200;
+        int pageIndex = 1;
+        private void LoadTaskList(bool fromFirstPage = true, Action? callBack = null)
         {
+            if (fromFirstPage)
+            {
+                pageIndex = 1;
+                _taskList.Clear();
+            }
+
             Task.Run(async () =>
             {
-                _taskList = await _coreService.GetTaskListAsync();
+                var pagedData = await _coreService.GetTaskPageListAsync(pageIndex, pageSize);
+                if (pagedData.Count == 0)
+                    return;
+
+                _taskList = _taskList.Concat(pagedData).ToList();
                 BeginInvoke(() =>
                 {
-                    if (refreshUrlDropdown)
-                        ComboxUrl.DataSource = _taskList.Select(x => x.RootUrl).Distinct().ToList();
+                    ComboxUrl.DataSource = _taskList.Select(x => x.RootUrl).Distinct().ToList();
 
                     LoadDataGridData(_taskList.Where(x => x.Status == (int)TaskType.InProgress || x.Status == (int)TaskType.NotEffective).ToList(), DataGrid_InProgressTasks);
                     LoadDataGridData(_taskList.Where(x => x.Status == (int)TaskType.Completed || x.Status == (int)TaskType.Canceled).ToList(), DataGrid_OtherTasks);
+                    callBack?.Invoke();
                 });
             });
         }
 
+
+        private void GridView_Scroll(object? sender, ScrollEventArgs e)
+        {
+            if (sender == null)
+                return;
+
+            var grid = (DataGridView)sender!;
+
+            // 当垂直滚动条滚动到底部时加载更多数据
+            if (e.ScrollOrientation == ScrollOrientation.VerticalScroll && e.NewValue + grid.DisplayedRowCount(false) >= grid.RowCount)
+            {
+                var index = e.NewValue;
+                pageIndex += 1;
+                LoadTaskList(false, () =>
+                {
+                    ScrollToRow(grid, index - 1);
+                });
+            }
+        }
+
+        // 将 DataGridView 滚动到指定行
+        private void ScrollToRow(DataGridView dataGridView, int rowIndex)
+        {
+            if (rowIndex >= 0 && rowIndex < dataGridView.RowCount)
+            {
+                dataGridView.FirstDisplayedScrollingRowIndex = rowIndex;
+            }
+        }
+
+
+
         private void Form1_Load(object sender, EventArgs e)
         {
             _logger.LogInformation("窗口已启动");
+            DataGrid_InProgressTasks.Scroll += GridView_Scroll;
+            DataGrid_OtherTasks.Scroll += GridView_Scroll;
             PreLoadForm();
 
             LoadForm();
@@ -197,7 +243,7 @@ namespace SpiderWin
                 };
                 worker.OnTaskStatusChanged += (obj, task) =>
                 {
-                    _delayedTaskPool.AddTask(nameof(LoadTaskList), () => LoadTaskList(task.Status == TaskType.Completed));
+                    _delayedTaskPool.AddTask(nameof(LoadTaskList), () => LoadTaskList());
                 };
                 worker.OnNewTask += (obj, spider) =>
                 {

@@ -248,5 +248,11 @@ namespace SpiderRemoteServiceClient.Services
         {
             throw new NotImplementedException();
         }
+
+        public async Task<List<TaskListItemViewModel>> GetTaskPageListAsync(int pageIndex, int pageSize)
+        {
+            var data = await _client.GetTaskPageListAsync(new PageInfo { PageIndex = pageIndex, PageSize = pageSize });
+            return data.List.Select(x => Mapper.Map<TaskListItemViewModel>(x)).ToList();
+        }
     }
 }
