@@ -161,7 +161,8 @@ namespace SpiderTool
             htmlStr = Regex.Replace(htmlStr, "<[bB][rR]\\s?/?>", Environment.NewLine);
             var temp = new HtmlDocument();
             temp.LoadHtml(htmlStr);
-            return WebUtility.HtmlDecode(temp.DocumentNode.InnerText);
+            temp.DocumentNode.InnerHtml = WebUtility.HtmlDecode(temp.DocumentNode.InnerHtml);
+            return temp.DocumentNode.InnerText;
         }
 
         public static async Task MergeTextFileAsync(string rootDir, CancellationToken cancellationToken = default)
