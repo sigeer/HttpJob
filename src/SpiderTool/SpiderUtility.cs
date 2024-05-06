@@ -142,9 +142,8 @@ namespace SpiderTool
             }
         }
 
-        public static string ReadHtmlNodeInnerContent(HtmlNode item, List<ReplacementRuleDto> replaceRules)
+        public static string ReplaceContent(string finalText, List<ReplacementRuleDto> replaceRules)
         {
-            var finalText = item.InnerHtml;
             foreach (var handle in replaceRules)
             {
                 finalText = Regex.Replace(finalText, handle.ReplacementOldStr, handle.ReplacementNewlyStr ?? "", handle.IgnoreCase ? RegexOptions.IgnoreCase : RegexOptions.None);
