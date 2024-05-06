@@ -59,7 +59,8 @@ namespace SpiderTool
         protected virtual StringTokenizer GetStringTokenizer()
         {
             return new StringTokenizer(
-                new StringTokenTag(DefaultStringTokenProvider.Name_XPath, SimpleStringTokenProvider.StartTag, SimpleStringTokenProvider.EndTag),
+                new StringTokenTag(DefaultStringTokenProvider.Name_XPathHtml, SimpleStringTokenProvider.StartTag, SimpleStringTokenProvider.EndTag),
+                new StringTokenTag(DefaultStringTokenProvider.Name_XPathText, SimpleStringTokenProvider.StartTag, SimpleStringTokenProvider.EndTag),
                 new StringTokenTag(SimpleStringTokenProvider.Name_If, SimpleStringTokenProvider.StartTag, SimpleStringTokenProvider.EndTag),
                 new StringTokenTag(SimpleStringTokenProvider.Name_NewLine)
             );
@@ -95,18 +96,26 @@ namespace SpiderTool
 
     public class DefaultStringTokenProvider : SimpleStringTokenProvider
     {
-        readonly HtmlNodeNavigator _navigator;
-        public const string Name_XPath = "$XPath";
+        readonly HtmlNode _htmlNode;
+        public const string Name_XPathHtml = "$XHtml";
+        public const string Name_XPathText = "$XText";
 
         public DefaultStringTokenProvider(HtmlNode htmlNode) : base()
         {
-            _navigator = (HtmlNodeNavigator)htmlNode.CreateNavigator();
+            _htmlNode = htmlNode;
         }
 
-        [StringTokenName(Name_XPath)]
-        public string XPath(string args)
+        [StringTokenName(Name_XPathHtml)]
+        public string XPathHtml(string args)
         {
-            return _navigator.SelectSingleNode(args)?.Value ?? string.Empty;
+            return _htmlNode.SelectSingleNode(args).InnerHtml;
         }
+
+        [StringTokenName(Name_XPathText)]
+        public string XPathText(string args)
+        {
+            return _htmlNode.SelectSingleNode(args).InnerText;
+        }
+
     }
 }
