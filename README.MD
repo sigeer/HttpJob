@@ -27,3 +27,12 @@
 4. 发起新任务
 5. 取消正在执行的任务
 6. 输出日志
+
+### 使用方法
+
+```
+// 读取<div class="text">的InnerHtml
+$XHtml(//div[@class="text"])
+// 读取InnerHtml，最终可以保存html或者text。读取InnerText，无论设置什么类型，都只能保存text
+
+```

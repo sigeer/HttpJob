@@ -5,7 +5,6 @@ using System.Data;
 using System.Net;
 using System.Text;
 using System.Text.RegularExpressions;
-using System.Web;
 using Utility.Common;
 using Utility.Extensions;
 
@@ -143,9 +142,8 @@ namespace SpiderTool
             }
         }
 
-        public static string ReadHtmlNodeInnerContent(HtmlNode item, List<ReplacementRuleDto> replaceRules)
+        public static string ReplaceContent(string finalText, List<ReplacementRuleDto> replaceRules)
         {
-            var finalText = item.InnerHtml;
             foreach (var handle in replaceRules)
             {
                 finalText = Regex.Replace(finalText, handle.ReplacementOldStr, handle.ReplacementNewlyStr ?? "", handle.IgnoreCase ? RegexOptions.IgnoreCase : RegexOptions.None);
@@ -172,12 +170,12 @@ namespace SpiderTool
             if (!rootDirInfo.Exists)
                 return;
 
-            var dirs = rootDirInfo.GetDirectories();
-            var dirsCount = dirs.Count();
+            var subDirs = rootDirInfo.GetDirectories();
+            var subDirCount = subDirs.Count();
 
-            if (dirsCount > 0)
+            if (subDirCount > 0)
             {
-                foreach (var currentDirInfo in dirs)
+                foreach (var currentDirInfo in subDirs)
                 {
                     cancellationToken.ThrowIfCancellationRequested();
 
@@ -188,37 +186,31 @@ namespace SpiderTool
                         continue;
                     }
 
-                    var files = allFiles.Where(x => x.Extension.ToLower() == ".txt").OrderBy(x => x.CreationTime).Select(x => x.FullName).ToList();
-                    if (files.Count != 0)
-                    {
-                        var fileName = GetDirToName(rootDirInfo, currentDirInfo) + ".txt";
-                        var filePath = Path.Combine(rootDir, fileName);
-                        foreach (var file in files)
-                        {
-                            var txt = await File.ReadAllTextAsync(file, cancellationToken);
-                            await File.AppendAllTextAsync(filePath, txt.TrimEnd(), cancellationToken);
-                            File.Delete(file);
-                        }
-                    }
+                    var fileName = GetDirToName(rootDirInfo, currentDirInfo) + ".txt";
+                    await MergeTextInFolderAsync(currentDirInfo.FullName, fileName);
                 }
             }
-            else 
+            else
             {
-                var allFiles = rootDirInfo.GetFiles().OrderBy(x => x.CreationTime).ToList();
-                var files = allFiles.Where(x => x.Extension.ToLower() == ".txt").OrderBy(x => x.CreationTime).Select(x => x.FullName).ToList();
-                if (files.Count != 0)
+                await MergeTextInFolderAsync(rootDir, rootDirInfo.Name + ".txt");
+            }
+        }
+
+        private static async Task MergeTextInFolderAsync(string dir, string fileName, CancellationToken cancellationToken = default)
+        {
+            var dirInfo = new DirectoryInfo(dir);
+            var allFiles = dirInfo.GetFiles().OrderBy(x => x.CreationTime).ToList();
+            var files = allFiles.Where(x => x.Extension.ToLower() == ".txt").OrderBy(x => x.CreationTime).Select(x => x.FullName).ToList();
+            if (files.Count != 0)
+            {
+                var filePath = Path.Combine(dir, fileName);
+                foreach (var file in files)
                 {
-                    var fileName = rootDirInfo.Name + ".txt";
-                    var filePath = Path.Combine(rootDir, fileName);
-                    foreach (var file in files)
-                    {
-                        var txt = await File.ReadAllTextAsync(file, cancellationToken);
-                        await File.AppendAllTextAsync(filePath, txt.TrimEnd(), cancellationToken);
-                        File.Delete(file);
-                    }
+                    var txt = await File.ReadAllTextAsync(file, cancellationToken);
+                    await File.AppendAllTextAsync(filePath, txt.TrimEnd(), cancellationToken);
+                    File.Delete(file);
                 }
             }
-
         }
 
         private static string GetDirToName(DirectoryInfo rootDirInfo, DirectoryInfo currentDirInfo)
