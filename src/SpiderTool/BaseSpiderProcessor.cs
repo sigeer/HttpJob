@@ -108,13 +108,13 @@ namespace SpiderTool
         [StringTokenName(Name_XPathHtml)]
         public string XPathHtml(string args)
         {
-            return _htmlNode.SelectSingleNode(args).InnerHtml;
+            return string.Join(Environment.NewLine, _htmlNode.SelectNodes(args).Select(x => x.InnerHtml));
         }
 
         [StringTokenName(Name_XPathText)]
         public string XPathText(string args)
         {
-            return _htmlNode.SelectSingleNode(args).InnerText;
+            return string.Join(Environment.NewLine, _htmlNode.SelectNodes(args).Select(x => x.InnerText));
         }
 
     }

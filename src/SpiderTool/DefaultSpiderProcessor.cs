@@ -20,7 +20,7 @@ namespace SpiderTool
             await SpiderUtility.BulkDownload(savePath, urlList, cancellationToken);
         }
 
-        protected virtual string FormatTemplateDynamic(HtmlNode htmlNode, string templateStr)
+        protected virtual string ReadElementContent(HtmlNode htmlNode, string templateStr)
         {
             var tokenizer = GetStringTokenizer();
             var provider = GetStringTokenProvider(htmlNode);
@@ -37,7 +37,7 @@ namespace SpiderTool
 
             if (rule.TemplateStr.Contains(DefaultStringTokenProvider.Name_XPathHtml) || rule.TemplateStr.Contains(DefaultStringTokenProvider.Name_XPathText))
             {
-                var value = FormatTemplateDynamic(pageDocument.DocumentNode, rule.TemplateStr);
+                var value = ReadElementContent(pageDocument.DocumentNode, rule.TemplateStr);
                 await SpiderUtility.SaveTextAsync(savePath, allowHtml ? value : SpiderUtility.Html2Text(value));
             }
             else
