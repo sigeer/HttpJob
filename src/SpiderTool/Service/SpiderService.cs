@@ -86,6 +86,11 @@ namespace SpiderTool.Service
             return await _taskDomain.GetTaskListAsync();
         }
 
+        public async Task<List<TaskListItemViewModel>> GetTaskPageListAsync(int pageIndex, int pageSize)
+        {
+            return await _taskDomain.GetTaskPageListAsync(pageIndex, pageSize);
+        }
+
         public async Task<int> AddTaskAsync(TaskEditDto model)
         {
             return await _taskDomain.AddTaskAsync(model);

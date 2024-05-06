@@ -6,6 +6,7 @@ namespace SpiderTool.IDomain
     {
         List<TaskListItemViewModel> GetTaskList();
         Task<List<TaskListItemViewModel>> GetTaskListAsync();
+        Task<List<TaskListItemViewModel>> GetTaskPageListAsync(int pageIndex, int pageSize);
         List<TaskSimpleViewModel> GetTaskHistoryList();
         Task<List<TaskSimpleViewModel>> GetTaskHistoryListAsync();
         int AddTask(TaskEditDto model);

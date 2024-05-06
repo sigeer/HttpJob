@@ -113,6 +113,21 @@ namespace SpiderTool.SqlSugar.Domain
             }).ToListAsync();
         }
 
+        public async Task<List<TaskListItemViewModel>> GetTaskPageListAsync(int pageIndex, int pageSize)
+        {
+            return await _dbContext.Queryable<DB_Task>().OrderByDescending(x => x.CreateTime).Take(GlobalVariable.TaskListMaxCount).Select(x => new TaskListItemViewModel()
+            {
+                Id = x.Id,
+                Status = x.Status,
+                CompleteTime = x.CompleteTime,
+                CreateTime = x.CreateTime,
+                CronExpression = x.CronExpression,
+                Description = x.Description,
+                RootUrl = x.RootUrl,
+                SpiderId = x.SpiderId,
+            }).ToPageListAsync(pageIndex, pageSize);
+        }
+
         public List<TaskSimpleViewModel> GetTaskHistoryList()
         {
             return _dbContext.Queryable<DB_Task>().OrderByDescending(x => x.CreateTime).Select(x => new TaskSimpleViewModel()

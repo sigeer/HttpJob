@@ -74,6 +74,10 @@ namespace SpiderTool.MongoDB.Domain
             return _mapper.Map<List<TaskListItemViewModel>>(taskList);
         }
 
+        public async Task<List<TaskListItemViewModel>> GetTaskPageListAsync(int pageIndex, int pageSize)
+        {
+            throw new NotImplementedException();
+        }
         public void SetTaskStatus(int taskId, int taskStatus)
         {
             var table = _db.GetCollection<DB_Task>(nameof(DB_Task));

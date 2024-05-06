@@ -104,6 +104,21 @@ namespace SpiderTool.FreeSql.Domain
             });
         }
 
+        public async Task<List<TaskListItemViewModel>> GetTaskPageListAsync(int pageIndex, int pageSize)
+        {
+            return await _freeSql.Select<DB_Task>().OrderByDescending(x => x.CreateTime).Page(pageIndex, pageSize).ToListAsync(x => new TaskListItemViewModel()
+            {
+                Id = x.Id,
+                Status = x.Status,
+                CompleteTime = x.CompleteTime,
+                CreateTime = x.CreateTime,
+                CronExpression = x.CronExpression,
+                Description = x.Description,
+                RootUrl = x.RootUrl,
+                SpiderId = x.SpiderId,
+            });
+        }
+
         public List<TaskSimpleViewModel> GetTaskHistoryList()
         {
             return _freeSql.Select<DB_Task>().OrderByDescending(x => x.CreateTime).ToList(x => new TaskSimpleViewModel()

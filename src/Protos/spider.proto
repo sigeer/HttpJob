@@ -14,6 +14,7 @@ service SpiderWorkerProtoService {
   rpc AddTask(TaskProtoEditDto) returns (google.protobuf.Int32Value);
   rpc UpdateTask(TaskProtoEditDto) returns (google.protobuf.Empty);
   rpc GetTaskList(google.protobuf.Empty) returns (TaskListResult);
+  rpc GetTaskPageList(PageInfo) returns (TaskListResult);
   rpc SetTaskStatus(TaskProtoEditDto) returns (google.protobuf.StringValue);
   rpc BulkUpdateTaskStatus(TaskProtoBulkEditDto) returns (google.protobuf.Empty);
   rpc GetTaskHistoryList(google.protobuf.Empty) returns(TaskProtoSimpleListResult);
@@ -35,6 +36,11 @@ service SpiderWorkerProtoService {
 message RequestModel {
   string url = 1;
   int32 spiderId = 2;
+}
+
+message PageInfo {
+	int32 pageIndex = 1;
+	int32 pageSize = 2;
 }
 
 // *********** Task ***********

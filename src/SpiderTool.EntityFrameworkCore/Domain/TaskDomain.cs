@@ -4,6 +4,7 @@ using SpiderTool.Data.DataBase;
 using SpiderTool.Data.Dto.Tasks;
 using SpiderTool.EntityFrameworkCore.ContextModel;
 using SpiderTool.IDomain;
+using Utility.Extensions;
 
 namespace SpiderTool.EntityFrameworkCore.Domain
 {
@@ -106,6 +107,21 @@ namespace SpiderTool.EntityFrameworkCore.Domain
                 RootUrl = x.RootUrl,
                 SpiderId = x.SpiderId,
             }).ToListAsync();
+        }
+
+        public async Task<List<TaskListItemViewModel>> GetTaskPageListAsync(int pageIndex, int pageSize)
+        {
+            return await _dbContext.Tasks.OrderByDescending(x => x.CreateTime).Select(x => new TaskListItemViewModel()
+            {
+                Id = x.Id,
+                Status = x.Status,
+                CompleteTime = x.CompleteTime,
+                CreateTime = x.CreateTime,
+                CronExpression = x.CronExpression,
+                Description = x.Description,
+                RootUrl = x.RootUrl,
+                SpiderId = x.SpiderId,
+            }).ToPage(pageIndex, pageSize).ToListAsync();
         }
 
         public List<TaskSimpleViewModel> GetTaskHistoryList()
