@@ -55,15 +55,11 @@ namespace SpiderWin.Modals
         protected virtual List<ReplacementRuleDto> FormatReplaceRulesDynamic(List<ReplacementRuleDto> rules)
         {
             var newList = new List<ReplacementRuleDto>();
-            var tokenizer = SimpleStringTokenProvider.GetStringTokenizer();
             var provider = new SimpleStringTokenProvider();
             foreach (var rule in rules)
             {
-                var oldToken = tokenizer.Parse(rule.ReplacementOldStr);
-                var oldValue = provider.Serialize(oldToken);
-
-                var newToken = tokenizer.Parse(rule.ReplacementNewlyStr);
-                var newlyValue = provider.Serialize(newToken);
+                var oldValue = provider.Serialize(rule.ReplacementOldStr);
+                var newlyValue = provider.Serialize(rule.ReplacementNewlyStr);
                 newList.Add(new ReplacementRuleDto
                 {
                     Id = rule.Id,

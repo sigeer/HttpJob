@@ -6,10 +6,4 @@
         public const string Error = "Error";
         public const string FormInvalid = "FormInvalid";
     }
-
-    public class RequestMethod
-    {
-        public const string POST = "POST";
-        public const string GET = "GET";
-    }
 }
