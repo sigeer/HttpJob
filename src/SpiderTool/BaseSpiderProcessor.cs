@@ -125,6 +125,5 @@ namespace SpiderTool
             var argList = TryGetArgs(args);
             return _htmlNode.SelectSingleNode(argList[0]).GetAttributeValue(argList[1], null);
         }
-
     }
 }
