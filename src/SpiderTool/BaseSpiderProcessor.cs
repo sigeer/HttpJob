@@ -56,32 +56,15 @@ namespace SpiderTool
                 }
             }
         }
-        protected virtual StringTokenizer GetStringTokenizer()
-        {
-            return new StringTokenizer(
-                new StringTokenTag(DefaultStringTokenProvider.Name_XPathHtml, SimpleStringTokenProvider.StartTag, SimpleStringTokenProvider.EndTag),
-                new StringTokenTag(DefaultStringTokenProvider.Name_XPathText, SimpleStringTokenProvider.StartTag, SimpleStringTokenProvider.EndTag),
-                new StringTokenTag(DefaultStringTokenProvider.Name_XPathAttr, SimpleStringTokenProvider.StartTag, SimpleStringTokenProvider.EndTag),
-                new StringTokenTag(SimpleStringTokenProvider.Name_If, SimpleStringTokenProvider.StartTag, SimpleStringTokenProvider.EndTag),
-                new StringTokenTag(SimpleStringTokenProvider.Name_NewLine)
-            );
-        }
-        protected virtual StringTokenProvider GetStringTokenProvider(HtmlNode htmlNode)
-        {
-            return new DefaultStringTokenProvider(htmlNode);
-        }
+
         protected virtual List<ReplacementRuleDto> FormatReplaceRulesDynamic(HtmlNode htmlNode, List<ReplacementRuleDto> rules)
         {
             var newList = new List<ReplacementRuleDto>();
-            var tokenizer = GetStringTokenizer();
-            var provider = GetStringTokenProvider(htmlNode);
+            var provider = new DefaultStringTokenProvider(htmlNode);
             foreach (var rule in rules)
             {
-                var oldToken = tokenizer.Parse(rule.ReplacementOldStr);
-                var oldValue = provider.Serialize(oldToken);
-
-                var newToken = tokenizer.Parse(rule.ReplacementNewlyStr);
-                var newlyValue = provider.Serialize(newToken);
+                var oldValue = provider.Serialize(rule.ReplacementOldStr);
+                var newlyValue = provider.Serialize(rule.ReplacementNewlyStr);
 
                 newList.Add(new ReplacementRuleDto
                 {
@@ -124,6 +107,14 @@ namespace SpiderTool
         {
             var argList = TryGetArgs(args);
             return _htmlNode.SelectSingleNode(argList[0]).GetAttributeValue(argList[1], null);
+        }
+
+        public override StringTokenizer GetStringTokenizer()
+        {
+            return GetStringTokenizer().Expand(
+                new StringTokenTag(Name_XPathHtml, StartTag, EndTag),
+                new StringTokenTag(Name_XPathText, StartTag, EndTag),
+                new StringTokenTag(Name_XPathAttr, StartTag, EndTag));
         }
     }
 }
