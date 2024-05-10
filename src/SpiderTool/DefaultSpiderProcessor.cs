@@ -45,12 +45,8 @@ namespace SpiderTool
         }
         protected virtual string ReadElementContent(HtmlNode htmlNode, string templateStr)
         {
-            var tokenizer = GetStringTokenizer();
-            var provider = GetStringTokenProvider(htmlNode);
-
-            var token = tokenizer.Parse(templateStr);
-            var value = provider.Serialize(token);
-            return value;
+            var provider = new DefaultStringTokenProvider(htmlNode);
+            return provider.Serialize(templateStr);
         }
 
         protected async Task ProcessTextOrHtml(string savePath, SpiderWorker rootSpider, HtmlDocument pageDocument, TemplateDetailViewModel rule, bool allowHtml = false, CancellationToken cancellationToken = default)
