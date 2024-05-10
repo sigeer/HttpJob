@@ -158,7 +158,7 @@ namespace SpiderTool
         /// <returns></returns>
         public static string Html2Text(string htmlStr)
         {
-            htmlStr = Regex.Replace(htmlStr, "<[bB][rR]\\s?/?>", Environment.NewLine);
+            htmlStr = Regex.Replace(htmlStr, "<[bB][rR]\\s*/?>", Environment.NewLine);
             var temp = new HtmlDocument();
             temp.LoadHtml(htmlStr);
             temp.DocumentNode.InnerHtml = WebUtility.HtmlDecode(temp.DocumentNode.InnerHtml);

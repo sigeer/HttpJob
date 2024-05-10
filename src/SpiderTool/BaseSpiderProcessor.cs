@@ -122,9 +122,8 @@ namespace SpiderTool
         [StringTokenName(Name_XPathAttr, ArgCount = 2)]
         public string XPathGetAttr(string args)
         {
-            var argList = TryOrGetArgs(args);
+            var argList = TryGetArgs(args);
             return _htmlNode.SelectSingleNode(argList[0]).GetAttributeValue(argList[1], null);
         }
-
     }
 }
