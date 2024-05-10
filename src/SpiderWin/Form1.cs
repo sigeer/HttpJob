@@ -488,10 +488,11 @@ namespace SpiderWin
 
         private void HideModalFromNormal()
         {
+            Hide();
+
             //将程序从任务栏移除显示
             this.ShowInTaskbar = false;
-            //隐藏窗口
-            Hide();
+
             //this.Visible = false;
             //显示托盘图标
             notifyIcon1.Visible = true;
