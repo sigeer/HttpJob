@@ -111,7 +111,7 @@ namespace SpiderTool
 
         public override StringTokenizer GetStringTokenizer()
         {
-            return GetStringTokenizer().Expand(
+            return base.GetStringTokenizer().Expand(
                 new StringTokenTag(Name_XPathHtml, StartTag, EndTag),
                 new StringTokenTag(Name_XPathText, StartTag, EndTag),
                 new StringTokenTag(Name_XPathAttr, StartTag, EndTag));
