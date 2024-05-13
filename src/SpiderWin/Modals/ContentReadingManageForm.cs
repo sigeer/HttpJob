@@ -3,14 +3,16 @@ using SpiderTool.Data.IService;
 
 namespace SpiderWin.Modals
 {
-    public partial class TemplateManageForm : Form
+    public partial class ContentReadingManageForm : Form
     {
         public event EventHandler<List<int>>? OnSelect;
         readonly ISpiderService _service;
         readonly List<int> _selected;
         List<TemplateDetailViewModel> _templates = new List<TemplateDetailViewModel>();
-        public TemplateManageForm(ISpiderService service, List<int>? selected = null)
+        readonly bool _canSelect;
+        public ContentReadingManageForm(ISpiderService service, List<int>? selected = null, bool canSelect = true)
         {
+            _canSelect = canSelect;
             _service = service;
             _selected = selected ?? new List<int>();
             InitializeComponent();
@@ -46,6 +48,7 @@ namespace SpiderWin.Modals
                 row.Cells.Add(new DataGridViewTextBoxCell() { Value = x.TemplateStr });
                 row.Cells.Add(new DataGridViewTextBoxCell() { Value = x.LinkedSpiderId });
                 dataGridView1.Rows.Add(row);
+                row.Cells[0].ReadOnly = !_canSelect;
             });
         }
         private async void TemplateManageForm_Load(object sender, EventArgs e)

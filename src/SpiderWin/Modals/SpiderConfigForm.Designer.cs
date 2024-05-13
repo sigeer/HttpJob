@@ -28,258 +28,242 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(SpiderConfigForm));
-            this.labelName = new System.Windows.Forms.Label();
-            this.TxtName = new System.Windows.Forms.TextBox();
-            this.labelDescription = new System.Windows.Forms.Label();
-            this.TxtDescription = new System.Windows.Forms.RichTextBox();
-            this.ComboMethod = new System.Windows.Forms.ComboBox();
-            this.labelMethod = new System.Windows.Forms.Label();
-            this.label1 = new System.Windows.Forms.Label();
-            this.TxtPostObj = new System.Windows.Forms.RichTextBox();
-            this.label2 = new System.Windows.Forms.Label();
-            this.btnAddContentReader = new System.Windows.Forms.Button();
-            this.label3 = new System.Windows.Forms.Label();
-            this.ComboBoxNextPage = new System.Windows.Forms.ComboBox();
-            this.menuStrip1 = new System.Windows.Forms.MenuStrip();
-            this.设置ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.TemplateListMenu = new System.Windows.Forms.ToolStripMenuItem();
-            this.BtnSubmit = new System.Windows.Forms.Button();
-            this.BtnCancel = new System.Windows.Forms.Button();
-            this.labelTemplateInfo = new System.Windows.Forms.LinkLabel();
-            this.BtnRefreshTemplate = new System.Windows.Forms.Button();
-            this.labelHeader = new System.Windows.Forms.Label();
-            this.TextRequestHeaders = new System.Windows.Forms.RichTextBox();
-            this.menuStrip1.SuspendLayout();
-            this.SuspendLayout();
+            labelName = new Label();
+            TxtName = new TextBox();
+            labelDescription = new Label();
+            TxtDescription = new RichTextBox();
+            ComboMethod = new ComboBox();
+            labelMethod = new Label();
+            label1 = new Label();
+            TxtPostObj = new RichTextBox();
+            label2 = new Label();
+            label3 = new Label();
+            ComboBoxNextPage = new ComboBox();
+            menuStrip1 = new MenuStrip();
+            设置ToolStripMenuItem = new ToolStripMenuItem();
+            TemplateListMenu = new ToolStripMenuItem();
+            BtnSubmit = new Button();
+            BtnCancel = new Button();
+            labelTemplateInfo = new LinkLabel();
+            BtnRefreshTemplate = new Button();
+            labelHeader = new Label();
+            TextRequestHeaders = new RichTextBox();
+            menuStrip1.SuspendLayout();
+            SuspendLayout();
             // 
             // labelName
             // 
-            this.labelName.AutoSize = true;
-            this.labelName.Location = new System.Drawing.Point(22, 36);
-            this.labelName.Name = "labelName";
-            this.labelName.Size = new System.Drawing.Size(32, 17);
-            this.labelName.TabIndex = 0;
-            this.labelName.Text = "名称";
+            labelName.AutoSize = true;
+            labelName.Location = new Point(22, 36);
+            labelName.Name = "labelName";
+            labelName.Size = new Size(32, 17);
+            labelName.TabIndex = 0;
+            labelName.Text = "名称";
             // 
             // TxtName
             // 
-            this.TxtName.Location = new System.Drawing.Point(89, 33);
-            this.TxtName.Name = "TxtName";
-            this.TxtName.Size = new System.Drawing.Size(547, 23);
-            this.TxtName.TabIndex = 1;
+            TxtName.Location = new Point(89, 33);
+            TxtName.Name = "TxtName";
+            TxtName.Size = new Size(547, 23);
+            TxtName.TabIndex = 1;
             // 
             // labelDescription
             // 
-            this.labelDescription.AutoSize = true;
-            this.labelDescription.Location = new System.Drawing.Point(22, 70);
-            this.labelDescription.Name = "labelDescription";
-            this.labelDescription.Size = new System.Drawing.Size(32, 17);
-            this.labelDescription.TabIndex = 2;
-            this.labelDescription.Text = "描述";
+            labelDescription.AutoSize = true;
+            labelDescription.Location = new Point(22, 70);
+            labelDescription.Name = "labelDescription";
+            labelDescription.Size = new Size(32, 17);
+            labelDescription.TabIndex = 2;
+            labelDescription.Text = "描述";
             // 
             // TxtDescription
             // 
-            this.TxtDescription.Location = new System.Drawing.Point(89, 70);
-            this.TxtDescription.Name = "TxtDescription";
-            this.TxtDescription.Size = new System.Drawing.Size(547, 58);
-            this.TxtDescription.TabIndex = 3;
-            this.TxtDescription.Text = "";
+            TxtDescription.Location = new Point(89, 70);
+            TxtDescription.Name = "TxtDescription";
+            TxtDescription.Size = new Size(547, 58);
+            TxtDescription.TabIndex = 3;
+            TxtDescription.Text = "";
             // 
             // ComboMethod
             // 
-            this.ComboMethod.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.ComboMethod.FormattingEnabled = true;
-            this.ComboMethod.Items.AddRange(new object[] {
-            "GET",
-            "POST"});
-            this.ComboMethod.Location = new System.Drawing.Point(89, 137);
-            this.ComboMethod.Name = "ComboMethod";
-            this.ComboMethod.Size = new System.Drawing.Size(121, 25);
-            this.ComboMethod.TabIndex = 4;
+            ComboMethod.DropDownStyle = ComboBoxStyle.DropDownList;
+            ComboMethod.FormattingEnabled = true;
+            ComboMethod.Items.AddRange(new object[] { "GET", "POST" });
+            ComboMethod.Location = new Point(89, 137);
+            ComboMethod.Name = "ComboMethod";
+            ComboMethod.Size = new Size(121, 25);
+            ComboMethod.TabIndex = 4;
             // 
             // labelMethod
             // 
-            this.labelMethod.AutoSize = true;
-            this.labelMethod.Location = new System.Drawing.Point(12, 140);
-            this.labelMethod.Name = "labelMethod";
-            this.labelMethod.Size = new System.Drawing.Size(56, 17);
-            this.labelMethod.TabIndex = 5;
-            this.labelMethod.Text = "请求方式";
+            labelMethod.AutoSize = true;
+            labelMethod.Location = new Point(12, 140);
+            labelMethod.Name = "labelMethod";
+            labelMethod.Size = new Size(56, 17);
+            labelMethod.TabIndex = 5;
+            labelMethod.Text = "请求方式";
             // 
             // label1
             // 
-            this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(2, 240);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(77, 17);
-            this.label1.TabIndex = 6;
-            this.label1.Text = "POST BODY";
+            label1.AutoSize = true;
+            label1.Location = new Point(2, 240);
+            label1.Name = "label1";
+            label1.Size = new Size(77, 17);
+            label1.TabIndex = 6;
+            label1.Text = "POST BODY";
             // 
             // TxtPostObj
             // 
-            this.TxtPostObj.Location = new System.Drawing.Point(89, 240);
-            this.TxtPostObj.Name = "TxtPostObj";
-            this.TxtPostObj.Size = new System.Drawing.Size(547, 52);
-            this.TxtPostObj.TabIndex = 7;
-            this.TxtPostObj.Text = "";
+            TxtPostObj.Location = new Point(89, 240);
+            TxtPostObj.Name = "TxtPostObj";
+            TxtPostObj.Size = new Size(547, 52);
+            TxtPostObj.TabIndex = 7;
+            TxtPostObj.Text = "";
             // 
             // label2
             // 
-            this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(12, 348);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(56, 17);
-            this.label2.TabIndex = 8;
-            this.label2.Text = "内容读取";
-            // 
-            // btnAddContentReader
-            // 
-            this.btnAddContentReader.Location = new System.Drawing.Point(89, 344);
-            this.btnAddContentReader.Name = "btnAddContentReader";
-            this.btnAddContentReader.Size = new System.Drawing.Size(127, 25);
-            this.btnAddContentReader.TabIndex = 10;
-            this.btnAddContentReader.Text = "选择模板";
-            this.btnAddContentReader.UseVisualStyleBackColor = true;
-            this.btnAddContentReader.Click += new System.EventHandler(this.btnAddContentReader_Click);
+            label2.AutoSize = true;
+            label2.Location = new Point(12, 348);
+            label2.Name = "label2";
+            label2.Size = new Size(56, 17);
+            label2.TabIndex = 8;
+            label2.Text = "内容读取";
             // 
             // label3
             // 
-            this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(11, 309);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(68, 17);
-            this.label3.TabIndex = 11;
-            this.label3.Text = "下一页设置";
+            label3.AutoSize = true;
+            label3.Location = new Point(11, 309);
+            label3.Name = "label3";
+            label3.Size = new Size(68, 17);
+            label3.TabIndex = 11;
+            label3.Text = "下一页设置";
             // 
             // ComboBoxNextPage
             // 
-            this.ComboBoxNextPage.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.ComboBoxNextPage.FormattingEnabled = true;
-            this.ComboBoxNextPage.Location = new System.Drawing.Point(89, 306);
-            this.ComboBoxNextPage.Name = "ComboBoxNextPage";
-            this.ComboBoxNextPage.Size = new System.Drawing.Size(127, 25);
-            this.ComboBoxNextPage.TabIndex = 12;
+            ComboBoxNextPage.DropDownStyle = ComboBoxStyle.DropDownList;
+            ComboBoxNextPage.FormattingEnabled = true;
+            ComboBoxNextPage.Location = new Point(89, 306);
+            ComboBoxNextPage.Name = "ComboBoxNextPage";
+            ComboBoxNextPage.Size = new Size(127, 25);
+            ComboBoxNextPage.TabIndex = 12;
             // 
             // menuStrip1
             // 
-            this.menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.设置ToolStripMenuItem});
-            this.menuStrip1.Location = new System.Drawing.Point(0, 0);
-            this.menuStrip1.Name = "menuStrip1";
-            this.menuStrip1.Size = new System.Drawing.Size(648, 25);
-            this.menuStrip1.TabIndex = 13;
-            this.menuStrip1.Text = "menuStrip1";
+            menuStrip1.Items.AddRange(new ToolStripItem[] { 设置ToolStripMenuItem });
+            menuStrip1.Location = new Point(0, 0);
+            menuStrip1.Name = "menuStrip1";
+            menuStrip1.Size = new Size(648, 25);
+            menuStrip1.TabIndex = 13;
+            menuStrip1.Text = "menuStrip1";
             // 
             // 设置ToolStripMenuItem
             // 
-            this.设置ToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.TemplateListMenu});
-            this.设置ToolStripMenuItem.Name = "设置ToolStripMenuItem";
-            this.设置ToolStripMenuItem.Size = new System.Drawing.Size(44, 21);
-            this.设置ToolStripMenuItem.Text = "设置";
+            设置ToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { TemplateListMenu });
+            设置ToolStripMenuItem.Name = "设置ToolStripMenuItem";
+            设置ToolStripMenuItem.Size = new Size(44, 21);
+            设置ToolStripMenuItem.Text = "设置";
             // 
             // TemplateListMenu
             // 
-            this.TemplateListMenu.Name = "TemplateListMenu";
-            this.TemplateListMenu.Size = new System.Drawing.Size(124, 22);
-            this.TemplateListMenu.Text = "模板列表";
-            this.TemplateListMenu.Click += new System.EventHandler(this.TemplateListMenu_Click);
+            TemplateListMenu.Name = "TemplateListMenu";
+            TemplateListMenu.Size = new Size(180, 22);
+            TemplateListMenu.Text = "模板列表";
+            TemplateListMenu.Click += TemplateListMenu_Click;
             // 
             // BtnSubmit
             // 
-            this.BtnSubmit.Location = new System.Drawing.Point(561, 391);
-            this.BtnSubmit.Name = "BtnSubmit";
-            this.BtnSubmit.Size = new System.Drawing.Size(75, 23);
-            this.BtnSubmit.TabIndex = 14;
-            this.BtnSubmit.Text = "保存";
-            this.BtnSubmit.UseVisualStyleBackColor = true;
-            this.BtnSubmit.Click += new System.EventHandler(this.BtnSubmit_Click);
+            BtnSubmit.Location = new Point(561, 391);
+            BtnSubmit.Name = "BtnSubmit";
+            BtnSubmit.Size = new Size(75, 23);
+            BtnSubmit.TabIndex = 14;
+            BtnSubmit.Text = "保存";
+            BtnSubmit.UseVisualStyleBackColor = true;
+            BtnSubmit.Click += BtnSubmit_Click;
             // 
             // BtnCancel
             // 
-            this.BtnCancel.Location = new System.Drawing.Point(480, 391);
-            this.BtnCancel.Name = "BtnCancel";
-            this.BtnCancel.Size = new System.Drawing.Size(75, 23);
-            this.BtnCancel.TabIndex = 15;
-            this.BtnCancel.Text = "取消";
-            this.BtnCancel.UseVisualStyleBackColor = true;
-            this.BtnCancel.Click += new System.EventHandler(this.BtnCancel_Click);
+            BtnCancel.Location = new Point(480, 391);
+            BtnCancel.Name = "BtnCancel";
+            BtnCancel.Size = new Size(75, 23);
+            BtnCancel.TabIndex = 15;
+            BtnCancel.Text = "取消";
+            BtnCancel.UseVisualStyleBackColor = true;
+            BtnCancel.Click += BtnCancel_Click;
             // 
             // labelTemplateInfo
             // 
-            this.labelTemplateInfo.AutoSize = true;
-            this.labelTemplateInfo.Location = new System.Drawing.Point(216, 348);
-            this.labelTemplateInfo.Name = "labelTemplateInfo";
-            this.labelTemplateInfo.Size = new System.Drawing.Size(0, 17);
-            this.labelTemplateInfo.TabIndex = 16;
-            this.labelTemplateInfo.Click += new System.EventHandler(this.labelTemplateInfo_Click);
+            labelTemplateInfo.AutoSize = true;
+            labelTemplateInfo.Location = new Point(89, 348);
+            labelTemplateInfo.Name = "labelTemplateInfo";
+            labelTemplateInfo.Size = new Size(63, 17);
+            labelTemplateInfo.TabIndex = 16;
+            labelTemplateInfo.TabStop = true;
+            labelTemplateInfo.Text = "已选择0项";
+            labelTemplateInfo.Click += labelTemplateInfo_Click;
             // 
             // BtnRefreshTemplate
             // 
-            this.BtnRefreshTemplate.Location = new System.Drawing.Point(222, 306);
-            this.BtnRefreshTemplate.Name = "BtnRefreshTemplate";
-            this.BtnRefreshTemplate.Size = new System.Drawing.Size(45, 25);
-            this.BtnRefreshTemplate.TabIndex = 17;
-            this.BtnRefreshTemplate.Text = "刷新";
-            this.BtnRefreshTemplate.UseVisualStyleBackColor = true;
-            this.BtnRefreshTemplate.Click += new System.EventHandler(this.BtnRefreshTemplate_Click);
+            BtnRefreshTemplate.Location = new Point(222, 306);
+            BtnRefreshTemplate.Name = "BtnRefreshTemplate";
+            BtnRefreshTemplate.Size = new Size(45, 25);
+            BtnRefreshTemplate.TabIndex = 17;
+            BtnRefreshTemplate.Text = "刷新";
+            BtnRefreshTemplate.UseVisualStyleBackColor = true;
+            BtnRefreshTemplate.Click += BtnRefreshTemplate_Click;
             // 
             // labelHeader
             // 
-            this.labelHeader.AutoSize = true;
-            this.labelHeader.Location = new System.Drawing.Point(22, 171);
-            this.labelHeader.Name = "labelHeader";
-            this.labelHeader.Size = new System.Drawing.Size(44, 17);
-            this.labelHeader.TabIndex = 18;
-            this.labelHeader.Text = "请求头";
+            labelHeader.AutoSize = true;
+            labelHeader.Location = new Point(22, 171);
+            labelHeader.Name = "labelHeader";
+            labelHeader.Size = new Size(44, 17);
+            labelHeader.TabIndex = 18;
+            labelHeader.Text = "请求头";
             // 
             // TextRequestHeaders
             // 
-            this.TextRequestHeaders.Location = new System.Drawing.Point(89, 168);
-            this.TextRequestHeaders.Name = "TextRequestHeaders";
-            this.TextRequestHeaders.Size = new System.Drawing.Size(547, 66);
-            this.TextRequestHeaders.TabIndex = 19;
-            this.TextRequestHeaders.Text = "";
+            TextRequestHeaders.Location = new Point(89, 168);
+            TextRequestHeaders.Name = "TextRequestHeaders";
+            TextRequestHeaders.Size = new Size(547, 66);
+            TextRequestHeaders.TabIndex = 19;
+            TextRequestHeaders.Text = "";
             // 
             // SpiderConfigForm
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 17F);
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.AutoScroll = true;
-            this.ClientSize = new System.Drawing.Size(648, 426);
-            this.Controls.Add(this.TextRequestHeaders);
-            this.Controls.Add(this.labelHeader);
-            this.Controls.Add(this.BtnRefreshTemplate);
-            this.Controls.Add(this.labelTemplateInfo);
-            this.Controls.Add(this.BtnCancel);
-            this.Controls.Add(this.BtnSubmit);
-            this.Controls.Add(this.ComboBoxNextPage);
-            this.Controls.Add(this.label3);
-            this.Controls.Add(this.btnAddContentReader);
-            this.Controls.Add(this.label2);
-            this.Controls.Add(this.TxtPostObj);
-            this.Controls.Add(this.label1);
-            this.Controls.Add(this.labelMethod);
-            this.Controls.Add(this.ComboMethod);
-            this.Controls.Add(this.TxtDescription);
-            this.Controls.Add(this.labelDescription);
-            this.Controls.Add(this.TxtName);
-            this.Controls.Add(this.labelName);
-            this.Controls.Add(this.menuStrip1);
-            this.Icon = GlobalResource.icon;
-            this.KeyPreview = true;
-            this.MainMenuStrip = this.menuStrip1;
-            this.Name = "SpiderConfigForm";
-            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-            this.Text = "爬虫设置";
-            this.Load += new System.EventHandler(this.SpiderConfigForm_Load);
-            this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.SpiderConfigForm_KeyDown);
-            this.menuStrip1.ResumeLayout(false);
-            this.menuStrip1.PerformLayout();
-            this.ResumeLayout(false);
-            this.PerformLayout();
-
+            AutoScaleDimensions = new SizeF(7F, 17F);
+            AutoScaleMode = AutoScaleMode.Font;
+            AutoScroll = true;
+            ClientSize = new Size(648, 426);
+            Controls.Add(TextRequestHeaders);
+            Controls.Add(labelHeader);
+            Controls.Add(BtnRefreshTemplate);
+            Controls.Add(labelTemplateInfo);
+            Controls.Add(BtnCancel);
+            Controls.Add(BtnSubmit);
+            Controls.Add(ComboBoxNextPage);
+            Controls.Add(label3);
+            Controls.Add(label2);
+            Controls.Add(TxtPostObj);
+            Controls.Add(label1);
+            Controls.Add(labelMethod);
+            Controls.Add(ComboMethod);
+            Controls.Add(TxtDescription);
+            Controls.Add(labelDescription);
+            Controls.Add(TxtName);
+            Controls.Add(labelName);
+            Controls.Add(menuStrip1);
+            Icon = GlobalResource.icon;
+            KeyPreview = true;
+            MainMenuStrip = menuStrip1;
+            Name = "SpiderConfigForm";
+            StartPosition = FormStartPosition.CenterScreen;
+            Text = "爬虫设置";
+            Load += SpiderConfigForm_Load;
+            KeyDown += SpiderConfigForm_KeyDown;
+            menuStrip1.ResumeLayout(false);
+            menuStrip1.PerformLayout();
+            ResumeLayout(false);
+            PerformLayout();
         }
 
         #endregion
@@ -293,7 +277,6 @@
         private Label label1;
         private RichTextBox TxtPostObj;
         private Label label2;
-        private Button btnAddContentReader;
         private Label label3;
         private ComboBox ComboBoxNextPage;
         private MenuStrip menuStrip1;
