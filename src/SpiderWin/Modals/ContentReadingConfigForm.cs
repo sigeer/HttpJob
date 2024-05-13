@@ -121,12 +121,14 @@ namespace SpiderWin.Modals
         {
             comboSpider.Visible = false;
             label3.Visible = false;
+            LinkLabel_NewConfig.Visible = false;
         }
 
         private void ShowSelectSpider()
         {
             comboSpider.Visible = true;
             label3.Visible = true;
+            LinkLabel_NewConfig.Visible = true;
         }
 
         private void ShowAttr()
