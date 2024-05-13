@@ -9,6 +9,7 @@ using SpiderWin.Modals;
 using SpiderWin.Server;
 using SpiderWin.Services;
 using System.Diagnostics;
+using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using Utility.Common;
 using Utility.Extensions;
@@ -239,7 +240,7 @@ namespace SpiderWin
                     childSW.Stop();
 
                     var cost = $"耗时：{childSW.Elapsed.TotalSeconds.ToFixed(2)}秒";
-                    _logger.LogInformation($"任务 {spider.TaskId} 结束========= {cost} 保存路径：file://{spider.CurrentDir}");
+                    _logger.LogInformation($"任务 {spider.TaskId} 结束========= {cost} 保存路径：{spider.CurrentDir}");
                 };
                 worker.OnTaskStatusChanged += (obj, task) =>
                 {
@@ -292,11 +293,102 @@ namespace SpiderWin
             setting.ShowDialog();
         }
 
-        private void ResultTxtBox_LinkClicked(object sender, LinkClickedEventArgs e)
+        #region log
+        private void AddPath(string path)
         {
-            if (!string.IsNullOrEmpty(e.LinkText) && e.LinkText.StartsWith("file"))
-                OpenDir(e.LinkText);
+            // 添加路径到 RichTextBox 中，并设置链接样式
+            int start = ResultTxtBox.TextLength;
+            ResultTxtBox.AppendText(path);
+            ResultTxtBox.Select(start, path.Length);
+            ResultTxtBox.SelectionColor = Color.Blue;
+            ResultTxtBox.SelectionFont = new Font(ResultTxtBox.Font, System.Drawing.FontStyle.Underline);
+            ResultTxtBox.DeselectAll();
         }
+
+        private void ResultTxtBox_MouseDown(object sender, MouseEventArgs e)
+        {
+            int charIndex = ResultTxtBox.GetCharIndexFromPosition(e.Location);
+            int startIndex = charIndex;
+            int endIndex = charIndex;
+
+            // 向前搜索，直到找到不是链接样式的字符为止
+            while (startIndex > 0 && ResultTxtBox.Text[startIndex - 1] != '\n' && ResultTxtBox.SelectionFont != null && ResultTxtBox.SelectionFont.Underline)
+            {
+                startIndex--;
+            }
+
+            // 向后搜索，直到找到不是链接样式的字符为止
+            while (endIndex < ResultTxtBox.Text.Length - 1 && ResultTxtBox.Text[endIndex + 1] != '\n' && ResultTxtBox.SelectionFont != null && ResultTxtBox.SelectionFont.Underline)
+            {
+                endIndex++;
+            }
+
+            if (startIndex == endIndex)
+                return;
+
+            string linkText = ResultTxtBox.Text[startIndex..(endIndex + 1)];
+            if (!string.IsNullOrEmpty(linkText))
+            {
+                try
+                {
+                    OpenDir(linkText);
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("无法打开链接：" + ex.Message);
+                }
+            }
+        }
+
+        private void ResultTxtBox_MouseMove(object sender, MouseEventArgs e)
+        {
+            if (ResultTxtBox.SelectionFont != null && ResultTxtBox.SelectionFont.Underline)
+            {
+                Cursor.Current = Cursors.Hand;
+            }
+            else
+            {
+                Cursor.Current = Cursors.Default;
+            }
+        }
+
+        private void PrintLog(string str)
+        {
+            if (IsDisposed)
+                return;
+
+            if (!string.IsNullOrWhiteSpace(str))
+            {
+                if (InvokeRequired)
+                {
+                    Invoke(() =>
+                    {
+                        AppendLog(str);
+                    });
+                }
+                else
+                {
+                    AppendLog(str);
+                }
+            }
+        }
+
+        private void AppendLog(string str)
+        {
+            var pathStr = Regex.Match(str, "保存路径：(.*)").Groups[1].Value;
+            if (!string.IsNullOrEmpty(pathStr))
+            {
+                ResultTxtBox.AppendText(str.Replace(pathStr, ""));
+                AddPath(pathStr);
+            }
+            else
+            {
+                ResultTxtBox.AppendText(str);
+            }
+            ResultTxtBox.Focus();
+        }
+        #endregion
+
 
         private void DataGrid_CellDoubleClick(object sender, DataGridViewCellEventArgs e)
         {
@@ -332,29 +424,6 @@ namespace SpiderWin
             _coreService.StopAllTask();
         }
 
-        private void PrintLog(string str)
-        {
-            if (IsDisposed)
-                return;
-
-            if (!string.IsNullOrWhiteSpace(str))
-            {
-                if (InvokeRequired)
-                {
-                    Invoke(() =>
-                    {
-                        ResultTxtBox.AppendText(str);
-                        ResultTxtBox.Focus();
-                    });
-                }
-                else
-                {
-
-                    ResultTxtBox.AppendText(str);
-                    ResultTxtBox.Focus();
-                }
-            }
-        }
 
         private void LinkClearLog_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
         {
