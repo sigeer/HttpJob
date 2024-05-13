@@ -29,13 +29,20 @@ namespace SpiderWin.Modals
             LoadForm();
         }
 
-        private async Task LoadData()
+        private void LoadConfigList()
         {
-            await Task.Run(async () =>
+            Task.Run(async () =>
             {
                 spiderList = await _service.GetSpiderDtoListAsync();
+
+                Invoke(() =>
+                {
+                    comboSpider.DataSource = (new List<SpiderListItemViewModel>() { new SpiderListItemViewModel { Id = 0, Name = "" } }.Concat(spiderList)).ToList();
+
+                    if (edittingModel.LinkedSpiderId > 0)
+                        comboSpider.SelectedValue = edittingModel.LinkedSpiderId;
+                });
             });
-            comboSpider.DataSource = (new List<SpiderListItemViewModel>() { new SpiderListItemViewModel { Id = 0, Name = "" } }.Concat(spiderList)).ToList();
         }
 
         private void PreLoadForm()
@@ -48,23 +55,16 @@ namespace SpiderWin.Modals
             comboSpider.ValueMember = nameof(SpiderListItemViewModel.Id);
         }
 
-        private async void LoadForm()
+        private void LoadForm()
         {
             txtName.Text = edittingModel.Name;
             txtXPath.Text = edittingModel.TemplateStr;
             TxtAttribute.Text = edittingModel.ReadAttribute;
             comboType.SelectedValue = edittingModel.Type;
 
-            if (comboType.SelectedValue != null && (int)comboType.SelectedValue == 4)
-                ShowSelectSpider();
-            else
-                HideSelectSpider();
+            HandleTypeChange();
 
-            await LoadData();
-
-            if (edittingModel.LinkedSpiderId > 0)
-                comboSpider.SelectedValue = edittingModel.LinkedSpiderId;
-
+            LoadConfigList();
         }
 
         private void BtnReplaceRule_Click(object sender, EventArgs e)
@@ -129,7 +129,19 @@ namespace SpiderWin.Modals
             label3.Visible = true;
         }
 
-        private void ComboType_SelectedValueChanged(object sender, EventArgs e)
+        private void ShowAttr()
+        {
+            TxtAttribute.Visible = true;
+            labalAttr.Visible = true;
+        }
+
+        private void HideAttr()
+        {
+            TxtAttribute.Visible = false;
+            labalAttr.Visible = false;
+        }
+
+        private void HandleTypeChange()
         {
             if (comboType.SelectedValue != null)
             {
@@ -137,8 +149,17 @@ namespace SpiderWin.Modals
                     ShowSelectSpider();
                 else
                     HideSelectSpider();
-            }
 
+                if (new int[] { 3, 4 }.Contains((int)comboType.SelectedValue))
+                    ShowAttr();
+                else
+                    HideAttr();
+            }
+        }
+
+        private void ComboType_SelectedValueChanged(object sender, EventArgs e)
+        {
+            HandleTypeChange();
         }
 
         private void ContentConfigForm_KeyDown(object sender, KeyEventArgs e)
@@ -147,6 +168,13 @@ namespace SpiderWin.Modals
             {
                 FormSubmit();
             }
+        }
+
+        private void LinkLabel_NewConfig_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        {
+            new SpiderConfigForm(_service).ShowDialog();
+
+            LoadConfigList();
         }
     }
 }

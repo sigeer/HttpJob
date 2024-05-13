@@ -24,7 +24,7 @@ namespace SpiderWin.Modals
 
             InitializeComponent();
 
-            Text = $"{Text} - {_spiderId}";
+
 
         }
         private async void LoadTemplateListData()
@@ -41,6 +41,11 @@ namespace SpiderWin.Modals
             TextRequestHeaders.Text = _currentSpider.Headers;
             ComboMethod.SelectedItem = _currentSpider.Method;
 
+            if (_spiderId > 0)
+                Text = "编辑爬虫 - " + _currentSpider.Name;
+            else
+                Text = "新增爬虫";
+
             labelTemplateInfo.Text = $"已选择{_currentSpider.Templates.Count}项";
 
 
@@ -51,7 +56,7 @@ namespace SpiderWin.Modals
             Task.Run(async () =>
             {
                 var templateList = await _coreService.GetTemplateDtoListAsync();
-                BeginInvoke(() =>
+                Invoke(() =>
                 {
                     ComboBoxNextPage.DataSource = (new List<TemplateDetailViewModel>() { new TemplateDetailViewModel() { Id = 0, Name = "--请选择--" } }.Concat(templateList)).ToList();
                     if (_currentSpider.NextPageTemplateId != null)
@@ -84,7 +89,7 @@ namespace SpiderWin.Modals
 
         private void TemplateListMenu_Click(object sender, EventArgs e)
         {
-            new TemplateManageForm(_coreService).ShowDialog();
+            new ContentReadingManageForm(_coreService, canSelect: false).ShowDialog();
         }
 
         private void FormDisabled()
@@ -129,7 +134,7 @@ namespace SpiderWin.Modals
 
         private void ShowTemplateManagerForm()
         {
-            var templateListForm = new TemplateManageForm(_coreService, _currentSpider.Templates);
+            var templateListForm = new ContentReadingManageForm(_coreService, _currentSpider.Templates);
             templateListForm.OnSelect += (data, evt) =>
             {
                 if (evt != null)
