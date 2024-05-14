@@ -10,7 +10,7 @@ namespace SpiderTool
         {
 
             var urlList = nodes.Where(x => x.GetAttributeValue(rule.ReadAttribute, null) != null)
-                .Select(x => x.GetAttributeValue(rule.ReadAttribute, "1").GetTotalUrl(rootSpider.HostUrl)).ToList();
+                .Select(x => x.GetAttributeValue(rule.ReadAttribute, "").GetTotalUrl(rootSpider.HostUrl)).ToList();
             urlList.AddRange(nodes.Where(x => x.Attributes["srcset"] != null || x.Attributes["data-srcset"] != null).SelectMany(item =>
             {
                 return (item.Attributes["srcset"] ?? item.Attributes["data-srcset"]).Value.Split(',').Select(x => x.Trim().Split(' ')[0].GetTotalUrl(rootSpider.HostUrl));

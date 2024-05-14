@@ -57,6 +57,12 @@ namespace SpiderTool
             }
         }
 
+        /// <summary>
+        /// 获取处理过的替换规则
+        /// </summary>
+        /// <param name="htmlNode"></param>
+        /// <param name="rules"></param>
+        /// <returns></returns>
         protected virtual List<ReplacementRuleDto> FormatReplaceRulesDynamic(HtmlNode htmlNode, List<ReplacementRuleDto> rules)
         {
             var newList = new List<ReplacementRuleDto>();
