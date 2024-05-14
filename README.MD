@@ -30,9 +30,13 @@
 
 ### 使用方法
 
-```
+```C#
 // 读取<div class="text">的InnerHtml
 $XHtml(//div[@class="text"])
 // 读取InnerHtml，最终可以保存html或者text。读取InnerText，无论设置什么类型，都只能保存text
 
+/// 常用提取
+
+// <div class="page"><ul><li>最后一个li
+$XHtml(//div[@class="page"]/ul/li[last()])
 ```
