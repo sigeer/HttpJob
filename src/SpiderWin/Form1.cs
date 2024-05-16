@@ -9,6 +9,7 @@ using SpiderWin.Modals;
 using SpiderWin.Server;
 using SpiderWin.Services;
 using System.Diagnostics;
+using System.IO;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using Utility.Common;
@@ -283,17 +284,6 @@ namespace SpiderWin
         }
 
         #region log
-        private void AddPath(string path)
-        {
-            // 添加路径到 RichTextBox 中，并设置链接样式
-            int start = ResultTxtBox.TextLength;
-            ResultTxtBox.AppendText(path);
-            ResultTxtBox.Select(start, path.Length);
-            ResultTxtBox.SelectionColor = Color.Blue;
-            ResultTxtBox.SelectionFont = new Font(ResultTxtBox.Font, System.Drawing.FontStyle.Underline);
-            ResultTxtBox.DeselectAll();
-        }
-
         private void ResultTxtBox_MouseDown(object sender, MouseEventArgs e)
         {
             int charIndex = ResultTxtBox.GetCharIndexFromPosition(e.Location);
@@ -361,20 +351,33 @@ namespace SpiderWin
                 }
             }
         }
-
         private void AppendLog(string str)
         {
-            var pathStr = Regex.Match(str, "file://.*?\\.\\S*").Value;
-            if (!string.IsNullOrEmpty(pathStr))
+            var reg = new Regex("<file://(.*?)>");
+            var segments = reg.Split(str);
+            List<(int, string)> list = new List<(int, string)>();
+            for (int i = 0; i < segments.Length; i++)
             {
-                ResultTxtBox.AppendText(str.Replace(pathStr, ""));
-                AddPath(pathStr);
+                var segment = segments[i];
+                if (string.IsNullOrEmpty(segment))
+                    return;
+
+                ResultTxtBox.AppendText(segment);
+                if (i % 2 != 0)
+                {
+                    var start = ResultTxtBox.TextLength - segment.Length;
+                    list.Add((start, segment));
+                }
             }
-            else
+            // 设置Select及相关的样式放在上面的循环里直接做，样式会连在一起
+            list.ForEach(x =>
             {
-                ResultTxtBox.AppendText(str);
-            }
-            ResultTxtBox.Focus();
+                ResultTxtBox.Select(x.Item1, x.Item2.Length);
+                ResultTxtBox.SelectionColor = Color.FromArgb(43, 145, 175);
+                ResultTxtBox.SelectionFont = new Font(ResultTxtBox.Font, FontStyle.Underline);
+            });
+            ResultTxtBox.DeselectAll();
+            ResultTxtBox.ScrollToCaret();
         }
         #endregion
 
