@@ -206,7 +206,7 @@ namespace SpiderTool
             await SpiderUtility.MergeTextFileAsync(CurrentDir, cancellationToken);
             if (Directory.Exists(CurrentDir))
             {
-                _logger.LogInformation($"文件保存在：[file://{CurrentDir}]");
+                _logger.LogInformation($"文件保存在：<file://{CurrentDir}>");
             }
         }
 
