@@ -228,27 +228,16 @@ namespace SpiderWin
                 worker.OnTaskInit += (obj, spider) =>
                 {
                     childSW.Start();
-
-                    _logger.LogInformation($"任务 {spider.TaskId} 正在初始化==========");
-                };
-                worker.OnTaskStart += (obj, spider) =>
-                {
-                    _logger.LogInformation($"任务 {spider.TaskId} 开始==========");
                 };
                 worker.OnTaskComplete += (obj, spider) =>
                 {
                     childSW.Stop();
 
-                    var cost = $"耗时：{childSW.Elapsed.TotalSeconds.ToFixed(2)}秒";
-                    _logger.LogInformation($"任务 {spider.TaskId} 结束========= {cost} 保存路径：{spider.CurrentDir}");
+                    var cost = $"任务 {spider.TaskId} 耗时：{childSW.Elapsed.TotalSeconds.ToFixed(2)}秒";
                 };
                 worker.OnTaskStatusChanged += (obj, task) =>
                 {
                     _delayedTaskPool.AddTask(nameof(LoadTaskList), () => LoadTaskList());
-                };
-                worker.OnNewTask += (obj, spider) =>
-                {
-                    _logger.LogInformation($"创建子任务: {spider.TaskId}");
                 };
                 _spiders.Add(worker);
 
@@ -375,7 +364,7 @@ namespace SpiderWin
 
         private void AppendLog(string str)
         {
-            var pathStr = Regex.Match(str, "保存路径：(.*)").Groups[1].Value;
+            var pathStr = Regex.Match(str, "file://.*?\\.\\S*").Value;
             if (!string.IsNullOrEmpty(pathStr))
             {
                 ResultTxtBox.AppendText(str.Replace(pathStr, ""));

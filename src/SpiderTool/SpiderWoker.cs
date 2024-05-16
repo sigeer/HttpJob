@@ -145,7 +145,7 @@ namespace SpiderTool
 
         public void MountChildTaskEvent(SpiderWorker childTask)
         {
-            _logger.LogInformation("创建子任务");
+            _logger.LogInformation($"创建子任务: {childTask.TaskId}");
             OnNewTask?.Invoke(this, childTask);
 
             childTask.OnNewTask += (obj, evt) =>
@@ -204,6 +204,10 @@ namespace SpiderTool
         {
             UpdateTaskStatus(TaskType.Completed);
             await SpiderUtility.MergeTextFileAsync(CurrentDir, cancellationToken);
+            if (Directory.Exists(CurrentDir))
+            {
+                _logger.LogInformation($"文件保存在：file://{CurrentDir} ");
+            }
         }
 
         public void UpdateTaskStatus(TaskType taskStatus, string logStr = "")
