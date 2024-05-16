@@ -6,7 +6,7 @@
     <Nullable>enable</Nullable>
     <UseWindowsForms>true</UseWindowsForms>
     <ImplicitUsings>enable</ImplicitUsings>
-    <Version>1.0.5</Version>
+    <Version>1.1.0</Version>
     <ApplicationIcon>icon.ico</ApplicationIcon>
     <Description>合并文件时换行</Description>
   </PropertyGroup>

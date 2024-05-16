@@ -66,7 +66,6 @@ namespace SpiderWin
 
             services.AddSpiderService(configuration.GetConnectionString("Sqlite"), DataType.Sqlite, ServiceLifetime.Singleton);
 
-            var serviceProvider = services.BuildServiceProvider();
             if (File.Exists("scripts.dll"))
             {
                 var processorAssembly = Assembly.LoadFile("scripts.dll");
@@ -74,6 +73,7 @@ namespace SpiderWin
                 if (newlyService != null)
                     services.AddSingleton<ISpiderProcessor>((Activator.CreateInstance(newlyService) as ISpiderProcessor)!);
             }
+            var serviceProvider = services.BuildServiceProvider();
 
             Application.SetUnhandledExceptionMode(UnhandledExceptionMode.CatchException);
             Application.ThreadException += new ThreadExceptionEventHandler(Application_ThreadException);
