@@ -364,7 +364,7 @@ namespace SpiderWin
 
         private void AppendLog(string str)
         {
-            var pathStr = Regex.Match(str, "file://.*?\\.\\S*").Value;
+            var pathStr = Regex.Match(str, "\\[file://.*?\\]").Value;
             if (!string.IsNullOrEmpty(pathStr))
             {
                 ResultTxtBox.AppendText(str.Replace(pathStr, ""));
