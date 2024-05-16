@@ -1,5 +1,7 @@
 ﻿using HtmlAgilityPack;
 using Microsoft.Extensions.Logging;
+using Polly;
+using Polly.Extensions.Http;
 using SpiderTool.Data.Dto.Spider;
 using System.Data;
 using System.Net;
@@ -57,6 +59,10 @@ namespace SpiderTool
             var data = urls.Distinct().ToDictionary(x => x, x => snowFlake.NextId().ToString());
             var dirRoot = dir.GetDirectory();
             using var httpRequestPool = new WorkPool<HttpClient>();
+            var policy = HttpPolicyExtensions.HandleTransientHttpError().RetryAsync(3, onRetry: (outcome, retryNumber, context) =>
+            {
+                Log.Logger.LogError($"Retry {retryNumber} for {outcome.Result?.RequestMessage?.RequestUri} due to {outcome.Result?.StatusCode}");
+            });
             await Parallel.ForEachAsync(data, cancellationToken, async (item, ct) =>
             {
                 if (string.IsNullOrEmpty(item.Key))
@@ -66,7 +72,7 @@ namespace SpiderTool
                 try
                 {
                     var uri = new Uri(item.Key);
-                    var result = await client.GetAsync(uri.ToString(), cancellationToken: ct);
+                    var result = await policy.ExecuteAsync(async (ctx) => await client.GetAsync(uri.ToString(), ctx), ct);
                     Log.Logger.LogInformation($"BulkDownload 请求 {item}");
                     var fileName = uri.Segments.Last();
                     if (!TryGetExtension(fileName, out var extension))
