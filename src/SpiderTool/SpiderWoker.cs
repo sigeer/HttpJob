@@ -1,12 +1,13 @@
 ﻿using HtmlAgilityPack;
 using Microsoft.Extensions.Logging;
+using Polly;
+using Polly.Extensions.Http;
 using SpiderTool.Data;
 using SpiderTool.Data.Dto.Spider;
 using SpiderTool.Data.Dto.Tasks;
 using SpiderTool.Data.IService;
 using System.Web;
 using Utility.Extensions;
-using Utility.HttpRequest.Core;
 
 namespace SpiderTool
 {
@@ -267,9 +268,16 @@ namespace SpiderTool
                 requestConfig.Headers.TryAddWithoutValidation(item.Key, item.Value);
             }
 
-            HttpResponseMessage res;
             using HttpClient httpClient = new HttpClient();
-            res = await httpClient.HttpSendCore(requestConfig, cancellationToken);
+            httpClient.Timeout = TimeSpan.FromSeconds(60);
+            var policy = HttpPolicyExtensions.HandleTransientHttpError().RetryAsync(3, onRetry: (outcome, retryNumber, context) =>
+            {
+                Log.Logger.LogError($"Retry {retryNumber} for {outcome.Result?.RequestMessage?.RequestUri} due to {outcome.Result?.StatusCode}");
+            });
+            var res = await policy.ExecuteAsync(async (ctx) =>
+             {
+                 return await httpClient.SendAsync(requestConfig, ctx);
+             }, cancellationToken);
             var resStream = await res.Content.ReadAsStreamAsync(cancellationToken);
             return resStream.DecodeData(res.Content.Headers.ContentType?.CharSet);
 

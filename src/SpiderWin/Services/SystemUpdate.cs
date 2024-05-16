@@ -1,5 +1,4 @@
 ﻿using System.Xml;
-using Utility.HttpRequest.Core;
 
 namespace SpiderWin.Services
 {
@@ -10,7 +9,8 @@ namespace SpiderWin.Services
 
         public static async Task<UpdateInfo> GetNewlyVersion()
         {
-            var data = await HttpRequest.GetAsync(NewlyVersionFile);
+            using var httpClient = new HttpClient();
+            var data = await httpClient.GetStringAsync(NewlyVersionFile);
             var doc = new XmlDocument();
             doc.LoadXml(data);
 
@@ -31,7 +31,8 @@ namespace SpiderWin.Services
 
         public static async Task<string> DownloadPackage()
         {
-            var fileReponse = await HttpRequest.HttpGetCore(InstallationPackage);
+            using var httpClient = new HttpClient();
+            var fileReponse = await httpClient.GetAsync(InstallationPackage);
             using var stream = fileReponse.Content.ReadAsStream();
             var bytes = new byte[stream.Length];
             stream.Read(bytes, 0, bytes.Length);
