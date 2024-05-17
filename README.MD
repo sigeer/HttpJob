@@ -39,4 +39,9 @@ $XHtml(//div[@class="text"])
 
 // <div class="page"><ul><li>最后一个li
 $XHtml(//div[@class="page"]/ul/li[last()])
+
+// 标题+内容
+$XHtml(//title)$NewLine$XHtml(//div[@class="text"])
+
+
 ```
