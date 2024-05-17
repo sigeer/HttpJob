@@ -15,7 +15,7 @@ namespace SpiderTool
     public static class SpiderUtility
     {
         public static readonly char[] InvalidFolderSymbol = new char[] { '\\', '/', '|', ':', '*', '^', '<', '>', '?' };
-        public static string RenameFolder(this string str)
+        public static string RemoveInvalidSymbolForFile(this string str)
         {
             StringBuilder sb = new StringBuilder();
             foreach (var c in str)

@@ -9,9 +9,7 @@ using SpiderWin.Modals;
 using SpiderWin.Server;
 using SpiderWin.Services;
 using System.Diagnostics;
-using System.IO;
 using System.Text.RegularExpressions;
-using System.Windows.Forms;
 using Utility.Common;
 using Utility.Extensions;
 
@@ -308,6 +306,7 @@ namespace SpiderWin
             string linkText = ResultTxtBox.Text[startIndex..(endIndex + 1)];
             if (!string.IsNullOrEmpty(linkText))
             {
+                _logger.LogDebug($"点击 {linkText}");
                 try
                 {
                     OpenDir(linkText);

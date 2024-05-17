@@ -303,10 +303,11 @@ namespace SpiderTool
 
             if (Spider.NextPageTemplate == null || string.IsNullOrEmpty(Spider.NextPageTemplate.TemplateStr))
                 return;
+
             var nextPageNode = _currentDoc.DocumentNode.SelectSingleNode(Spider.NextPageTemplate.TemplateStr);
             if (nextPageNode != null)
             {
-                var nextUrl = (nextPageNode.Attributes["href"] ?? nextPageNode.Attributes["data-href"])?.Value;
+                var nextUrl = (nextPageNode.Attributes[Spider.NextPageTemplate.ReadAttribute ?? "href"] ?? nextPageNode.Attributes["href"] ?? nextPageNode.Attributes["data-href"])?.Value;
                 if (!string.IsNullOrEmpty(nextUrl))
                     await ProcessUrl(nextUrl, false);
             }
@@ -315,8 +316,9 @@ namespace SpiderTool
         private string GenarteDirName()
         {
             if (!string.IsNullOrEmpty(DocumentTitle))
-                return DocumentTitle.RenameFolder();
-            return $"AutoGenerate";
+                return DocumentTitle.RemoveInvalidSymbolForFile();
+
+            return $"AutoGenerate_{Spider.Id}";
         }
     }
 }

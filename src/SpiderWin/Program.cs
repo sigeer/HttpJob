@@ -2,8 +2,6 @@ using FreeSql;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Serilog;
-using Serilog.Core;
-using Serilog.Events;
 using SpiderTool;
 using SpiderTool.FreeSql;
 using SpiderTool.Injection;
