@@ -18,9 +18,12 @@ namespace SpiderWin
 
         public void Emit(LogEvent logEvent)
         {
-            using var sw = new StringWriter();
-            formatter!.Format(logEvent, sw);
-            LogReceived?.Invoke(this, sw.ToString());
+            if (logEvent.Level > LogEventLevel.Debug)
+            {
+                using var sw = new StringWriter();
+                formatter!.Format(logEvent, sw);
+                LogReceived?.Invoke(this, sw.ToString());
+            }
         }
 
         public void Dispose()
