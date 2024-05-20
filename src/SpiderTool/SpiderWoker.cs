@@ -64,6 +64,21 @@ namespace SpiderTool
             }
         }
         public string DocumentTitle => HttpUtility.HtmlDecode(_currentDoc?.DocumentNode?.SelectSingleNode("//title")?.InnerText) ?? _rootUrl;
+        private string? _description;
+        public string Description 
+        { 
+            get 
+            {
+                if (string.IsNullOrEmpty(_description))
+                {
+                    _description = GenarteDirName();
+                    var path = Path.Combine(Configs.BaseDir, _description);
+                    if (Directory.Exists(path))
+                        _description = $"{TaskId}_{GenarteDirName()}";
+                }
+                return _description;
+            } 
+        }
 
         private string? _currentDir;
         public string CurrentDir
@@ -71,13 +86,7 @@ namespace SpiderTool
             get
             {
                 if (string.IsNullOrEmpty(_currentDir))
-                {
-                    var path = Path.Combine(Configs.BaseDir, GenarteDirName());
-                    if (Directory.Exists(path))
-                        _currentDir = Path.Combine(Configs.BaseDir, $"{TaskId}_{GenarteDirName()}");
-                    else
-                        _currentDir = path;
-                }
+                    _currentDir = Path.Combine(Configs.BaseDir, Description);
                 return _currentDir;
             }
         }
@@ -228,7 +237,7 @@ namespace SpiderTool
                     _service?.UpdateTask(new TaskEditDto
                     {
                         Id = TaskId,
-                        Description = DocumentTitle,
+                        Description = Description,
                         Status = (int)TaskType.InProgress
                     });
                     OnTaskStart?.Invoke(this, this);

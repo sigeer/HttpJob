@@ -123,11 +123,6 @@ namespace SpiderWin.Modals
             return configFile;
         }
 
-        private void SetConfig(int index)
-        {
-            ReadConfig(index);
-        }
-
         private void ShowConfig(int index)
         {
             var dialog = new TxtReplaceRuleManageForm(ReplacementRules);
