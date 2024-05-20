@@ -285,28 +285,10 @@ namespace SpiderWin
         private void ResultTxtBox_MouseDown(object sender, MouseEventArgs e)
         {
             int charIndex = ResultTxtBox.GetCharIndexFromPosition(e.Location);
-            int startIndex = charIndex;
-            int endIndex = charIndex;
 
-            // 向前搜索，直到找到不是链接样式的字符为止
-            while (startIndex > 0 && ResultTxtBox.Text[startIndex - 1] != '\n' && ResultTxtBox.SelectionFont != null && ResultTxtBox.SelectionFont.Underline)
-            {
-                startIndex--;
-            }
-
-            // 向后搜索，直到找到不是链接样式的字符为止
-            while (endIndex < ResultTxtBox.Text.Length - 1 && ResultTxtBox.Text[endIndex + 1] != '\n' && ResultTxtBox.SelectionFont != null && ResultTxtBox.SelectionFont.Underline)
-            {
-                endIndex++;
-            }
-
-            if (startIndex == endIndex)
-                return;
-
-            string linkText = ResultTxtBox.Text[startIndex..(endIndex + 1)];
+            var (start, end, linkText) = pathList.FirstOrDefault(x => x.Item1 <= charIndex && x.Item2 >= charIndex);
             if (!string.IsNullOrEmpty(linkText))
             {
-                _logger.LogDebug($"点击 {linkText}");
                 try
                 {
                     OpenDir(linkText);
@@ -350,6 +332,7 @@ namespace SpiderWin
                 }
             }
         }
+        List<(int, int, string)> pathList = new List<(int, int, string)>();
         private void AppendLog(string str)
         {
             var reg = new Regex("<file://(.*?)>");
@@ -372,6 +355,7 @@ namespace SpiderWin
             list.ForEach(x =>
             {
                 ResultTxtBox.Select(x.Item1, x.Item2.Length);
+                pathList.Add((x.Item1, x.Item1 + x.Item2.Length, x.Item2));
                 ResultTxtBox.SelectionColor = Color.FromArgb(43, 145, 175);
                 ResultTxtBox.SelectionFont = new Font(ResultTxtBox.Font, FontStyle.Underline);
             });
@@ -428,6 +412,7 @@ namespace SpiderWin
 
         private void OpenDir(string dir)
         {
+            _logger.LogDebug($"尝试打开【{dir}】");
             if (!Directory.Exists(dir))
                 dir = Configs.BaseDir;
 
