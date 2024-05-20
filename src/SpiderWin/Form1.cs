@@ -469,11 +469,10 @@ namespace SpiderWin
                 var taskId = (int?)row.Cells[1].Value;
                 var dir = Configs.BaseDir;
 
-                var worker = _spiders.FirstOrDefault(x => x.TaskId == taskId);
-                if (worker != null)
-                    dir = worker.CurrentDir;
+                var task = _taskList.FirstOrDefault(x => x.Id == taskId);
+                if (task != null)
+                    dir = Path.Combine(Configs.BaseDir, task.Description);
 
-                _logger.LogDebug($"尝试打开{dir}");
                 OpenDir(dir);
             }
         }

@@ -138,5 +138,10 @@ namespace SpiderTool.FreeSql.Domain
         {
             return await Task.FromResult(Submit(model));
         }
+
+        public async Task Export(int id)
+        {
+            var data = await _freeSql.Select<DB_Spider>(id).ToOneAsync();
+        }
     }
 }
