@@ -30,25 +30,34 @@ namespace SpiderWin
                 return;
 
             isLoading = true;
-            var newlyVersion = await SystemUpdate.GetNewlyVersion();
-            if (Label_Version.Text != newlyVersion.Version)
+            Link_Update.Text = "正在获取数据...";
+            await Task.Run(async () =>
             {
-                label2.Visible = true;
-                Label_UpdateDescription.Visible = true;
-                Label_UpdateDescription.Text = newlyVersion.Description;
-                var confirmResult = MessageBox.Show($"最新版本是{newlyVersion.Version}，是否需要更新？", "更新", MessageBoxButtons.YesNo);
-                if (confirmResult == DialogResult.Yes)
+                var newlyVersion = await SystemUpdate.GetNewlyVersion();
+                Invoke(() =>
                 {
-                    //1.下载安装包（压缩包到临时目录）
-                    //2.调起更新脚本
-                    //3.退出当前程序
-                }
-            }
-            else
-            {
-                MessageBox.Show("当前版本已是最新版本！");
-            }
+                    if (Label_Version.Text != newlyVersion.Version)
+                    {
+                        label2.Visible = true;
+                        Label_UpdateDescription.Visible = true;
+                        Label_UpdateDescription.Text = newlyVersion.Description;
+                        var confirmResult = MessageBox.Show($"最新版本是{newlyVersion.Version}，是否需要更新？", "更新", MessageBoxButtons.YesNo);
+                        if (confirmResult == DialogResult.Yes)
+                        {
+                            //1.下载安装包（压缩包到临时目录）
+                            //2.调起更新脚本
+                            //3.退出当前程序
+                        }
+                    }
+                    else
+                    {
+                        MessageBox.Show("当前版本已是最新版本！");
+                    }
+                });
+            });
+
             isLoading = false;
+            Link_Update.Text = "检查更新";
         }
     }
 }

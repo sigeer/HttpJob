@@ -26,10 +26,16 @@ namespace SpiderWin.Modals
         {
             var txtFilePath = TextFilePath.Text;
             if (string.IsNullOrEmpty(txtFilePath) || !File.Exists(txtFilePath))
+            {
+                MessageBox.Show($"文件{txtFilePath}不存在");
                 return;
+            }
 
             if (ReplacementRules.Count == 0)
+            {
+                MessageBox.Show("无规则，无需替换");
                 return;
+            }
 
             Task.Run(() =>
             {

@@ -58,7 +58,7 @@ namespace SpiderTool
             {
                 var content = ReadElementContent(pageDocument.DocumentNode, rule.TemplateStr);
                 var value = SpiderUtility.ReplaceContent(content, rule.ReplacementRules);
-                await SpiderUtility.SaveTextAsync(savePath, allowHtml ? value : SpiderUtility.Html2Text(value));
+                await SpiderUtility.SaveTextAsync(savePath, allowHtml ? value : SpiderUtility.Html2Text(value), cancellationToken);
             }
             else
             {
@@ -67,7 +67,7 @@ namespace SpiderTool
                 {
                     cancellationToken.ThrowIfCancellationRequested();
                     var value = SpiderUtility.ReplaceContent(item.InnerHtml, rule.ReplacementRules);
-                    await SpiderUtility.SaveTextAsync(savePath, allowHtml ? value : SpiderUtility.Html2Text(value));
+                    await SpiderUtility.SaveTextAsync(savePath, allowHtml ? value : SpiderUtility.Html2Text(value), cancellationToken);
                 }
             }
         }
