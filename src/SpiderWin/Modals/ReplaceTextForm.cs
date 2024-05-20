@@ -1,4 +1,5 @@
 ﻿using SpiderTool.Data.Dto.Spider;
+using System;
 using System.Diagnostics;
 using System.Text.Json;
 using System.Text.RegularExpressions;
@@ -125,7 +126,10 @@ namespace SpiderWin.Modals
         private void SetConfig(int index)
         {
             ReadConfig(index);
+        }
 
+        private void ShowConfig(int index)
+        {
             var dialog = new TxtReplaceRuleManageForm(ReplacementRules);
             dialog.OnOk += (obj, evt) =>
             {
@@ -133,10 +137,11 @@ namespace SpiderWin.Modals
                 File.WriteAllText(ConfigFile(index), JsonSerializer.Serialize(ReplacementRules));
             };
             dialog.ShowDialog();
-
         }
+
         private void ReadConfig(int index)
         {
+            _currentSelectedConfig = index;
             var configBtns = new Button[] { BtnConfig1, BtnConfig2, BtnConfig3 };
             for (int i = 0; i < configBtns.Length; i++)
             {
@@ -158,19 +163,29 @@ namespace SpiderWin.Modals
             else
                 ReplacementRules = new List<ReplacementRuleDto>();
         }
+        int _currentSelectedConfig = 1;
         private void BtnConfig1_Click(object sender, EventArgs e)
         {
-            SetConfig(1);
+            if (_currentSelectedConfig == 1)
+                ShowConfig(1);
+            else
+                ReadConfig(1);
         }
 
         private void BtnConfig2_Click(object sender, EventArgs e)
         {
-            SetConfig(2);
+            if (_currentSelectedConfig == 2)
+                ShowConfig(2);
+            else
+                ReadConfig(2);
         }
 
         private void BtnConfig3_Click(object sender, EventArgs e)
         {
-            SetConfig(3);
+            if (_currentSelectedConfig == 3)
+                ShowConfig(3);
+            else
+                ReadConfig(3);
         }
 
         private void TextFilePath_TextChanged(object sender, EventArgs e)
