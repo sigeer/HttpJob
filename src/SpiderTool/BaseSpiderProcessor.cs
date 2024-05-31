@@ -75,7 +75,7 @@ namespace SpiderTool
                 newList.Add(new ReplacementRuleDto
                 {
                     Id = rule.Id,
-                    IgnoreCase = rule.IgnoreCase,
+                    UseRegex = rule.UseRegex,
                     ReplacementOldStr = oldValue,
                     ReplacementNewlyStr = newlyValue
                 });

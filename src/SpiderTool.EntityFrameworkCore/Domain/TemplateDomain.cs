@@ -45,7 +45,7 @@ namespace SpiderTool.EntityFrameworkCore.Domain
                             Id = x.Id,
                             ReplacementOldStr = x.ReplacementOldStr,
                             ReplacementNewlyStr = x.ReplacementNewlyStr,
-                            IgnoreCase = x.IgnoreCase
+                            UseRegex = x.IgnoreCase
                         }).ToList()
                     }).AsSplitQuery().ToList();
         }
@@ -67,7 +67,7 @@ namespace SpiderTool.EntityFrameworkCore.Domain
                                   Id = x.Id,
                                   ReplacementOldStr = x.ReplacementOldStr,
                                   ReplacementNewlyStr = x.ReplacementNewlyStr,
-                                  IgnoreCase = x.IgnoreCase
+                                  UseRegex = x.IgnoreCase
                               }).ToList()
                           }).AsSplitQuery().ToListAsync();
         }
@@ -102,7 +102,7 @@ namespace SpiderTool.EntityFrameworkCore.Domain
                 TemplateId = dbModel.Id,
                 ReplacementNewlyStr = x.ReplacementNewlyStr,
                 ReplacementOldStr = x.ReplacementOldStr,
-                IgnoreCase = x.IgnoreCase
+                IgnoreCase = x.UseRegex
             }));
             _dbContext.SaveChanges();
             dbTrans.Commit();
@@ -140,7 +140,7 @@ namespace SpiderTool.EntityFrameworkCore.Domain
                 TemplateId = dbModel.Id,
                 ReplacementNewlyStr = x.ReplacementNewlyStr,
                 ReplacementOldStr = x.ReplacementOldStr,
-                IgnoreCase = x.IgnoreCase
+                IgnoreCase = x.UseRegex
             }));
             await _dbContext.SaveChangesAsync();
             await dbTrans.CommitAsync();

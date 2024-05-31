@@ -48,7 +48,10 @@ namespace SpiderWin.Modals
                 var content = File.ReadAllText(txtFilePath);
                 foreach (var rule in workRules)
                 {
-                    content = Regex.Replace(content, rule.ReplacementOldStr, rule.ReplacementNewlyStr ?? string.Empty, rule.IgnoreCase ? RegexOptions.IgnoreCase : RegexOptions.None);
+                    if (rule.UseRegex)
+                        content = Regex.Replace(content, rule.ReplacementOldStr, rule.ReplacementNewlyStr ?? string.Empty);
+                    else
+                        content = content.Replace(rule.ReplacementOldStr, rule.ReplacementNewlyStr ?? string.Empty);
                 }
                 File.WriteAllText(txtFilePath, content);
                 MessageBox.Show("操作完成");
@@ -70,7 +73,7 @@ namespace SpiderWin.Modals
                 newList.Add(new ReplacementRuleDto
                 {
                     Id = rule.Id,
-                    IgnoreCase = rule.IgnoreCase,
+                    UseRegex = rule.UseRegex,
                     ReplacementOldStr = oldValue,
                     ReplacementNewlyStr = newlyValue
                 });

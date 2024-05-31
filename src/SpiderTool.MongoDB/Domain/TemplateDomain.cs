@@ -81,7 +81,7 @@ namespace SpiderTool.MongoDB.Domain
                         TemplateId = dbModel.Id,
                         ReplacementNewlyStr = x.ReplacementNewlyStr,
                         ReplacementOldStr = x.ReplacementOldStr,
-                        IgnoreCase = x.IgnoreCase
+                        IgnoreCase = x.UseRegex
                     }));
                 }
 
@@ -110,7 +110,7 @@ namespace SpiderTool.MongoDB.Domain
                             TemplateId = dbModel.Id,
                             ReplacementNewlyStr = x.ReplacementNewlyStr,
                             ReplacementOldStr = x.ReplacementOldStr,
-                            IgnoreCase = x.IgnoreCase
+                            IgnoreCase = x.UseRegex
                         }));
                     }
                 }
@@ -144,7 +144,7 @@ namespace SpiderTool.MongoDB.Domain
                         TemplateId = dbModel.Id,
                         ReplacementNewlyStr = x.ReplacementNewlyStr,
                         ReplacementOldStr = x.ReplacementOldStr,
-                        IgnoreCase = x.IgnoreCase
+                        IgnoreCase = x.UseRegex
                     }));
                 }
 
@@ -173,7 +173,7 @@ namespace SpiderTool.MongoDB.Domain
                             TemplateId = dbModel.Id,
                             ReplacementNewlyStr = x.ReplacementNewlyStr,
                             ReplacementOldStr = x.ReplacementOldStr,
-                            IgnoreCase = x.IgnoreCase
+                            IgnoreCase = x.UseRegex
                         }));
                     }
 
