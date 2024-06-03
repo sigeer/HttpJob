@@ -7,7 +7,7 @@ namespace SpiderWin.Modals
     {
         readonly List<ReplacementRuleDto>? _rules;
         public event EventHandler<List<ReplacementRuleDto>>? OnOk;
-        const int Col_IgnoreCase = 0;
+        const int Col_UseRegex = 0;
         const int Col_OldStr = 1;
         const int Col_NewStr = 2;
         public TxtReplaceRuleManageForm(List<ReplacementRuleDto>? rules = null)
@@ -21,8 +21,8 @@ namespace SpiderWin.Modals
         {
             DataGridViewMain.Columns.Add(new DataGridViewColumn()
             {
-                HeaderText = "忽视大小写",
-                Name = nameof(ReplacementRuleDto.ReplacementOldStr),
+                HeaderText = "使用正则",
+                Name = nameof(ReplacementRuleDto.UseRegex),
                 Width = 80,
                 CellTemplate = new DataGridViewCheckBoxCell()
             });
@@ -49,7 +49,7 @@ namespace SpiderWin.Modals
             _rules?.ForEach(x =>
             {
                 var row = new DataGridViewRow();
-                row.Cells.Add(new DataGridViewCheckBoxCell() { Value = x.IgnoreCase, ValueType = typeof(bool?) });
+                row.Cells.Add(new DataGridViewCheckBoxCell() { Value = x.UseRegex, ValueType = typeof(bool?) });
                 row.Cells.Add(new DataGridViewTextBoxCell() { Value = x.ReplacementOldStr, ValueType = typeof(string) });
                 row.Cells.Add(new DataGridViewTextBoxCell() { Value = x.ReplacementNewlyStr, ValueType = typeof(string) });
                 row.ContextMenuStrip = DataGridMenu;
@@ -69,7 +69,7 @@ namespace SpiderWin.Modals
                     continue;
                 data.Add(new ReplacementRuleDto
                 {
-                    IgnoreCase = (bool)(row.Cells[Col_IgnoreCase]?.Value ?? false),
+                    UseRegex = (bool)(row.Cells[Col_UseRegex]?.Value ?? true),
                     ReplacementOldStr = col1.ToString(),
                     ReplacementNewlyStr = col2?.ToString(),
                 });
@@ -135,6 +135,22 @@ namespace SpiderWin.Modals
             if (e.KeyCode == Keys.Enter)
             {
                 Search();
+            }
+        }
+
+        private void DataGridViewMain_DefaultValuesNeeded(object sender, DataGridViewRowEventArgs e)
+        {
+            e.Row.Cells[Col_UseRegex].Value = true;
+        }
+
+        private void DataGridViewMain_RowValidating(object sender, DataGridViewCellCancelEventArgs e)
+        {
+            if (sender is DataGridView dgv && dgv.Rows[e.RowIndex].IsNewRow)
+            {
+                if (string.IsNullOrEmpty(dgv.Rows[e.RowIndex].Cells[Col_OldStr].Value?.ToString()))
+                {
+                    e.Cancel = true; // Cancel the addition if validation fails
+                }
             }
         }
     }

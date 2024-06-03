@@ -5,6 +5,6 @@
         public int Id { get; set; }
         public string ReplacementOldStr { get; set; } = null!;
         public string? ReplacementNewlyStr { get; set; }
-        public bool IgnoreCase { get; set; } = true;
+        public bool UseRegex { get; set; } = true;
     }
 }

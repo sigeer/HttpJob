@@ -150,9 +150,12 @@ namespace SpiderTool
 
         public static string ReplaceContent(string finalText, List<ReplacementRuleDto> replaceRules)
         {
-            foreach (var handle in replaceRules)
+            foreach (var rule in replaceRules)
             {
-                finalText = Regex.Replace(finalText, handle.ReplacementOldStr, handle.ReplacementNewlyStr ?? "", handle.IgnoreCase ? RegexOptions.IgnoreCase : RegexOptions.None);
+                if (rule.UseRegex)
+                    finalText = Regex.Replace(finalText, rule.ReplacementOldStr, rule.ReplacementNewlyStr ?? string.Empty);
+                else
+                    finalText = finalText.Replace(rule.ReplacementOldStr, rule.ReplacementNewlyStr ?? string.Empty);
             }
             return finalText;
         }

@@ -110,7 +110,7 @@ namespace SpiderTool.Dapper.Domain
                 TemplateId = dbModel.Id,
                 ReplacementOldStr = x.ReplacementOldStr,
                 ReplacementNewlyStr = x.ReplacementNewlyStr,
-                IgnoreCase = x.IgnoreCase
+                IgnoreCase = x.UseRegex
             }), dbTrans);
             dbTrans.Commit();
 
@@ -145,7 +145,7 @@ namespace SpiderTool.Dapper.Domain
                 TemplateId = dbModel.Id,
                 ReplacementOldStr = x.ReplacementOldStr,
                 ReplacementNewlyStr = x.ReplacementNewlyStr,
-                IgnoreCase = x.IgnoreCase
+                IgnoreCase = x.UseRegex
             }), dbTrans);
             dbTrans.Commit();
 

@@ -84,7 +84,7 @@ namespace SpiderTool.FreeSql.Domain
                     TemplateId = dbModel.Id,
                     ReplacementNewlyStr = x.ReplacementNewlyStr,
                     ReplacementOldStr = x.ReplacementOldStr,
-                    IgnoreCase = x.IgnoreCase
+                    IgnoreCase = x.UseRegex
                 }).ToList();
                 _freeSql.Insert<DB_ReplacementRule>(data).ExecuteAffrows();
             });
