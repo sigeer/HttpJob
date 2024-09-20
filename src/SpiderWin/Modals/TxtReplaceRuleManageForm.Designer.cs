@@ -35,6 +35,7 @@
             BtnSave = new Button();
             Txt_Search = new TextBox();
             Btn_Search = new Button();
+            DataGrid_MenuItem_Insert = new ToolStripMenuItem();
             ((System.ComponentModel.ISupportInitialize)DataGridViewMain).BeginInit();
             DataGridMenu.SuspendLayout();
             SuspendLayout();
@@ -53,14 +54,14 @@
             // 
             // DataGridMenu
             // 
-            DataGridMenu.Items.AddRange(new ToolStripItem[] { DataGridMenu_Item_Delete });
+            DataGridMenu.Items.AddRange(new ToolStripItem[] { DataGrid_MenuItem_Insert, DataGridMenu_Item_Delete });
             DataGridMenu.Name = "DataGridMenu";
-            DataGridMenu.Size = new Size(101, 26);
+            DataGridMenu.Size = new Size(181, 70);
             // 
             // DataGridMenu_Item_Delete
             // 
             DataGridMenu_Item_Delete.Name = "DataGridMenu_Item_Delete";
-            DataGridMenu_Item_Delete.Size = new Size(100, 22);
+            DataGridMenu_Item_Delete.Size = new Size(180, 22);
             DataGridMenu_Item_Delete.Text = "删除";
             DataGridMenu_Item_Delete.Click += DataGridMenu_Item_Delete_Click;
             // 
@@ -92,6 +93,13 @@
             Btn_Search.UseVisualStyleBackColor = true;
             Btn_Search.Click += Btn_Search_Click;
             // 
+            // DataGrid_MenuItem_Insert
+            // 
+            DataGrid_MenuItem_Insert.Name = "DataGrid_MenuItem_Insert";
+            DataGrid_MenuItem_Insert.Size = new Size(180, 22);
+            DataGrid_MenuItem_Insert.Text = "插入";
+            DataGrid_MenuItem_Insert.Click += DataGrid_MenuItem_Insert_Click;
+            // 
             // TxtReplaceRuleManageForm
             // 
             AutoScaleDimensions = new SizeF(7F, 17F);
@@ -120,5 +128,6 @@
         private ToolStripMenuItem DataGridMenu_Item_Delete;
         private TextBox Txt_Search;
         private Button Btn_Search;
+        private ToolStripMenuItem DataGrid_MenuItem_Insert;
     }
 }
