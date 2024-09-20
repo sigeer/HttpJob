@@ -78,14 +78,7 @@ namespace SpiderWin.Modals
             Close();
         }
 
-        private void DataGridMenu_Item_Delete_Click(object sender, EventArgs e)
-        {
-            var selectedRow = DataGridViewMain.Rows[DataGridViewMain.SelectedCells[0].RowIndex];
-            if (selectedRow != null && !selectedRow.IsNewRow)
-            {
-                DataGridViewMain.Rows.Remove(selectedRow);
-            }
-        }
+
 
         private void DataGridViewMain_CellMouseUp(object sender, DataGridViewCellMouseEventArgs e)
         {
@@ -151,6 +144,30 @@ namespace SpiderWin.Modals
                 {
                     e.Cancel = true; // Cancel the addition if validation fails
                 }
+            }
+        }
+
+        private void DataGrid_MenuItem_Insert_Click(object sender, EventArgs e)
+        {
+            if (DataGridViewMain.CurrentRow.IsNewRow)
+                return;
+
+            var selectedIndex = DataGridViewMain.CurrentRow.Index;
+
+            var row = new DataGridViewRow();
+            row.Cells.Add(new DataGridViewCheckBoxCell() { Value = true, ValueType = typeof(bool?) });
+            row.Cells.Add(new DataGridViewTextBoxCell() { Value = "", ValueType = typeof(string) });
+            row.Cells.Add(new DataGridViewTextBoxCell() { Value = "", ValueType = typeof(string) });
+            row.ContextMenuStrip = DataGridMenu;
+            DataGridViewMain.Rows.Insert(selectedIndex, row);
+        }
+
+        private void DataGridMenu_Item_Delete_Click(object sender, EventArgs e)
+        {
+            var selectedRow = DataGridViewMain.Rows[DataGridViewMain.CurrentRow.Index];
+            if (selectedRow != null && !selectedRow.IsNewRow)
+            {
+                DataGridViewMain.Rows.Remove(selectedRow);
             }
         }
     }
